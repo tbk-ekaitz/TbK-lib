@@ -1,0 +1,414 @@
+%% test-full.tex
+%% TbK Library - Full Integration Test
+%% This document tests ALL TbK commands and features
+%%
+%% Compile with: pdflatex test-full.tex
+%%
+
+\documentclass[11pt,a4paper]{article}
+
+% Load TbK library
+\usepackage{tbk}
+
+% Configure document
+\tbkSetup{
+  company-name = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  product-name = {TBK-99 EA Asclepius},
+  document-code = {A99 EA-EN-A04-A002},
+  version = {1.0},
+  date = {2025-01-15},
+}
+
+% Configure branding
+\tbkSetBranding{
+  company = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  website = {www.surglasses.com},
+  slogan = {Innovation in Medical Technology},
+}
+
+\begin{document}
+
+%% ============================================================================
+%% COVER PAGE
+%% ============================================================================
+
+\tbkTitlePage{
+  title = {TBK-99 EA},
+  subtitle = {User Guide},
+  tagline = {Virtual Electronic Anatomy Table for Education},
+}
+
+%% ============================================================================
+%% TABLE OF CONTENTS
+%% ============================================================================
+
+\tbkTableOfContents[
+  title = {Contents},
+  depth = 4,
+]
+
+%% ============================================================================
+%% CHAPTER 1: INTRODUCTION
+%% ============================================================================
+
+\tbkChapter{Introduction}
+
+This document demonstrates all features of the TbK LaTeX library for professional technical documentation.
+
+\tbkSection{About This Document}
+
+The TbK library provides a comprehensive set of commands for creating professional technical manuals, user guides, and product documentation.
+
+\tbkSubsection{Document Structure}
+
+This test document is organized into the following sections:
+
+\begin{tbkList}[bullet=arrow]
+  \item Introduction and overview
+  \item Callouts and warnings
+  \item Figures and images
+  \item Tables and specifications
+  \item Lists and formatting
+  \item Icons and buttons
+\end{tbkList}
+
+\tbkSubsubsection{Version History}
+
+\begin{tbkSpecTable}[caption={Document Versions}, label=tbl:versions]
+  \tbkSpec{Version 1.0}{Initial release}
+  \tbkSpec{Date}{January 15, 2025}
+  \tbkSpec{Author}{TbK Team}
+\end{tbkSpecTable}
+
+%% ============================================================================
+%% CHAPTER 2: CALLOUTS AND WARNINGS
+%% ============================================================================
+
+\tbkChapter{Safety Information}
+
+This chapter demonstrates the callout system for safety warnings and notices.
+
+\tbkSection{Warning Types}
+
+\tbkSubsection{Danger Callout}
+
+\begin{tbkCallout}[type=danger, title=DANGER]
+  \textbf{Hazardous Voltage}\\
+  Do not touch internal components with wet hands.\\
+  Disconnect power before servicing.
+\end{tbkCallout}
+
+\tbkSubsection{Warning Callout}
+
+\begin{tbkCallout}[type=warning]
+  \textbf{Risk of Injury}\\
+  Keep hands away from moving parts during operation.
+\end{tbkCallout}
+
+\tbkSubsection{Notice Callout}
+
+\begin{tbkCallout}[type=notice]
+  \textbf{Important Information}\\
+  Read all instructions before operating this equipment.
+\end{tbkCallout}
+
+\tbkSubsection{Caution Callout}
+
+\begin{tbkCallout}[type=caution]
+  Handle the display panel with care to avoid scratches.
+\end{tbkCallout}
+
+\tbkSubsection{Info and Tip Callouts}
+
+\tbkInfo{This device requires a stable internet connection for software updates.}
+
+\tbkTip{Use keyboard shortcuts for faster navigation. Press \tbkKey{F1} for help.}
+
+\tbkSuccess{Installation completed successfully!}
+
+%% ============================================================================
+%% CHAPTER 3: SPECIFICATIONS
+%% ============================================================================
+
+\tbkChapter{Device Specifications}
+
+\tbkSection{Technical Specifications}
+
+\begin{tbkSpecTable}[
+  caption = {TBK-99 EA Specifications},
+  label = tbl:specs,
+  key-style = bold,
+]
+  \tbkSpec{Product Name}{Asclepius Virtual Anatomy Table}
+  \tbkSpec{Model}{TBK-99 EA}
+  \tbkSpec{Display Size}{99-inch diagonal}
+  \tbkSpec{Resolution}{3840 $\times$ 1080 pixels}
+  \tbkSpec{Aspect Ratio}{32:9 Ultra-wide}
+  \tbkSpec{Power Supply}{100V--240V AC, 50/60Hz, 8A}
+  \tbkSpec{Power Consumption}{800W typical}
+  \tbkSpec{Operating Temperature}{10°C to 35°C}
+  \tbkSpec{Storage Temperature}{-20°C to 60°C}
+  \tbkSpec{Humidity}{20\% to 80\% (non-condensing)}
+  \tbkSpec{Net Weight}{360 kg}
+  \tbkSpec{Dimensions (W×D×H)}{2400 × 900 × 1100 mm}
+\end{tbkSpecTable}
+
+\tbkSection{Computer Specifications}
+
+\begin{tbkSpecTable}[caption={Built-in Computer Specifications}]
+  \tbkSpec{Processor}{Intel Core i9-13900K}
+  \tbkSpec{Memory}{64 GB DDR5}
+  \tbkSpec{Storage}{2 TB NVMe SSD}
+  \tbkSpec{Graphics}{NVIDIA RTX 4080 16GB}
+  \tbkSpec{Operating System}{Windows 11 Pro}
+\end{tbkSpecTable}
+
+%% ============================================================================
+%% CHAPTER 4: TABLES
+%% ============================================================================
+
+\tbkChapter{Control Operations}
+
+\tbkSection{Button Functions}
+
+\begin{tbkOperationTable}[
+  caption = {Control Panel Buttons},
+  label = tbl:buttons,
+]
+  \tbkOp{\tbkIcon{power}}{Power On/Off - Press and hold for 3 seconds}
+  \tbkOp{\tbkIcon{home}}{Return to Home Screen}
+  \tbkOp{\tbkIcon{settings}}{Open Settings Menu}
+  \tbkOp{\tbkIcon{usb}}{Switch to USB Input Source}
+  \tbkOp{\tbkIcon{hdmi}}{Switch to HDMI Input Source}
+  \tbkOp{\tbkIcon{wifi}}{Toggle Wireless Connection}
+  \tbkOp{\tbkIcon{zoom-in}}{Zoom In on Selected Region}
+  \tbkOp{\tbkIcon{zoom-out}}{Zoom Out}
+\end{tbkOperationTable}
+
+\tbkSection{Keyboard Shortcuts}
+
+The following keyboard shortcuts are available:
+
+\begin{tbkTable}[
+  caption = {Keyboard Shortcuts},
+  label = tbl:shortcuts,
+]
+  \tbkRow{\tbkShortcut{Ctrl+O}}{Open file}
+  \tbkRow{\tbkShortcut{Ctrl+S}}{Save current state}
+  \tbkRow{\tbkShortcut{Ctrl+Z}}{Undo last action}
+  \tbkRow{\tbkShortcut{Ctrl+Shift+Z}}{Redo}
+  \tbkRow{\tbkShortcut{F11}}{Toggle fullscreen}
+  \tbkRow{\tbkKey{Esc}}{Exit current mode}
+\end{tbkTable}
+
+%% ============================================================================
+%% CHAPTER 5: LISTS
+%% ============================================================================
+
+\tbkChapter{Procedures and Lists}
+
+\tbkSection{Setup Procedure}
+
+Follow these steps to set up your device:
+
+\begin{tbkSteps}[prefix=Step]
+  \item Unpack the device and remove all protective materials.
+  \item Position the table on a flat, stable surface.
+  \item Connect the power cable to a grounded outlet.
+  \item Connect peripherals (keyboard, mouse, network cable).
+  \item Press the power button to turn on the device.
+  \item Follow the on-screen setup wizard.
+\end{tbkSteps}
+
+\tbkSection{Feature List}
+
+\begin{tbkFeatureList}
+  \item High-resolution 99-inch display
+  \item Multi-touch gesture support
+  \item Real-time 3D anatomy rendering
+  \item Built-in collaboration tools
+  \item Cloud synchronization
+  \item Regular software updates
+\end{tbkFeatureList}
+
+\tbkSection{Safety Checklist}
+
+\begin{tbkChecklist}
+  \tbkUnchecked{Verify power supply voltage matches local standards}
+  \tbkUnchecked{Ensure adequate ventilation around the device}
+  \tbkUnchecked{Check all cables for damage before connecting}
+  \tbkUnchecked{Read the complete user manual}
+  \tbkChecked{Keep this document for future reference}
+\end{tbkChecklist}
+
+\tbkSection{Warnings List}
+
+\begin{tbkWarningList}
+  \item Do not expose to direct sunlight
+  \item Do not operate with wet hands
+  \item Keep away from water and moisture
+  \item Do not block ventilation openings
+\end{tbkWarningList}
+
+%% ============================================================================
+%% CHAPTER 6: ICONS AND TYPOGRAPHY
+%% ============================================================================
+
+\tbkChapter{Icons and Visual Elements}
+
+\tbkSection{Available Icons}
+
+The TbK library includes a comprehensive set of icons:
+
+\tbkSubsection{Control Icons}
+
+\begin{tbkList}
+  \item Power: \tbkIcon{power}
+  \item Settings: \tbkIcon{settings}
+  \item Home: \tbkIcon{home}
+  \item Menu: \tbkIcon{menu}
+\end{tbkList}
+
+\tbkSubsection{Media Icons}
+
+\begin{tbkList}
+  \item Play: \tbkIcon{play}
+  \item Pause: \tbkIcon{pause}
+  \item Stop: \tbkIcon{stop}
+  \item Forward: \tbkIcon{forward}
+\end{tbkList}
+
+\tbkSubsection{Status Icons}
+
+\begin{tbkList}
+  \item Warning: \tbkIcon{warning}
+  \item Info: \tbkIcon{info}
+  \item Check: \tbkIcon{check}
+  \item Error: \tbkIcon{error}
+\end{tbkList}
+
+\tbkSubsection{Connectivity Icons}
+
+\begin{tbkList}
+  \item USB: \tbkIcon{usb}
+  \item WiFi: \tbkIcon{wifi}
+  \item Bluetooth: \tbkIcon{bluetooth}
+  \item HDMI: \tbkIcon{hdmi}
+\end{tbkList}
+
+\tbkSection{Buttons}
+
+Example button styles:
+
+\begin{center}
+  \tbkButton{OK}
+  \quad
+  \tbkButton[style=outlined]{Cancel}
+  \quad
+  \tbkButton[icon=power]{Power On}
+  \quad
+  \tbkButton[icon=settings]{Settings}
+\end{center}
+
+\tbkSection{Typography Samples}
+
+\tbkSubsection{Headings}
+
+\tbkHeading{1}{Heading Level 1}
+\tbkHeading{2}{Heading Level 2}
+\tbkHeading{3}{Heading Level 3}
+\tbkHeading{4}{Heading Level 4}
+
+\tbkSubsection{Text Styles}
+
+\begin{tbkList}
+  \item \tbkBold{Bold text}
+  \item \tbkItalic{Italic text}
+  \item \tbkCode{Monospace/code text}
+  \item \tbkSmallCaps{Small Caps Text}
+  \item \tbkUnderline{Underlined text}
+\end{tbkList}
+
+%% ============================================================================
+%% CHAPTER 7: SECTIONS DEEP NESTING
+%% ============================================================================
+
+\tbkChapter{Section Nesting Demo}
+
+\tbkSection{Level 2 Section}
+
+This demonstrates the deep section numbering system.
+
+\tbkSubsection{Level 3 Subsection}
+
+Content at level 3.
+
+\tbkSubsubsection{Level 4 Subsubsection}
+
+Content at level 4.
+
+\tbkParagraph{Level 5 Paragraph}
+
+Content at level 5.
+
+\tbkSubparagraph{Level 6 Subparagraph}
+
+Content at level 6 - the deepest level supported.
+
+%% ============================================================================
+%% APPENDIX
+%% ============================================================================
+
+\clearpage
+\tbkAppendices
+
+\tbkChapter{Warranty Information}
+
+\tbkSection{Warranty Coverage}
+
+This product is covered by a limited warranty for a period of 24 months from the date of purchase.
+
+\tbkSubsection{What is Covered}
+
+\begin{tbkList}
+  \item Manufacturing defects
+  \item Hardware component failures under normal use
+  \item Software bugs in pre-installed applications
+\end{tbkList}
+
+\tbkSubsection{What is Not Covered}
+
+\begin{tbkList}
+  \item Damage from misuse or accidents
+  \item Unauthorized modifications
+  \item Normal wear and tear
+  \item Consumable parts
+\end{tbkList}
+
+\tbkSection{Contact Information}
+
+\begin{tbkSpecTable}
+  \tbkSpec{Phone}{+886 4-2565-2818}
+  \tbkSpec{Email}{support@surglasses.com}
+  \tbkSpec{Website}{www.surglasses.com}
+  \tbkSpec{Address}{2F., No.41, Keya Rd., Daya Dist., Taichung City 428, Taiwan}
+\end{tbkSpecTable}
+
+%% ============================================================================
+%% DOCUMENT INFO
+%% ============================================================================
+
+\clearpage
+\tbkSection*{Document Information}
+
+\tbkDocumentInfo
+
+\vspace{2cm}
+
+\tbkCopyright
+
+\vspace{1cm}
+
+\tbkDisclaimer
+
+\end{document}

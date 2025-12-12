@@ -1,0 +1,279 @@
+%% tbk-page.sty
+%% TbK Library - Page Layout Module
+%% Page geometry, margins, and layout configuration
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-page}[2025/01/01 v1.0 TbK Page Layout]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{geometry}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% PAGE SIZE PRESETS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/page/.is family,
+  /tbk/page/.cd,
+  % Paper size
+  paper/.is choice,
+  paper/a4/.code={%
+    \geometry{a4paper}%
+    \def\tbk@page@paper{a4}%
+  },
+  paper/letter/.code={%
+    \geometry{letterpaper}%
+    \def\tbk@page@paper{letter}%
+  },
+  paper/a5/.code={%
+    \geometry{a5paper}%
+    \def\tbk@page@paper{a5}%
+  },
+  paper/b5/.code={%
+    \geometry{b5paper}%
+    \def\tbk@page@paper{b5}%
+  },
+  paper/legal/.code={%
+    \geometry{legalpaper}%
+    \def\tbk@page@paper{legal}%
+  },
+  paper/.default=a4,
+  % Orientation
+  orientation/.is choice,
+  orientation/portrait/.code={%
+    \geometry{portrait}%
+    \def\tbk@page@orientation{portrait}%
+  },
+  orientation/landscape/.code={%
+    \geometry{landscape}%
+    \def\tbk@page@orientation{landscape}%
+  },
+  orientation/.default=portrait,
+  % Margins
+  margin-top/.store in=\tbk@page@margintop,
+  margin-bottom/.store in=\tbk@page@marginbottom,
+  margin-left/.store in=\tbk@page@marginleft,
+  margin-right/.store in=\tbk@page@marginright,
+  margin-inner/.store in=\tbk@page@margininner,
+  margin-outer/.store in=\tbk@page@marginouter,
+  % Uniform margin
+  margin/.code={%
+    \def\tbk@page@margintop{#1}%
+    \def\tbk@page@marginbottom{#1}%
+    \def\tbk@page@marginleft{#1}%
+    \def\tbk@page@marginright{#1}%
+  },
+  % Header/footer space
+  header-height/.store in=\tbk@page@headerheight,
+  footer-height/.store in=\tbk@page@footerheight,
+  header-sep/.store in=\tbk@page@headersep,
+  footer-sep/.store in=\tbk@page@footersep,
+  % Two-sided document
+  twoside/.is if=tbk@page@twoside,
+  twoside/.default=true,
+  % Binding offset
+  binding-offset/.store in=\tbk@page@bindingoffset,
+}
+
+% Default values
+\def\tbk@page@paper{a4}
+\def\tbk@page@orientation{portrait}
+\def\tbk@page@margintop{2.5cm}
+\def\tbk@page@marginbottom{2.5cm}
+\def\tbk@page@marginleft{2.5cm}
+\def\tbk@page@marginright{2.5cm}
+\def\tbk@page@margininner{}
+\def\tbk@page@marginouter{}
+\def\tbk@page@headerheight{1.5cm}
+\def\tbk@page@footerheight{1.5cm}
+\def\tbk@page@headersep{0.5cm}
+\def\tbk@page@footersep{0.5cm}
+\def\tbk@page@bindingoffset{0cm}
+\newbool{tbk@page@twoside}
+\boolfalse{tbk@page@twoside}
+
+%% ============================================================================
+%% PAGE SETUP COMMAND
+%% ============================================================================
+
+% Configure page layout
+% #1 = key-value options
+\NewDocumentCommand{\tbkSetPage}{m}{%
+  \pgfkeys{/tbk/page/.cd, #1}%
+  \tbk@applypagegeometry
+}
+
+% Apply geometry settings
+\newcommand{\tbk@applypagegeometry}{%
+  % Build geometry options
+  \edef\tbk@geom@opts{%
+    top=\tbk@page@margintop,%
+    bottom=\tbk@page@marginbottom,%
+    headheight=\tbk@page@headerheight,%
+    headsep=\tbk@page@headersep,%
+    footskip=\tbk@page@footersep,%
+  }%
+  % Add left/right or inner/outer margins
+  \ifdefempty{\tbk@page@margininner}{%
+    \eappto\tbk@geom@opts{left=\tbk@page@marginleft,right=\tbk@page@marginright,}%
+  }{%
+    \eappto\tbk@geom@opts{inner=\tbk@page@margininner,outer=\tbk@page@marginouter,}%
+  }%
+  % Add binding offset if set
+  \ifdefempty{\tbk@page@bindingoffset}{}{%
+    \eappto\tbk@geom@opts{bindingoffset=\tbk@page@bindingoffset,}%
+  }%
+  % Apply geometry
+  \expandafter\geometry\expandafter{\tbk@geom@opts}%
+}
+
+%% ============================================================================
+%% PRESET PAGE LAYOUTS
+%% ============================================================================
+
+% Technical manual layout (default)
+\newcommand{\tbkPageTechnicalManual}{%
+  \tbkSetPage{%
+    paper=a4,
+    orientation=portrait,
+    margin-top=2.5cm,
+    margin-bottom=2cm,
+    margin-left=2.5cm,
+    margin-right=2cm,
+    header-height=1.5cm,
+    footer-height=1cm,
+    header-sep=0.5cm,
+  }%
+}
+
+% Compact layout
+\newcommand{\tbkPageCompact}{%
+  \tbkSetPage{%
+    paper=a4,
+    orientation=portrait,
+    margin-top=1.5cm,
+    margin-bottom=1.5cm,
+    margin-left=1.5cm,
+    margin-right=1.5cm,
+    header-height=1cm,
+    footer-height=0.8cm,
+  }%
+}
+
+% Wide layout for diagrams
+\newcommand{\tbkPageWide}{%
+  \tbkSetPage{%
+    paper=a4,
+    orientation=landscape,
+    margin-top=2cm,
+    margin-bottom=2cm,
+    margin-left=2cm,
+    margin-right=2cm,
+  }%
+}
+
+% Book layout (two-sided)
+\newcommand{\tbkPageBook}{%
+  \tbkSetPage{%
+    paper=a4,
+    orientation=portrait,
+    margin-inner=3cm,
+    margin-outer=2cm,
+    margin-top=2.5cm,
+    margin-bottom=2cm,
+    twoside=true,
+    binding-offset=0.5cm,
+  }%
+}
+
+%% ============================================================================
+%% PAGE BREAK UTILITIES
+%% ============================================================================
+
+% Force page break
+\newcommand{\tbkPageBreak}{\clearpage}
+
+% Force double page break (for two-sided documents)
+\newcommand{\tbkDoublePageBreak}{\cleardoublepage}
+
+% Conditional page break (only if less than X space remaining)
+% #1 = minimum space required
+\newcommand{\tbkPageBreakIf}[1]{%
+  \needspace{#1}%
+}
+
+%% ============================================================================
+%% PAGE STYLE UTILITIES
+%% ============================================================================
+
+% Empty page (no headers/footers)
+\newcommand{\tbkEmptyPage}{%
+  \thispagestyle{empty}%
+}
+
+% Plain page (page number only)
+\newcommand{\tbkPlainPage}{%
+  \thispagestyle{plain}%
+}
+
+%% ============================================================================
+%% COLUMN LAYOUT
+%% ============================================================================
+
+% Two-column layout
+\newcommand{\tbkTwoColumns}{%
+  \twocolumn
+}
+
+% Single column layout (restore)
+\newcommand{\tbkOneColumn}{%
+  \onecolumn
+}
+
+% Custom multi-column using multicol
+\RequirePackage{multicol}
+
+% Multi-column environment
+% #1 = number of columns (default 2)
+% #2 = optional column separation
+\NewDocumentEnvironment{tbkColumns}{O{2}O{1em}}{%
+  \begin{multicols}{#1}%
+  \setlength{\columnsep}{#2}%
+}{%
+  \end{multicols}%
+}
+
+%% ============================================================================
+%% PAGE DIMENSIONS ACCESSORS
+%% ============================================================================
+
+% Get current text width
+\newcommand{\tbkTextWidth}{\the\textwidth}
+
+% Get current text height
+\newcommand{\tbkTextHeight}{\the\textheight}
+
+% Get page width
+\newcommand{\tbkPageWidth}{\the\paperwidth}
+
+% Get page height
+\newcommand{\tbkPageHeight}{\the\paperheight}
+
+%% ============================================================================
+%% INITIALIZATION
+%% ============================================================================
+
+% Apply default page geometry
+\AtEndOfPackage{%
+  \tbkPageTechnicalManual
+}
+
+\endinput

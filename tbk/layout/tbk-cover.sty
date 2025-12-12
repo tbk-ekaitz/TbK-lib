@@ -1,0 +1,380 @@
+%% tbk-cover.sty
+%% TbK Library - Cover Pages Module
+%% Front and back cover designs for technical documents
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-cover}[2025/01/01 v1.0 TbK Cover Pages]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{geometry}
+
+\usetikzlibrary{calc,positioning}
+
+%% ============================================================================
+%% COVER CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/cover/.is family,
+  /tbk/cover/.cd,
+  % Type
+  type/.is choice,
+  type/front/.code={\def\tbk@cover@type{front}},
+  type/back/.code={\def\tbk@cover@type{back}},
+  type/title-page/.code={\def\tbk@cover@type{title-page}},
+  type/.default=front,
+  % Logo
+  logo/.store in=\tbk@cover@logo,
+  logo/.default={},
+  logo-position/.is choice,
+  logo-position/top-left/.code={\def\tbk@cover@logopos{top-left}},
+  logo-position/top-right/.code={\def\tbk@cover@logopos{top-right}},
+  logo-position/top-center/.code={\def\tbk@cover@logopos{top-center}},
+  logo-position/bottom-left/.code={\def\tbk@cover@logopos{bottom-left}},
+  logo-position/bottom-right/.code={\def\tbk@cover@logopos{bottom-right}},
+  logo-position/.default=top-right,
+  logo-width/.store in=\tbk@cover@logowidth,
+  logo-width/.default={4cm},
+  % Hero image
+  hero-image/.store in=\tbk@cover@hero,
+  hero-image/.default={},
+  hero-position/.is choice,
+  hero-position/center/.code={\def\tbk@cover@heropos{center}},
+  hero-position/top/.code={\def\tbk@cover@heropos{top}},
+  hero-position/bottom/.code={\def\tbk@cover@heropos{bottom}},
+  hero-position/full/.code={\def\tbk@cover@heropos{full}},
+  hero-position/.default=center,
+  % Title
+  title/.store in=\tbk@cover@title,
+  title/.default={},
+  subtitle/.store in=\tbk@cover@subtitle,
+  subtitle/.default={},
+  tagline/.store in=\tbk@cover@tagline,
+  tagline/.default={},
+  % Footer images
+  footer-images/.store in=\tbk@cover@footerimages,
+  footer-images/.default={},
+  % Colors
+  background-color/.store in=\tbk@cover@bgcolor,
+  background-color/.default={white},
+  title-color/.store in=\tbk@cover@titlecolor,
+  title-color/.default={black},
+}
+
+% Default values
+\def\tbk@cover@type{front}
+\def\tbk@cover@logo{}
+\def\tbk@cover@logopos{top-right}
+\def\tbk@cover@logowidth{4cm}
+\def\tbk@cover@hero{}
+\def\tbk@cover@heropos{center}
+\def\tbk@cover@title{}
+\def\tbk@cover@subtitle{}
+\def\tbk@cover@tagline{}
+\def\tbk@cover@footerimages{}
+\def\tbk@cover@bgcolor{white}
+\def\tbk@cover@titlecolor{black}
+
+% Reset
+\newcommand{\tbk@cover@reset}{%
+  \def\tbk@cover@type{front}%
+  \def\tbk@cover@logo{}%
+  \def\tbk@cover@logopos{top-right}%
+  \def\tbk@cover@logowidth{4cm}%
+  \def\tbk@cover@hero{}%
+  \def\tbk@cover@heropos{center}%
+  \def\tbk@cover@title{}%
+  \def\tbk@cover@subtitle{}%
+  \def\tbk@cover@tagline{}%
+  \def\tbk@cover@footerimages{}%
+  \def\tbk@cover@bgcolor{white}%
+  \def\tbk@cover@titlecolor{black}%
+}
+
+%% ============================================================================
+%% MAIN COVER COMMAND
+%% ============================================================================
+
+% Front cover command
+% #1 = key-value options
+\NewDocumentCommand{\tbkCover}{m}{%
+  \pgfkeys{/tbk/cover/.cd, #1}%
+  \thispagestyle{empty}%
+  \newgeometry{margin=0pt}%
+  %
+  \begin{tikzpicture}[remember picture, overlay]
+    % Background
+    \fill[\tbk@cover@bgcolor] (current page.south west) rectangle (current page.north east);
+    %
+    % Logo
+    \ifdefempty{\tbk@cover@logo}{}{%
+      \tbk@cover@placelogo
+    }%
+    %
+    % Hero image
+    \ifdefempty{\tbk@cover@hero}{}{%
+      \tbk@cover@placehero
+    }%
+    %
+    % Title block
+    \ifdefempty{\tbk@cover@title}{}{%
+      \tbk@cover@placetitle
+    }%
+    %
+    % Footer images
+    \ifdefempty{\tbk@cover@footerimages}{}{%
+      \tbk@cover@placefooter
+    }%
+  \end{tikzpicture}%
+  %
+  \restoregeometry
+  \clearpage
+  \tbk@cover@reset
+}
+
+%% ============================================================================
+%% LOGO PLACEMENT
+%% ============================================================================
+
+\newcommand{\tbk@cover@placelogo}{%
+  \ifdefstring{\tbk@cover@logopos}{top-left}{%
+    \node[anchor=north west] at ($(current page.north west)+(1.5cm,-1.5cm)$) {%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@logopos}{top-right}{%
+    \node[anchor=north east] at ($(current page.north east)+(-1.5cm,-1.5cm)$) {%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@logopos}{top-center}{%
+    \node[anchor=north] at ($(current page.north)+(0,-1.5cm)$) {%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@logopos}{bottom-left}{%
+    \node[anchor=south west] at ($(current page.south west)+(1.5cm,1.5cm)$) {%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@logopos}{bottom-right}{%
+    \node[anchor=south east] at ($(current page.south east)+(-1.5cm,1.5cm)$) {%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}%
+    };
+  }{}%
+}
+
+%% ============================================================================
+%% HERO IMAGE PLACEMENT
+%% ============================================================================
+
+\newcommand{\tbk@cover@placehero}{%
+  \ifdefstring{\tbk@cover@heropos}{center}{%
+    \node at (current page.center) {%
+      \includegraphics[width=0.8\paperwidth,height=0.5\paperheight,keepaspectratio]{\tbk@cover@hero}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@heropos}{top}{%
+    \node[anchor=north] at ($(current page.north)+(0,-4cm)$) {%
+      \includegraphics[width=0.9\paperwidth,height=0.4\paperheight,keepaspectratio]{\tbk@cover@hero}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@heropos}{bottom}{%
+    \node[anchor=south] at ($(current page.south)+(0,4cm)$) {%
+      \includegraphics[width=0.9\paperwidth,height=0.4\paperheight,keepaspectratio]{\tbk@cover@hero}%
+    };
+  }{}%
+  \ifdefstring{\tbk@cover@heropos}{full}{%
+    \node[inner sep=0pt] at (current page.center) {%
+      \includegraphics[width=\paperwidth,height=\paperheight]{\tbk@cover@hero}%
+    };
+  }{}%
+}
+
+%% ============================================================================
+%% TITLE PLACEMENT
+%% ============================================================================
+
+\newcommand{\tbk@cover@placetitle}{%
+  \node[anchor=center, text width=0.8\paperwidth, align=center] at ($(current page.center)+(0,-2cm)$) {%
+    {\fontsize{36}{42}\selectfont\bfseries\color{\tbk@cover@titlecolor}\tbk@cover@title}\\[0.5cm]
+    \ifdefempty{\tbk@cover@subtitle}{}{%
+      {\fontsize{24}{30}\selectfont\color{\tbk@cover@titlecolor}\tbk@cover@subtitle}\\[0.5cm]
+    }%
+    \ifdefempty{\tbk@cover@tagline}{}{%
+      {\fontsize{12}{16}\selectfont\color{\tbk@cover@titlecolor!70}\itshape\tbk@cover@tagline}%
+    }%
+  };
+}
+
+%% ============================================================================
+%% FOOTER IMAGES PLACEMENT
+%% ============================================================================
+
+\newcommand{\tbk@cover@placefooter}{%
+  \node[anchor=south] at ($(current page.south)+(0,2cm)$) {%
+    \tbk@cover@renderfooter{\tbk@cover@footerimages}%
+  };
+}
+
+% Render footer images
+\newcommand{\tbk@cover@renderfooter}[1]{%
+  \def\tbk@temp@sep{}%
+  \forcsvlist{\tbk@cover@footerimg}{#1}%
+}
+
+\newcommand{\tbk@cover@footerimg}[1]{%
+  \tbk@temp@sep
+  \includegraphics[height=1.5cm]{#1}%
+  \def\tbk@temp@sep{\hspace{1cm}}%
+}
+
+%% ============================================================================
+%% BACK COVER COMMAND
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/backcover/.is family,
+  /tbk/backcover/.cd,
+  logo/.store in=\tbk@back@logo,
+  logo/.default={},
+  contact-phone/.store in=\tbk@back@phone,
+  contact-phone/.default={},
+  contact-email/.store in=\tbk@back@email,
+  contact-email/.default={},
+  contact-address/.store in=\tbk@back@address,
+  contact-address/.default={},
+  qr-code/.store in=\tbk@back@qr,
+  qr-code/.default={},
+  background-color/.store in=\tbk@back@bgcolor,
+  background-color/.default={white},
+}
+
+\def\tbk@back@logo{}
+\def\tbk@back@phone{}
+\def\tbk@back@email{}
+\def\tbk@back@address{}
+\def\tbk@back@qr{}
+\def\tbk@back@bgcolor{white}
+
+% Back cover command
+% #1 = key-value options
+\NewDocumentCommand{\tbkBackCover}{m}{%
+  \pgfkeys{/tbk/backcover/.cd, #1}%
+  \thispagestyle{empty}%
+  \newgeometry{margin=0pt}%
+  %
+  \begin{tikzpicture}[remember picture, overlay]
+    % Background
+    \fill[\tbk@back@bgcolor] (current page.south west) rectangle (current page.north east);
+    %
+    % Logo (centered, top)
+    \ifdefempty{\tbk@back@logo}{}{%
+      \node[anchor=north] at ($(current page.north)+(0,-3cm)$) {%
+        \includegraphics[width=6cm]{\tbk@back@logo}%
+      };
+    }%
+    %
+    % Contact information (centered)
+    \node[anchor=center, text width=0.7\paperwidth, align=center] at (current page.center) {%
+      \ifdefempty{\tbk@back@phone}{}{%
+        {\Large\faPhone~\tbk@back@phone}\\[0.5cm]
+      }%
+      \ifdefempty{\tbk@back@email}{}{%
+        {\Large\faEnvelope~\tbk@back@email}\\[0.5cm]
+      }%
+      \ifdefempty{\tbk@back@address}{}{%
+        {\normalsize\faMapMarker~\tbk@back@address}\\[1cm]
+      }%
+    };
+    %
+    % QR Code (bottom right)
+    \ifdefempty{\tbk@back@qr}{}{%
+      \node[anchor=south east] at ($(current page.south east)+(-2cm,2cm)$) {%
+        \includegraphics[width=3cm]{\tbk@back@qr}%
+      };
+    }%
+  \end{tikzpicture}%
+  %
+  \restoregeometry
+  \clearpage
+}
+
+%% ============================================================================
+%% TITLE PAGE (INTERNAL)
+%% ============================================================================
+
+% Simple title page
+% #1 = options (same as cover)
+\NewDocumentCommand{\tbkTitlePage}{m}{%
+  \pgfkeys{/tbk/cover/.cd, type=title-page, #1}%
+  \thispagestyle{empty}%
+  \begin{center}
+    \vspace*{2cm}
+    %
+    % Logo
+    \ifdefempty{\tbk@cover@logo}{}{%
+      \includegraphics[width=\tbk@cover@logowidth]{\tbk@cover@logo}\\[2cm]
+    }%
+    %
+    % Title
+    {\Huge\bfseries\tbk@cover@title}\\[1cm]
+    %
+    % Subtitle
+    \ifdefempty{\tbk@cover@subtitle}{}{%
+      {\LARGE\tbk@cover@subtitle}\\[0.5cm]
+    }%
+    %
+    % Tagline
+    \ifdefempty{\tbk@cover@tagline}{}{%
+      {\large\itshape\tbk@cover@tagline}\\[2cm]
+    }%
+    %
+    \vfill
+    %
+    % Document info
+    {\large
+      \tbkCompanyName\\[0.25cm]
+      \tbkDate\\[0.25cm]
+      Version \tbkVersion
+    }
+    \vspace{2cm}
+  \end{center}
+  \clearpage
+  \tbk@cover@reset
+}
+
+%% ============================================================================
+%% SIMPLE COVER PRESETS
+%% ============================================================================
+
+% Minimal cover
+\NewDocumentCommand{\tbkMinimalCover}{mmm}{%
+  % #1 = title, #2 = subtitle, #3 = logo path
+  \thispagestyle{empty}%
+  \begin{center}
+    \vspace*{4cm}
+    \ifstrempty{#3}{}{%
+      \includegraphics[width=5cm]{#3}\\[2cm]
+    }%
+    {\Huge\bfseries #1}\\[1cm]
+    {\Large #2}\\
+    \vfill
+    {\large\tbkDate}
+    \vspace{2cm}
+  \end{center}
+  \clearpage
+}
+
+\endinput

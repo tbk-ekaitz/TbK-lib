@@ -1,0 +1,391 @@
+%% tbk-callouts.sty
+%% TbK Library - Callouts Module
+%% Warning, notice, and information boxes
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-callouts}[2025/01/01 v1.0 TbK Callouts]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{tcolorbox}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{fontawesome5}
+
+\tcbuselibrary{skins,breakable}
+
+%% ============================================================================
+%% CALLOUT COLORS (defaults if tbk-colors not loaded)
+%% ============================================================================
+
+\@ifpackageloaded{tbk-colors}{}{%
+  % Danger
+  \definecolor{tbk@callout@danger@bg}{RGB}{255, 235, 235}
+  \definecolor{tbk@callout@danger@border}{RGB}{200, 0, 0}
+  \definecolor{tbk@callout@danger@title}{RGB}{150, 0, 0}
+  % Warning
+  \definecolor{tbk@callout@warning@bg}{RGB}{255, 250, 230}
+  \definecolor{tbk@callout@warning@border}{RGB}{200, 150, 0}
+  \definecolor{tbk@callout@warning@title}{RGB}{150, 100, 0}
+  % Notice
+  \definecolor{tbk@callout@notice@bg}{RGB}{230, 240, 255}
+  \definecolor{tbk@callout@notice@border}{RGB}{0, 100, 180}
+  \definecolor{tbk@callout@notice@title}{RGB}{0, 70, 140}
+  % Caution
+  \definecolor{tbk@callout@caution@bg}{RGB}{255, 245, 230}
+  \definecolor{tbk@callout@caution@border}{RGB}{255, 140, 0}
+  \definecolor{tbk@callout@caution@title}{RGB}{200, 100, 0}
+  % Info
+  \definecolor{tbk@callout@info@bg}{RGB}{235, 245, 255}
+  \definecolor{tbk@callout@info@border}{RGB}{0, 120, 180}
+  \definecolor{tbk@callout@info@title}{RGB}{0, 90, 140}
+  % Tip
+  \definecolor{tbk@callout@tip@bg}{RGB}{245, 245, 245}
+  \definecolor{tbk@callout@tip@border}{RGB}{100, 100, 100}
+  \definecolor{tbk@callout@tip@title}{RGB}{70, 70, 70}
+  % Success
+  \definecolor{tbk@callout@success@bg}{RGB}{235, 255, 240}
+  \definecolor{tbk@callout@success@border}{RGB}{0, 150, 50}
+  \definecolor{tbk@callout@success@title}{RGB}{0, 100, 30}
+}
+
+%% ============================================================================
+%% CALLOUT ICONS
+%% ============================================================================
+
+\newcommand{\tbk@icon@danger}{\faExclamationTriangle}
+\newcommand{\tbk@icon@warning}{\faExclamationTriangle}
+\newcommand{\tbk@icon@notice}{\faInfoCircle}
+\newcommand{\tbk@icon@caution}{\faExclamationCircle}
+\newcommand{\tbk@icon@info}{\faInfoCircle}
+\newcommand{\tbk@icon@tip}{\faLightbulb}
+\newcommand{\tbk@icon@success}{\faCheckCircle}
+
+%% ============================================================================
+%% DEFAULT TITLES (can be overridden by tbk-core translations)
+%% ============================================================================
+
+\newcommand{\tbk@title@danger}{DANGER}
+\newcommand{\tbk@title@warning}{WARNING}
+\newcommand{\tbk@title@notice}{NOTICE}
+\newcommand{\tbk@title@caution}{CAUTION}
+\newcommand{\tbk@title@info}{INFO}
+\newcommand{\tbk@title@tip}{TIP}
+\newcommand{\tbk@title@success}{SUCCESS}
+
+%% ============================================================================
+%% CALLOUT CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/callout/.is family,
+  /tbk/callout/.cd,
+  % Type
+  type/.is choice,
+  type/danger/.code={\def\tbk@callout@type{danger}},
+  type/warning/.code={\def\tbk@callout@type{warning}},
+  type/notice/.code={\def\tbk@callout@type{notice}},
+  type/caution/.code={\def\tbk@callout@type{caution}},
+  type/info/.code={\def\tbk@callout@type{info}},
+  type/tip/.code={\def\tbk@callout@type{tip}},
+  type/success/.code={\def\tbk@callout@type{success}},
+  type/.default=notice,
+  % Custom title
+  title/.store in=\tbk@callout@title,
+  title/.default={},
+  % Icon
+  icon/.is choice,
+  icon/auto/.code={\def\tbk@callout@icon{auto}},
+  icon/none/.code={\def\tbk@callout@icon{none}},
+  icon/.default=auto,
+  % Custom icon path
+  icon-path/.store in=\tbk@callout@iconpath,
+  icon-path/.default={},
+  % Custom colors
+  border-color/.store in=\tbk@callout@bordercolor,
+  border-color/.default={auto},
+  background-color/.store in=\tbk@callout@bgcolor,
+  background-color/.default={auto},
+  title-color/.store in=\tbk@callout@titlecolor,
+  title-color/.default={auto},
+  % Box options
+  width/.store in=\tbk@callout@width,
+  width/.default={\textwidth},
+  breakable/.is if=tbk@callout@breakable,
+  breakable/.default=true,
+}
+
+% Default values
+\def\tbk@callout@type{notice}
+\def\tbk@callout@title{}
+\def\tbk@callout@icon{auto}
+\def\tbk@callout@iconpath{}
+\def\tbk@callout@bordercolor{auto}
+\def\tbk@callout@bgcolor{auto}
+\def\tbk@callout@titlecolor{auto}
+\def\tbk@callout@width{\textwidth}
+\newbool{tbk@callout@breakable}
+\booltrue{tbk@callout@breakable}
+
+% Reset defaults
+\newcommand{\tbk@callout@reset}{%
+  \def\tbk@callout@type{notice}%
+  \def\tbk@callout@title{}%
+  \def\tbk@callout@icon{auto}%
+  \def\tbk@callout@iconpath{}%
+  \def\tbk@callout@bordercolor{auto}%
+  \def\tbk@callout@bgcolor{auto}%
+  \def\tbk@callout@titlecolor{auto}%
+  \def\tbk@callout@width{\textwidth}%
+  \booltrue{tbk@callout@breakable}%
+}
+
+%% ============================================================================
+%% GET COLORS FOR TYPE
+%% ============================================================================
+
+\newcommand{\tbk@callout@getbg}{tbk@callout@\tbk@callout@type @bg}
+\newcommand{\tbk@callout@getborder}{tbk@callout@\tbk@callout@type @border}
+\newcommand{\tbk@callout@gettitlecolor}{tbk@callout@\tbk@callout@type @title}
+\newcommand{\tbk@callout@geticon}{\csname tbk@icon@\tbk@callout@type\endcsname}
+\newcommand{\tbk@callout@gettitle}{\csname tbk@title@\tbk@callout@type\endcsname}
+
+%% ============================================================================
+%% MAIN CALLOUT ENVIRONMENT
+%% ============================================================================
+
+% Callout environment
+% #1 = options
+% #2 = content
+\NewDocumentEnvironment{tbkCallout}{O{}+b}{%
+  \pgfkeys{/tbk/callout/.cd, #1}%
+  % Determine title
+  \ifdefempty{\tbk@callout@title}{%
+    \edef\tbk@callout@finaltitle{\tbk@callout@gettitle}%
+  }{%
+    \edef\tbk@callout@finaltitle{\tbk@callout@title}%
+  }%
+  % Determine icon
+  \ifdefstring{\tbk@callout@icon}{auto}{%
+    \edef\tbk@callout@finalicon{\tbk@callout@geticon}%
+  }{%
+    \def\tbk@callout@finalicon{}%
+  }%
+  % Create the box
+  \begin{tcolorbox}[%
+    enhanced,
+    width=\tbk@callout@width,
+    colback=\tbk@callout@getbg,
+    colframe=\tbk@callout@getborder,
+    coltitle=\tbk@callout@gettitlecolor,
+    fonttitle=\bfseries,
+    title={\tbk@callout@finalicon\hspace{0.5em}\tbk@callout@finaltitle},
+    boxrule=1pt,
+    left=10pt,
+    right=10pt,
+    top=5pt,
+    bottom=5pt,
+    arc=3pt,
+    breakable,
+  ]%
+    #2%
+  \end{tcolorbox}%
+  \tbk@callout@reset
+}{}
+
+%% ============================================================================
+%% SHORTHAND CALLOUT COMMANDS
+%% ============================================================================
+
+% Danger callout
+\NewDocumentCommand{\tbkDanger}{+m}{%
+  \begin{tbkCallout}[type=danger]
+    #1
+  \end{tbkCallout}%
+}
+
+% Warning callout
+\NewDocumentCommand{\tbkWarning}{+m}{%
+  \begin{tbkCallout}[type=warning]
+    #1
+  \end{tbkCallout}%
+}
+
+% Notice callout
+\NewDocumentCommand{\tbkNotice}{+m}{%
+  \begin{tbkCallout}[type=notice]
+    #1
+  \end{tbkCallout}%
+}
+
+% Caution callout
+\NewDocumentCommand{\tbkCaution}{+m}{%
+  \begin{tbkCallout}[type=caution]
+    #1
+  \end{tbkCallout}%
+}
+
+% Info callout
+\NewDocumentCommand{\tbkInfo}{+m}{%
+  \begin{tbkCallout}[type=info]
+    #1
+  \end{tbkCallout}%
+}
+
+% Tip callout
+\NewDocumentCommand{\tbkTip}{+m}{%
+  \begin{tbkCallout}[type=tip]
+    #1
+  \end{tbkCallout}%
+}
+
+% Success callout
+\NewDocumentCommand{\tbkSuccess}{+m}{%
+  \begin{tbkCallout}[type=success]
+    #1
+  \end{tbkCallout}%
+}
+
+%% ============================================================================
+%% INLINE CALLOUTS (ONE-LINERS)
+%% ============================================================================
+
+% Inline danger
+\NewDocumentCommand{\tbkInlineDanger}{m}{%
+  \textcolor{tbk@callout@danger@title}{\faExclamationTriangle~\textbf{DANGER:} #1}%
+}
+
+% Inline warning
+\NewDocumentCommand{\tbkInlineWarning}{m}{%
+  \textcolor{tbk@callout@warning@title}{\faExclamationTriangle~\textbf{WARNING:} #1}%
+}
+
+% Inline notice
+\NewDocumentCommand{\tbkInlineNotice}{m}{%
+  \textcolor{tbk@callout@notice@title}{\faInfoCircle~\textbf{NOTICE:} #1}%
+}
+
+% Inline tip
+\NewDocumentCommand{\tbkInlineTip}{m}{%
+  \textcolor{tbk@callout@tip@title}{\faLightbulb~\textbf{TIP:} #1}%
+}
+
+%% ============================================================================
+%% ICON-ONLY CALLOUTS
+%% ============================================================================
+
+% Icon with colored background
+% #1 = type
+\NewDocumentCommand{\tbkCalloutIcon}{m}{%
+  \def\tbk@temp@type{#1}%
+  \tcbox[%
+    on line,
+    colback=tbk@callout@#1@bg,
+    colframe=tbk@callout@#1@border,
+    boxrule=0.5pt,
+    arc=2pt,
+    boxsep=2pt,
+    left=2pt,
+    right=2pt,
+  ]{%
+    \textcolor{tbk@callout@#1@title}{\csname tbk@icon@#1\endcsname}%
+  }%
+}
+
+%% ============================================================================
+%% MULTI-ITEM CALLOUTS
+%% ============================================================================
+
+% Callout with list of items
+% #1 = type
+% #2 = title (optional)
+% #3 = items
+\NewDocumentEnvironment{tbkCalloutList}{O{notice}O{}+b}{%
+  \pgfkeys{/tbk/callout/.cd, type=#1}%
+  \ifstrempty{#2}{%
+    \edef\tbk@callout@finaltitle{\tbk@callout@gettitle}%
+  }{%
+    \def\tbk@callout@finaltitle{#2}%
+  }%
+  \begin{tcolorbox}[%
+    enhanced,
+    colback=\tbk@callout@getbg,
+    colframe=\tbk@callout@getborder,
+    coltitle=\tbk@callout@gettitlecolor,
+    fonttitle=\bfseries,
+    title={\tbk@callout@geticon\hspace{0.5em}\tbk@callout@finaltitle},
+    boxrule=1pt,
+    arc=3pt,
+    breakable,
+  ]%
+    \begin{itemize}[leftmargin=1.5em, itemsep=0.3em]
+      #3
+    \end{itemize}
+  \end{tcolorbox}%
+}{}
+
+%% ============================================================================
+%% CUSTOM CALLOUT DEFINITION
+%% ============================================================================
+
+% Define a new callout type
+% #1 = type name
+% #2 = background color
+% #3 = border color
+% #4 = title color
+% #5 = icon command
+% #6 = default title
+\NewDocumentCommand{\tbkDefineCallout}{mmmmmm}{%
+  \definecolor{tbk@callout@#1@bg}{RGB}{#2}%
+  \definecolor{tbk@callout@#1@border}{RGB}{#3}%
+  \definecolor{tbk@callout@#1@title}{RGB}{#4}%
+  \expandafter\def\csname tbk@icon@#1\endcsname{#5}%
+  \expandafter\def\csname tbk@title@#1\endcsname{#6}%
+}
+
+%% ============================================================================
+%% SIMPLE BOX CALLOUTS
+%% ============================================================================
+
+% Simple framed box
+% #1 = content
+\NewDocumentCommand{\tbkBox}{+m}{%
+  \begin{tcolorbox}[%
+    colback=white,
+    colframe=gray,
+    boxrule=0.5pt,
+    arc=2pt,
+    left=8pt,
+    right=8pt,
+    top=5pt,
+    bottom=5pt,
+  ]%
+    #1%
+  \end{tcolorbox}%
+}
+
+% Highlighted box
+% #1 = color name (optional)
+% #2 = content
+\NewDocumentCommand{\tbkHighlight}{O{yellow!20}+m}{%
+  \begin{tcolorbox}[%
+    colback=#1,
+    colframe=#1!50!black,
+    boxrule=0pt,
+    arc=2pt,
+    left=8pt,
+    right=8pt,
+    top=5pt,
+    bottom=5pt,
+  ]%
+    #2%
+  \end{tcolorbox}%
+}
+
+\endinput

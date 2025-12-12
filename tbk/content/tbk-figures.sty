@@ -1,0 +1,390 @@
+%% tbk-figures.sty
+%% TbK Library - Figures Module
+%% Enhanced figure handling with captions, frames, and annotations
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-figures}[2025/01/01 v1.0 TbK Figures]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{graphicx}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\RequirePackage{float}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{tikz}
+\RequirePackage{etoolbox}
+
+\usetikzlibrary{calc,positioning,shadows}
+
+%% ============================================================================
+%% FIGURE COUNTER
+%% ============================================================================
+
+\newcounter{tbkfigure}
+\renewcommand{\thetbkfigure}{\arabic{tbkfigure}}
+
+%% ============================================================================
+%% FIGURE CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/figure/.is family,
+  /tbk/figure/.cd,
+  % Image path
+  path/.store in=\tbk@fig@path,
+  path/.default={},
+  % Caption
+  caption/.store in=\tbk@fig@caption,
+  caption/.default={},
+  % Label for references
+  label/.store in=\tbk@fig@label,
+  label/.default={},
+  % Width
+  width/.store in=\tbk@fig@width,
+  width/.default={\textwidth},
+  % Height
+  height/.store in=\tbk@fig@height,
+  height/.default={},
+  % Scale
+  scale/.store in=\tbk@fig@scale,
+  scale/.default={},
+  % Position
+  position/.store in=\tbk@fig@position,
+  position/.default={htbp},
+  % Frame style
+  frame/.is choice,
+  frame/none/.code={\def\tbk@fig@frame{none}},
+  frame/thin/.code={\def\tbk@fig@frame{thin}},
+  frame/shadow/.code={\def\tbk@fig@frame{shadow}},
+  frame/rounded/.code={\def\tbk@fig@frame{rounded}},
+  frame/.default=none,
+  % Alignment
+  align/.is choice,
+  align/left/.code={\def\tbk@fig@align{flushleft}},
+  align/center/.code={\def\tbk@fig@align{center}},
+  align/right/.code={\def\tbk@fig@align{flushright}},
+  align/.default=center,
+}
+
+% Default values
+\def\tbk@fig@path{}
+\def\tbk@fig@caption{}
+\def\tbk@fig@label{}
+\def\tbk@fig@width{\textwidth}
+\def\tbk@fig@height{}
+\def\tbk@fig@scale{}
+\def\tbk@fig@position{htbp}
+\def\tbk@fig@frame{none}
+\def\tbk@fig@align{center}
+
+% Reset to defaults
+\newcommand{\tbk@fig@reset}{%
+  \def\tbk@fig@path{}%
+  \def\tbk@fig@caption{}%
+  \def\tbk@fig@label{}%
+  \def\tbk@fig@width{\textwidth}%
+  \def\tbk@fig@height{}%
+  \def\tbk@fig@scale{}%
+  \def\tbk@fig@position{htbp}%
+  \def\tbk@fig@frame{none}%
+  \def\tbk@fig@align{center}%
+}
+
+%% ============================================================================
+%% MAIN FIGURE COMMAND
+%% ============================================================================
+
+% Figure with options
+% #1 = key-value options
+% #2 = additional content below image (optional)
+\NewDocumentEnvironment{tbkFigure}{O{}+b}{%
+  \pgfkeys{/tbk/figure/.cd, #1}%
+  \begin{figure}[\tbk@fig@position]%
+    \begin{\tbk@fig@align}%
+      % Include image with frame
+      \tbk@renderimage
+      % Additional content
+      #2%
+      % Caption
+      \ifdefempty{\tbk@fig@caption}{}{%
+        \caption{\tbk@fig@caption}%
+      }%
+      % Label
+      \ifdefempty{\tbk@fig@label}{}{%
+        \label{\tbk@fig@label}%
+      }%
+    \end{\tbk@fig@align}%
+  \end{figure}%
+  \tbk@fig@reset
+}{}
+
+% Render image with appropriate frame
+\newcommand{\tbk@renderimage}{%
+  % Build includegraphics options
+  \edef\tbk@fig@opts{}%
+  \ifdefempty{\tbk@fig@width}{}{%
+    \edef\tbk@fig@opts{width=\tbk@fig@width}%
+  }%
+  \ifdefempty{\tbk@fig@height}{}{%
+    \ifdefempty{\tbk@fig@opts}{%
+      \edef\tbk@fig@opts{height=\tbk@fig@height}%
+    }{%
+      \edef\tbk@fig@opts{\tbk@fig@opts,height=\tbk@fig@height}%
+    }%
+  }%
+  \ifdefempty{\tbk@fig@scale}{}{%
+    \ifdefempty{\tbk@fig@opts}{%
+      \edef\tbk@fig@opts{scale=\tbk@fig@scale}%
+    }{%
+      \edef\tbk@fig@opts{\tbk@fig@opts,scale=\tbk@fig@scale}%
+    }%
+  }%
+  % Render based on frame type
+  \ifdefstring{\tbk@fig@frame}{none}{%
+    \expandafter\includegraphics\expandafter[\tbk@fig@opts]{\tbk@fig@path}%
+  }{}%
+  \ifdefstring{\tbk@fig@frame}{thin}{%
+    \fbox{\expandafter\includegraphics\expandafter[\tbk@fig@opts]{\tbk@fig@path}}%
+  }{}%
+  \ifdefstring{\tbk@fig@frame}{shadow}{%
+    \begin{tikzpicture}
+      \node[drop shadow={shadow xshift=2pt, shadow yshift=-2pt, opacity=0.3}] {%
+        \expandafter\includegraphics\expandafter[\tbk@fig@opts]{\tbk@fig@path}%
+      };
+    \end{tikzpicture}%
+  }{}%
+  \ifdefstring{\tbk@fig@frame}{rounded}{%
+    \begin{tikzpicture}
+      \node[rounded corners=5pt, draw=gray, inner sep=0pt, outer sep=0pt] {%
+        \expandafter\includegraphics\expandafter[\tbk@fig@opts]{\tbk@fig@path}%
+      };
+    \end{tikzpicture}%
+  }{}%
+}
+
+%% ============================================================================
+%% SIMPLE FIGURE COMMAND
+%% ============================================================================
+
+% Quick figure command
+% #1 = options
+% #2 = path (for backward compatibility if path not in options)
+\NewDocumentCommand{\tbkFig}{O{}m}{%
+  \pgfkeys{/tbk/figure/.cd, path={#2}, #1}%
+  \begin{figure}[\tbk@fig@position]%
+    \begin{\tbk@fig@align}%
+      \tbk@renderimage
+      \ifdefempty{\tbk@fig@caption}{}{%
+        \caption{\tbk@fig@caption}%
+      }%
+      \ifdefempty{\tbk@fig@label}{}{%
+        \label{\tbk@fig@label}%
+      }%
+    \end{\tbk@fig@align}%
+  \end{figure}%
+  \tbk@fig@reset
+}
+
+%% ============================================================================
+%% FIGURE ROW (SUBFIGURES)
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/figurerow/.is family,
+  /tbk/figurerow/.cd,
+  caption/.store in=\tbk@figrow@caption,
+  label/.store in=\tbk@figrow@label,
+  columns/.store in=\tbk@figrow@columns,
+  columns/.default=2,
+  spacing/.store in=\tbk@figrow@spacing,
+  spacing/.default=1em,
+}
+
+\def\tbk@figrow@caption{}
+\def\tbk@figrow@label{}
+\def\tbk@figrow@columns{2}
+\def\tbk@figrow@spacing{1em}
+
+% Figure row environment
+% #1 = options
+\NewDocumentEnvironment{tbkFigureRow}{O{}}{%
+  \pgfkeys{/tbk/figurerow/.cd, #1}%
+  % Calculate subfigure width
+  \newlength{\tbk@subfigwidth}%
+  \setlength{\tbk@subfigwidth}{\dimexpr(\textwidth-(\tbk@figrow@columns-1)*\tbk@figrow@spacing)/\tbk@figrow@columns\relax}%
+  \begin{figure}[htbp]%
+    \centering
+}{%
+    \ifdefempty{\tbk@figrow@caption}{}{%
+      \caption{\tbk@figrow@caption}%
+    }%
+    \ifdefempty{\tbk@figrow@label}{}{%
+      \label{\tbk@figrow@label}%
+    }%
+  \end{figure}%
+}
+
+% Subfigure command (for use in tbkFigureRow)
+% #1 = image path
+% #2 = subcaption
+\NewDocumentCommand{\tbkSubfigure}{mm}{%
+  \begin{subfigure}[b]{\tbk@subfigwidth}%
+    \centering
+    \includegraphics[width=\linewidth]{#1}%
+    \caption{#2}%
+  \end{subfigure}%
+  \hfill
+}
+
+%% ============================================================================
+%% ANNOTATED FIGURE
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/annotated/.is family,
+  /tbk/annotated/.cd,
+  path/.store in=\tbk@annot@path,
+  caption/.store in=\tbk@annot@caption,
+  label/.store in=\tbk@annot@label,
+  width/.store in=\tbk@annot@width,
+  width/.default=0.8\textwidth,
+}
+
+\def\tbk@annot@path{}
+\def\tbk@annot@caption{}
+\def\tbk@annot@label{}
+\def\tbk@annot@width{0.8\textwidth}
+
+% Storage for annotations
+\newcounter{tbk@annot@count}
+\def\tbk@annot@list{}
+
+% Annotated figure environment
+% #1 = options
+\NewDocumentEnvironment{tbkAnnotatedFigure}{O{}+b}{%
+  \pgfkeys{/tbk/annotated/.cd, #1}%
+  \setcounter{tbk@annot@count}{0}%
+  \def\tbk@annot@list{}%
+  % Collect annotations
+  #2%
+  \begin{figure}[htbp]%
+    \centering
+    \begin{tikzpicture}
+      \node[inner sep=0pt] (image) {%
+        \includegraphics[width=\tbk@annot@width]{\tbk@annot@path}%
+      };
+      % Draw annotations
+      \tbk@annot@list
+    \end{tikzpicture}%
+    \ifdefempty{\tbk@annot@caption}{}{%
+      \caption{\tbk@annot@caption}%
+    }%
+    \ifdefempty{\tbk@annot@label}{}{%
+      \label{\tbk@annot@label}%
+    }%
+  \end{figure}%
+}{}
+
+% Annotation command
+% #1 = x position (0-1)
+% #2 = y position (0-1)
+% #3 = number/label
+% #4 = text (for legend, not drawn on image)
+\NewDocumentCommand{\tbkAnnotation}{mmmm}{%
+  \stepcounter{tbk@annot@count}%
+  % Add to drawing list
+  \eappto\tbk@annot@list{%
+    \noexpand\node[circle, fill=red!80, text=white, font=\noexpand\tiny\noexpand\bfseries,
+                   minimum size=1.2em, inner sep=1pt]
+      at ($(image.south west)!#1!(image.south east)$|-$(image.south west)!#2!(image.north west)$) {#3};
+  }%
+}
+
+%% ============================================================================
+%% INLINE FIGURE (NO FLOAT)
+%% ============================================================================
+
+% Inline figure (no float, inserted at current position)
+% #1 = options
+% #2 = path
+\NewDocumentCommand{\tbkInlineFigure}{O{}m}{%
+  \pgfkeys{/tbk/figure/.cd, path={#2}, #1}%
+  \begin{\tbk@fig@align}%
+    \tbk@renderimage
+    \ifdefempty{\tbk@fig@caption}{}{%
+      \par\smallskip
+      \textbf{Figure:} \tbk@fig@caption
+    }%
+  \end{\tbk@fig@align}%
+  \tbk@fig@reset
+}
+
+%% ============================================================================
+%% FIGURE CAPTION STYLING
+%% ============================================================================
+
+% Configure caption style
+\captionsetup[figure]{%
+  font=small,
+  labelfont=bf,
+  labelsep=period,
+  justification=centering,
+  singlelinecheck=true,
+}
+
+%% ============================================================================
+%% FULL PAGE FIGURE
+%% ============================================================================
+
+% Figure that takes entire page
+% #1 = options
+% #2 = path
+\NewDocumentCommand{\tbkFullPageFigure}{O{}m}{%
+  \pgfkeys{/tbk/figure/.cd, path={#2}, #1}%
+  \begin{figure}[p]%
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{\tbk@fig@path}%
+    \ifdefempty{\tbk@fig@caption}{}{%
+      \caption{\tbk@fig@caption}%
+    }%
+    \ifdefempty{\tbk@fig@label}{}{%
+      \label{\tbk@fig@label}%
+    }%
+  \end{figure}%
+  \tbk@fig@reset
+}
+
+%% ============================================================================
+%% WRAPPED FIGURE
+%% ============================================================================
+
+\RequirePackage{wrapfig}
+
+% Wrapped figure (text flows around)
+% #1 = options
+% #2 = path
+% #3 = side (l/r)
+% #4 = width
+\NewDocumentCommand{\tbkWrapFigure}{O{}mmm}{%
+  \pgfkeys{/tbk/figure/.cd, path={#2}, #1}%
+  \begin{wrapfigure}{#3}{#4}%
+    \centering
+    \includegraphics[width=\linewidth]{\tbk@fig@path}%
+    \ifdefempty{\tbk@fig@caption}{}{%
+      \caption{\tbk@fig@caption}%
+    }%
+    \ifdefempty{\tbk@fig@label}{}{%
+      \label{\tbk@fig@label}%
+    }%
+  \end{wrapfigure}%
+  \tbk@fig@reset
+}
+
+\endinput

@@ -1,0 +1,165 @@
+%% user-guide.tex
+%% TbK Library - User Guide Example
+%% Example of a user guide with step-by-step instructions
+%%
+
+\documentclass[11pt,a4paper]{article}
+\usepackage{tbk}
+
+\tbkSetup{
+  company-name = {SmartHome Inc.},
+  product-name = {Smart Thermostat ST-100},
+  document-code = {ST100-UG-EN},
+  version = {2.0},
+}
+
+\begin{document}
+
+\tbkTitlePage{
+  title = {Smart Thermostat ST-100},
+  subtitle = {User Guide},
+  tagline = {Intelligent Climate Control for Your Home},
+}
+
+\tbkTableOfContents
+
+\tbkChapter{Welcome}
+
+Congratulations on your purchase of the Smart Thermostat ST-100! This guide will help you get the most out of your new device.
+
+\tbkSection{What's in the Box}
+
+\begin{tbkChecklist}
+  \tbkUnchecked{Smart Thermostat ST-100}
+  \tbkUnchecked{Wall mounting plate}
+  \tbkUnchecked{Mounting screws (4×)}
+  \tbkUnchecked{Wire labels}
+  \tbkUnchecked{Quick start guide}
+  \tbkUnchecked{Screwdriver}
+\end{tbkChecklist}
+
+\tbkChapter{Safety Information}
+
+\tbkDanger{
+  \textbf{Electrical Hazard}\\
+  Turn off power at the circuit breaker before installation.
+  Failure to do so may result in electrical shock or death.
+}
+
+\tbkWarning{
+  This device should be installed by a qualified professional
+  if you are not familiar with HVAC wiring.
+}
+
+\tbkCaution{
+  Do not install in locations exposed to direct sunlight,
+  drafts, or near heat sources as this may affect temperature readings.
+}
+
+\tbkChapter{Installation}
+
+\tbkSection{Before You Begin}
+
+\tbkTip{Take a photo of your existing thermostat wiring before disconnecting any wires.}
+
+\tbkSection{Installation Steps}
+
+\begin{tbkSteps}
+  \item Turn off power to your HVAC system at the circuit breaker.
+  \item Remove your old thermostat from the wall.
+  \item Label each wire using the provided wire labels.
+  \item Disconnect wires from the old thermostat.
+  \item Mount the new wall plate using the provided screws.
+  \item Connect wires to the corresponding terminals on the wall plate.
+  \item Attach the thermostat to the wall plate.
+  \item Turn power back on at the circuit breaker.
+  \item Follow the on-screen setup wizard.
+\end{tbkSteps}
+
+\tbkChapter{Using Your Thermostat}
+
+\tbkSection{Display Overview}
+
+The main display shows:
+\begin{tbkList}
+  \item Current temperature
+  \item Target temperature
+  \item Current mode (Heat/Cool/Auto)
+  \item WiFi connection status
+  \item Time
+\end{tbkList}
+
+\tbkSection{Basic Controls}
+
+\begin{tbkOperationTable}[caption={Touch Controls}]
+  \tbkOp{\tbkIcon{arrow-up}}{Increase target temperature}
+  \tbkOp{\tbkIcon{arrow-down}}{Decrease target temperature}
+  \tbkOp{\tbkIcon{home}}{Return to home screen}
+  \tbkOp{\tbkIcon{settings}}{Open settings menu}
+  \tbkOp{\tbkIcon{calendar}}{View/edit schedule}
+\end{tbkOperationTable}
+
+\tbkSection{Temperature Modes}
+
+\tbkSubsection{Heating Mode}
+
+In heating mode \tbkIcon{arrow-up}, the thermostat activates your heating system when the temperature falls below the target.
+
+\tbkSubsection{Cooling Mode}
+
+In cooling mode \tbkIcon{arrow-down}, the thermostat activates your cooling system when the temperature rises above the target.
+
+\tbkSubsection{Auto Mode}
+
+In auto mode, the thermostat automatically switches between heating and cooling to maintain comfort.
+
+\tbkChapter{WiFi Setup}
+
+\begin{tbkSteps}
+  \item Press \tbkIcon{settings} to open settings.
+  \item Select ``WiFi Setup''.
+  \item Choose your network from the list.
+  \item Enter your WiFi password using the on-screen keyboard.
+  \item Press ``Connect''.
+\end{tbkSteps}
+
+\tbkSuccess{Once connected, you can control your thermostat from anywhere using the SmartHome app!}
+
+\tbkChapter{Troubleshooting}
+
+\tbkSection{Common Issues}
+
+\tbkSubsection{Thermostat Not Responding}
+
+\begin{tbkList}
+  \item Check that power is connected
+  \item Verify circuit breaker is on
+  \item Try removing and reattaching the thermostat from the wall plate
+\end{tbkList}
+
+\tbkSubsection{WiFi Connection Problems}
+
+\begin{tbkList}
+  \item Ensure your router is working
+  \item Check that you're connecting to a 2.4GHz network (5GHz not supported)
+  \item Move closer to your router during setup
+  \item Restart your router
+\end{tbkList}
+
+\tbkInfo{For additional support, visit support.smarthomeinc.com or call 1-800-SMART-00.}
+
+\tbkChapter{Specifications}
+
+\begin{tbkSpecTable}[caption={Product Specifications}]
+  \tbkSpec{Display}{3.5" color LCD touchscreen}
+  \tbkSpec{Resolution}{320 × 480 pixels}
+  \tbkSpec{Connectivity}{WiFi 802.11 b/g/n (2.4GHz)}
+  \tbkSpec{Power}{24V AC (from HVAC system)}
+  \tbkSpec{Backup Battery}{2 × AA (not included)}
+  \tbkSpec{Temperature Range}{40°F to 90°F (4°C to 32°C)}
+  \tbkSpec{Accuracy}{± 0.5°F (± 0.3°C)}
+  \tbkSpec{Dimensions}{4.0" × 4.0" × 1.0"}
+  \tbkSpec{Warranty}{2 years limited}
+\end{tbkSpecTable}
+
+\end{document}

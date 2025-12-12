@@ -1,0 +1,111 @@
+%% technical-spec.tex
+%% TbK Library - Technical Specification Example
+%% Example of a technical specification document
+%%
+
+\documentclass[11pt,a4paper]{article}
+\usepackage{tbk}
+
+\tbkSetup{
+  company-name = {TechCorp Industries},
+  product-name = {Model X-500 Controller},
+  document-code = {X500-TS-REV-A},
+  version = {Rev A},
+}
+
+\begin{document}
+
+\tbkTitlePage{
+  title = {Model X-500 Controller},
+  subtitle = {Technical Specification},
+  tagline = {Industrial Automation Controller},
+}
+
+\tbkTableOfContents
+
+\tbkChapter{Overview}
+
+The Model X-500 is a high-performance industrial controller designed for demanding automation applications.
+
+\tbkSection{Key Features}
+
+\begin{tbkFeatureList}
+  \item Real-time processing with 1ms cycle time
+  \item 256 digital I/O points
+  \item 64 analog I/O channels
+  \item Industrial Ethernet connectivity
+  \item Hot-swappable modules
+\end{tbkFeatureList}
+
+\tbkChapter{Electrical Specifications}
+
+\tbkSection{Power Requirements}
+
+\begin{tbkSpecTable}[caption={Power Specifications}]
+  \tbkSpec{Input Voltage}{24V DC ± 10\%}
+  \tbkSpec{Current Draw}{2.5A typical, 4A maximum}
+  \tbkSpec{Power Consumption}{60W typical}
+  \tbkSpec{Inrush Current}{15A @ 25°C}
+\end{tbkSpecTable}
+
+\tbkSection{Digital I/O}
+
+\begin{tbkSpecTable}[caption={Digital Input Specifications}]
+  \tbkSpec{Input Voltage}{24V DC}
+  \tbkSpec{ON Threshold}{15V minimum}
+  \tbkSpec{OFF Threshold}{5V maximum}
+  \tbkSpec{Input Impedance}{4.7 k$\Omega$}
+  \tbkSpec{Response Time}{< 1ms}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={Digital Output Specifications}]
+  \tbkSpec{Output Type}{Sourcing (PNP)}
+  \tbkSpec{Output Voltage}{24V DC}
+  \tbkSpec{Maximum Current}{0.5A per point}
+  \tbkSpec{Short Circuit Protection}{Yes}
+\end{tbkSpecTable}
+
+\tbkChapter{Environmental Specifications}
+
+\begin{tbkSpecTable}[caption={Environmental Ratings}]
+  \tbkSpec{Operating Temperature}{0°C to 55°C}
+  \tbkSpec{Storage Temperature}{-40°C to 85°C}
+  \tbkSpec{Humidity}{5\% to 95\% RH (non-condensing)}
+  \tbkSpec{Vibration}{5-500 Hz, 2G}
+  \tbkSpec{Shock}{30G, 11ms}
+  \tbkSpec{IP Rating}{IP20}
+\end{tbkSpecTable}
+
+\tbkChapter{Communication Interfaces}
+
+\tbkSection{Ethernet Ports}
+
+\begin{tbkSpecTable}[caption={Ethernet Specifications}]
+  \tbkSpec{Ports}{2 × RJ45}
+  \tbkSpec{Speed}{10/100/1000 Mbps}
+  \tbkSpec{Protocols}{EtherNet/IP, Modbus TCP, PROFINET}
+  \tbkSpec{Switch Function}{Built-in 2-port switch}
+\end{tbkSpecTable}
+
+\tbkSection{Serial Ports}
+
+\begin{tbkSpecTable}[caption={Serial Port Specifications}]
+  \tbkSpec{Ports}{1 × RS-232, 1 × RS-485}
+  \tbkSpec{Baud Rate}{300 to 115200 bps}
+  \tbkSpec{Protocols}{Modbus RTU, ASCII}
+\end{tbkSpecTable}
+
+\tbkChapter{Compliance}
+
+\tbkNotice{This product is certified for use in industrial environments and complies with applicable standards.}
+
+\tbkSection{Certifications}
+
+\begin{tbkList}
+  \item CE Marking (EN 61131-2)
+  \item UL Listed (UL 508)
+  \item CSA Certified
+  \item RoHS Compliant
+\end{tbkList}
+
+\end{document}

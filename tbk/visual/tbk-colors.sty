@@ -1,0 +1,265 @@
+%% tbk-colors.sty
+%% TbK Library - Color System
+%% Configurable color palette for consistent document styling
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-colors}[2025/01/01 v1.0 TbK Color System]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{xcolor}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% COLOR SCHEME STORAGE
+%% ============================================================================
+
+% Current color scheme name
+\def\tbk@currentcolorscheme{default}
+
+%% ============================================================================
+%% DEFAULT COLOR SCHEME
+%% ============================================================================
+
+% Define the default color scheme
+% Primary colors
+\definecolor{tbk@color@primary}{RGB}{0, 120, 60}
+\definecolor{tbk@color@secondary}{RGB}{50, 50, 50}
+\definecolor{tbk@color@accent}{RGB}{0, 150, 200}
+
+% Semantic colors
+\definecolor{tbk@color@danger}{RGB}{200, 0, 0}
+\definecolor{tbk@color@warning}{RGB}{230, 180, 0}
+\definecolor{tbk@color@notice}{RGB}{0, 100, 180}
+\definecolor{tbk@color@caution}{RGB}{255, 140, 0}
+\definecolor{tbk@color@success}{RGB}{0, 150, 50}
+\definecolor{tbk@color@info}{RGB}{0, 120, 180}
+\definecolor{tbk@color@tip}{RGB}{100, 100, 100}
+
+% Text colors
+\definecolor{tbk@color@text}{RGB}{30, 30, 30}
+\definecolor{tbk@color@text-light}{RGB}{100, 100, 100}
+\definecolor{tbk@color@text-muted}{RGB}{150, 150, 150}
+
+% Background colors
+\definecolor{tbk@color@background}{RGB}{255, 255, 255}
+\definecolor{tbk@color@background-alt}{RGB}{245, 245, 245}
+\definecolor{tbk@color@background-dark}{RGB}{40, 40, 40}
+
+% Border colors
+\definecolor{tbk@color@border}{RGB}{200, 200, 200}
+\definecolor{tbk@color@border-dark}{RGB}{100, 100, 100}
+
+% Header/Footer colors
+\definecolor{tbk@color@header-bg}{RGB}{240, 240, 240}
+\definecolor{tbk@color@footer-bg}{RGB}{240, 240, 240}
+
+% Table colors
+\definecolor{tbk@color@table-header}{RGB}{60, 60, 60}
+\definecolor{tbk@color@table-row-alt}{RGB}{248, 248, 248}
+\definecolor{tbk@color@table-border}{RGB}{180, 180, 180}
+
+%% ============================================================================
+%% COLOR ACCESSOR COMMAND
+%% ============================================================================
+
+% Get a color by name
+% #1 = color name (e.g., primary, danger, text)
+\newcommand{\tbkColor}[1]{tbk@color@#1}
+
+% Use color in text
+% #1 = color name
+% #2 = text
+\newcommand{\tbkTextColor}[2]{%
+  \textcolor{tbk@color@#1}{#2}%
+}
+
+%% ============================================================================
+%% COLOR SCHEME DEFINITION
+%% ============================================================================
+
+% Define a new color scheme
+% #1 = scheme name
+% #2 = key-value pairs of colors
+\newcommand{\tbkDefineColorScheme}[2]{%
+  \pgfkeys{
+    /tbk/colorscheme/#1/.cd,
+    #2
+  }%
+  % Mark scheme as defined
+  \expandafter\def\csname tbk@colorscheme@#1@defined\endcsname{1}%
+}
+
+% Internal: Process color scheme keys
+\pgfkeys{
+  /tbk/colorscheme/.is family,
+  /tbk/colorscheme/.unknown/.code={%
+    % Parse RGB values and define color
+    \tbk@parseanddefinecolor{\pgfkeyscurrentname}{#1}%
+  },
+}
+
+% Parse RGB tuple and define color
+% #1 = color name
+% #2 = RGB values as {R, G, B}
+\newcommand{\tbk@parseanddefinecolor}[2]{%
+  \tbk@extractrgb{#2}%
+  \definecolor{tbk@color@#1}{RGB}{\tbk@rgb@r, \tbk@rgb@g, \tbk@rgb@b}%
+}
+
+% Extract RGB values from {R, G, B} format
+\ExplSyntaxOn
+\cs_new:Npn \tbk@extractrgb #1 {
+  \seq_set_split:Nnn \l_tmpa_seq {,} {#1}
+  \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tl
+  \tl_gset:Nx \tbk@rgb@r {\tl_trim_spaces:V \l_tmpa_tl}
+  \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tl
+  \tl_gset:Nx \tbk@rgb@g {\tl_trim_spaces:V \l_tmpa_tl}
+  \seq_pop_left:NN \l_tmpa_seq \l_tmpa_tl
+  \tl_gset:Nx \tbk@rgb@b {\tl_trim_spaces:V \l_tmpa_tl}
+}
+\ExplSyntaxOff
+
+\def\tbk@rgb@r{0}
+\def\tbk@rgb@g{0}
+\def\tbk@rgb@b{0}
+
+%% ============================================================================
+%% USE COLOR SCHEME
+%% ============================================================================
+
+% Switch to a different color scheme
+% #1 = scheme name
+\newcommand{\tbkUseColorScheme}[1]{%
+  \ifcsdef{tbk@colorscheme@#1@defined}{%
+    \def\tbk@currentcolorscheme{#1}%
+    % The colors are already defined, nothing more needed
+  }{%
+    \PackageError{tbk-colors}{Color scheme '#1' is not defined}%
+      {Use \string\tbkDefineColorScheme to define it first.}%
+  }%
+}
+
+%% ============================================================================
+%% PREDEFINED COLOR SCHEMES
+%% ============================================================================
+
+% Dark color scheme
+\definecolor{tbk@dark@primary}{RGB}{100, 200, 150}
+\definecolor{tbk@dark@secondary}{RGB}{200, 200, 200}
+\definecolor{tbk@dark@accent}{RGB}{100, 180, 230}
+\definecolor{tbk@dark@danger}{RGB}{255, 100, 100}
+\definecolor{tbk@dark@warning}{RGB}{255, 200, 100}
+\definecolor{tbk@dark@notice}{RGB}{100, 150, 230}
+\definecolor{tbk@dark@text}{RGB}{230, 230, 230}
+\definecolor{tbk@dark@background}{RGB}{30, 30, 30}
+
+\expandafter\def\csname tbk@colorscheme@dark@defined\endcsname{1}
+
+% High contrast color scheme
+\definecolor{tbk@highcontrast@primary}{RGB}{0, 0, 0}
+\definecolor{tbk@highcontrast@secondary}{RGB}{0, 0, 0}
+\definecolor{tbk@highcontrast@text}{RGB}{0, 0, 0}
+\definecolor{tbk@highcontrast@background}{RGB}{255, 255, 255}
+
+\expandafter\def\csname tbk@colorscheme@high-contrast@defined\endcsname{1}
+
+%% ============================================================================
+%% COLOR MANIPULATION
+%% ============================================================================
+
+% Lighten a color
+% #1 = color name
+% #2 = percentage (0-100)
+\newcommand{\tbkLighten}[2]{%
+  tbk@color@#1!#2!white%
+}
+
+% Darken a color
+% #1 = color name
+% #2 = percentage (0-100)
+\newcommand{\tbkDarken}[2]{%
+  tbk@color@#1!#2!black%
+}
+
+% Color with opacity
+% #1 = color name
+% #2 = opacity (0-100)
+\newcommand{\tbkColorOpacity}[2]{%
+  tbk@color@#1!#2%
+}
+
+%% ============================================================================
+%% CONVENIENCE COMMANDS
+%% ============================================================================
+
+% Semantic color commands
+\newcommand{\tbkPrimaryColor}{tbk@color@primary}
+\newcommand{\tbkSecondaryColor}{tbk@color@secondary}
+\newcommand{\tbkAccentColor}{tbk@color@accent}
+\newcommand{\tbkDangerColor}{tbk@color@danger}
+\newcommand{\tbkWarningColor}{tbk@color@warning}
+\newcommand{\tbkNoticeColor}{tbk@color@notice}
+\newcommand{\tbkSuccessColor}{tbk@color@success}
+\newcommand{\tbkInfoColor}{tbk@color@info}
+
+% Background color box
+% #1 = color name
+% #2 = content
+\newcommand{\tbkColorBox}[2]{%
+  \colorbox{tbk@color@#1}{#2}%
+}
+
+% Frame with color
+% #1 = color name
+% #2 = content
+\newcommand{\tbkFrameColor}[2]{%
+  \fcolorbox{tbk@color@#1}{white}{#2}%
+}
+
+%% ============================================================================
+%% CALLOUT-SPECIFIC COLORS (for tbk-callouts.sty)
+%% ============================================================================
+
+% Danger callout colors
+\definecolor{tbk@callout@danger@bg}{RGB}{255, 235, 235}
+\definecolor{tbk@callout@danger@border}{RGB}{200, 0, 0}
+\definecolor{tbk@callout@danger@title}{RGB}{150, 0, 0}
+
+% Warning callout colors
+\definecolor{tbk@callout@warning@bg}{RGB}{255, 250, 230}
+\definecolor{tbk@callout@warning@border}{RGB}{200, 150, 0}
+\definecolor{tbk@callout@warning@title}{RGB}{150, 100, 0}
+
+% Notice callout colors
+\definecolor{tbk@callout@notice@bg}{RGB}{230, 240, 255}
+\definecolor{tbk@callout@notice@border}{RGB}{0, 100, 180}
+\definecolor{tbk@callout@notice@title}{RGB}{0, 70, 140}
+
+% Caution callout colors
+\definecolor{tbk@callout@caution@bg}{RGB}{255, 245, 230}
+\definecolor{tbk@callout@caution@border}{RGB}{255, 140, 0}
+\definecolor{tbk@callout@caution@title}{RGB}{200, 100, 0}
+
+% Info callout colors
+\definecolor{tbk@callout@info@bg}{RGB}{235, 245, 255}
+\definecolor{tbk@callout@info@border}{RGB}{0, 120, 180}
+\definecolor{tbk@callout@info@title}{RGB}{0, 90, 140}
+
+% Tip callout colors
+\definecolor{tbk@callout@tip@bg}{RGB}{245, 245, 245}
+\definecolor{tbk@callout@tip@border}{RGB}{100, 100, 100}
+\definecolor{tbk@callout@tip@title}{RGB}{70, 70, 70}
+
+% Success callout colors
+\definecolor{tbk@callout@success@bg}{RGB}{235, 255, 240}
+\definecolor{tbk@callout@success@border}{RGB}{0, 150, 50}
+\definecolor{tbk@callout@success@title}{RGB}{0, 100, 30}
+
+\endinput

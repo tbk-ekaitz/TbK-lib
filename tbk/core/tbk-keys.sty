@@ -1,0 +1,198 @@
+%% tbk-keys.sty
+%% TbK Library - Key-Value System
+%% Provides unified key=value interface for all TbK commands
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-keys}[2025/01/01 v1.0 TbK Key-Value System]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% KEY FAMILY SETUP
+%% ============================================================================
+
+% Main TbK key family
+\pgfkeys{
+  /tbk/.is family,
+  /tbk/.cd,
+  % Default handler for unknown keys
+  .unknown/.code={%
+    \PackageWarning{tbk-keys}{Unknown key '\pgfkeyscurrentname' ignored}%
+  },
+}
+
+%% ============================================================================
+%% KEY DEFINITION HELPERS
+%% ============================================================================
+
+% Define a new key with default value
+% #1 = key path (e.g., /tbk/cover)
+% #2 = key name
+% #3 = default value
+\newcommand{\tbkDefineKey}[3]{%
+  \pgfkeys{%
+    #1/#2/.initial={#3},
+    #1/#2/.default={#3},
+  }%
+}
+
+% Define a key that stores to a macro
+% #1 = key path
+% #2 = key name
+% #3 = macro name (without backslash)
+% #4 = default value
+\newcommand{\tbkDefineKeyMacro}[4]{%
+  \pgfkeys{%
+    #1/#2/.code={\expandafter\def\csname tbk@#3\endcsname{##1}},
+    #1/#2/.default={#4},
+  }%
+  \expandafter\def\csname tbk@#3\endcsname{#4}%
+}
+
+% Define a boolean key
+% #1 = key path
+% #2 = key name
+% #3 = default value (true/false)
+\newcommand{\tbkDefineBoolKey}[3]{%
+  \newbool{tbk@#2}%
+  \ifstrequal{#3}{true}{\booltrue{tbk@#2}}{\boolfalse{tbk@#2}}%
+  \pgfkeys{%
+    #1/#2/.is if=tbk@#2,
+    #1/#2/.default=true,
+  }%
+}
+
+% Define a choice key
+% #1 = key path
+% #2 = key name
+% #3 = list of choices (comma separated)
+% #4 = default choice
+\newcommand{\tbkDefineChoiceKey}[4]{%
+  \expandafter\def\csname tbk@#2\endcsname{#4}%
+  \pgfkeys{%
+    #1/#2/.is choice,
+  }%
+  \forcsvlist{\tbk@define@choice{#1}{#2}}{#3}%
+  \pgfkeys{#1/#2/.default=#4}%
+}
+
+\newcommand{\tbk@define@choice}[3]{%
+  \pgfkeys{#1/#2/#3/.code={\expandafter\def\csname tbk@#2\endcsname{#3}}}%
+}
+
+%% ============================================================================
+%% KEY PROCESSING
+%% ============================================================================
+
+% Process keys in a given family
+% #1 = key path (e.g., /tbk/cover)
+% #2 = key-value pairs
+\newcommand{\tbkProcessKeys}[2]{%
+  \pgfkeys{#1/.cd, #2}%
+}
+
+% Get value of a key
+% #1 = full key path (e.g., /tbk/cover/title)
+\newcommand{\tbkGetKey}[1]{%
+  \pgfkeysvalueof{#1}%
+}
+
+% Set value of a key
+% #1 = full key path
+% #2 = value
+\newcommand{\tbkSetKey}[2]{%
+  \pgfkeys{#1={#2}}%
+}
+
+%% ============================================================================
+%% GLOBAL SETUP KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/setup/.is family,
+  /tbk/setup/.cd,
+  % Company information
+  company-name/.store in=\tbk@setup@companyname,
+  company-name/.default={Company Name},
+  company-name=Company Name,
+  % Product information
+  product-name/.store in=\tbk@setup@productname,
+  product-name/.default={Product Name},
+  product-name=Product Name,
+  % Document metadata
+  document-code/.store in=\tbk@setup@documentcode,
+  document-code/.default={},
+  document-code={},
+  % Version
+  version/.store in=\tbk@setup@version,
+  version/.default={1.0},
+  version=1.0,
+  % Date
+  date/.store in=\tbk@setup@date,
+  date/.default={\today},
+  date=\today,
+  % Language
+  language/.store in=\tbk@setup@language,
+  language/.default={english},
+  language=english,
+}
+
+%% ============================================================================
+%% ACCESSOR COMMANDS FOR SETUP VALUES
+%% ============================================================================
+
+% Get a setup value by name
+% #1 = setup key name (without path)
+\newcommand{\tbkGetSetup}[1]{%
+  \csname tbk@setup@#1\endcsname
+}
+
+% Convenient accessors
+\newcommand{\tbkCompanyName}{\tbk@setup@companyname}
+\newcommand{\tbkProductName}{\tbk@setup@productname}
+\newcommand{\tbkDocumentCode}{\tbk@setup@documentcode}
+\newcommand{\tbkVersion}{\tbk@setup@version}
+\newcommand{\tbkDate}{\tbk@setup@date}
+
+%% ============================================================================
+%% DIMENSION KEYS HELPER
+%% ============================================================================
+
+% Define a dimension key
+% #1 = key path
+% #2 = key name
+% #3 = default value
+\newcommand{\tbkDefineDimKey}[3]{%
+  \newlength{\tbk@dim@#2}%
+  \setlength{\tbk@dim@#2}{#3}%
+  \pgfkeys{%
+    #1/#2/.code={\setlength{\tbk@dim@#2}{##1}},
+    #1/#2/.default={#3},
+  }%
+}
+
+%% ============================================================================
+%% COLOR KEYS HELPER
+%% ============================================================================
+
+% Define a color key
+% #1 = key path
+% #2 = key name
+% #3 = default color
+\newcommand{\tbkDefineColorKey}[3]{%
+  \expandafter\def\csname tbk@color@#2\endcsname{#3}%
+  \pgfkeys{%
+    #1/#2/.code={\expandafter\def\csname tbk@color@#2\endcsname{##1}},
+    #1/#2/.default={#3},
+  }%
+}
+
+\endinput

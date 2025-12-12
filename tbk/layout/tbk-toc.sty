@@ -1,0 +1,271 @@
+%% tbk-toc.sty
+%% TbK Library - Table of Contents Module
+%% Styled table of contents
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-toc}[2025/01/01 v1.0 TbK Table of Contents]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{tocloft}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{xparse}
+
+%% ============================================================================
+%% TOC CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/toc/.is family,
+  /tbk/toc/.cd,
+  % Title
+  title/.store in=\tbk@toc@title,
+  title/.default={Contents},
+  % Title style
+  title-style/.is choice,
+  title-style/bold/.code={\def\tbk@toc@titlestyle{\bfseries}},
+  title-style/normal/.code={\def\tbk@toc@titlestyle{}},
+  title-style/.default=bold,
+  % Show dots (leaders)
+  dots/.is if=tbk@toc@dots,
+  dots/.default=true,
+  % Depth
+  depth/.store in=\tbk@toc@depth,
+  depth/.default=3,
+  % Indentation per level
+  indent/.store in=\tbk@toc@indent,
+  indent/.default=1.5em,
+}
+
+% Default values
+\def\tbk@toc@title{Contents}
+\def\tbk@toc@titlestyle{\bfseries}
+\newbool{tbk@toc@dots}
+\booltrue{tbk@toc@dots}
+\def\tbk@toc@depth{3}
+\def\tbk@toc@indent{1.5em}
+
+%% ============================================================================
+%% TOC STYLING
+%% ============================================================================
+
+% Remove default TOC title
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+% Section level fonts
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+\renewcommand{\cftsubsubsecfont}{\normalfont\small}
+\renewcommand{\cftsubsubsecpagefont}{\normalfont\small}
+
+% Indentation
+\setlength{\cftsecindent}{0em}
+\setlength{\cftsubsecindent}{1.5em}
+\setlength{\cftsubsubsecindent}{3em}
+\setlength{\cftparaindent}{4.5em}
+\setlength{\cftsubparaindent}{6em}
+
+% Number width
+\setlength{\cftsecnumwidth}{3em}
+\setlength{\cftsubsecnumwidth}{3.5em}
+\setlength{\cftsubsubsecnumwidth}{4em}
+\setlength{\cftparanumwidth}{4.5em}
+\setlength{\cftsubparanumwidth}{5em}
+
+% Dots/leaders
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+%% ============================================================================
+%% MAIN TOC COMMAND
+%% ============================================================================
+
+% Print table of contents
+% #1 = optional key-value options
+\NewDocumentCommand{\tbkTableOfContents}{O{}}{%
+  % Process options
+  \pgfkeys{/tbk/toc/.cd, #1}%
+  % Set depth
+  \setcounter{tocdepth}{\tbk@toc@depth}%
+  % Handle dots
+  \ifbool{tbk@toc@dots}{%
+    \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}%
+  }{%
+    \renewcommand{\cftsecleader}{\hfill}%
+    \renewcommand{\cftsubsecleader}{\hfill}%
+    \renewcommand{\cftsubsubsecleader}{\hfill}%
+  }%
+  % Print title
+  {%
+    \centering
+    {\Large\tbk@toc@titlestyle\tbk@toc@title}%
+    \par
+    \vspace{1em}%
+  }%
+  % Print TOC
+  \@starttoc{toc}%
+  \clearpage
+}
+
+% Shorthand
+\newcommand{\tbkTOC}{\tbkTableOfContents}
+
+%% ============================================================================
+%% TOC CONFIGURATION COMMAND
+%% ============================================================================
+
+% Configure TOC appearance
+% #1 = key-value options
+\NewDocumentCommand{\tbkSetTOC}{m}{%
+  \pgfkeys{/tbk/toc/.cd, #1}%
+  \tbk@applytocstyle
+}
+
+% Apply TOC styling
+\newcommand{\tbk@applytocstyle}{%
+  \setcounter{tocdepth}{\tbk@toc@depth}%
+  % Apply indent settings
+  \setlength{\cftsubsecindent}{\tbk@toc@indent}%
+  \setlength{\cftsubsubsecindent}{2\tbk@toc@indent}%
+  \setlength{\cftparaindent}{3\tbk@toc@indent}%
+  \setlength{\cftsubparaindent}{4\tbk@toc@indent}%
+}
+
+%% ============================================================================
+%% ADD CUSTOM ENTRIES
+%% ============================================================================
+
+% Add custom entry to TOC
+% #1 = level (section, subsection, etc.)
+% #2 = text
+% #3 = page number (or \thepage for current)
+\NewDocumentCommand{\tbkAddToTOC}{mmm}{%
+  \addcontentsline{toc}{#1}{#2}%
+}
+
+% Add unnumbered entry
+% #1 = level
+% #2 = text
+\NewDocumentCommand{\tbkAddToTOCUnnumbered}{mm}{%
+  \addtocontents{toc}{\protect\contentsline{#1}{#2}{\thepage}{}}%
+}
+
+%% ============================================================================
+%% LIST OF FIGURES / TABLES
+%% ============================================================================
+
+% List of figures
+% #1 = optional title
+\NewDocumentCommand{\tbkListOfFigures}{O{List of Figures}}{%
+  {%
+    \centering
+    {\Large\bfseries #1}%
+    \par
+    \vspace{1em}%
+  }%
+  \@starttoc{lof}%
+  \clearpage
+}
+
+% List of tables
+% #1 = optional title
+\NewDocumentCommand{\tbkListOfTables}{O{List of Tables}}{%
+  {%
+    \centering
+    {\Large\bfseries #1}%
+    \par
+    \vspace{1em}%
+  }%
+  \@starttoc{lot}%
+  \clearpage
+}
+
+%% ============================================================================
+%% MINI TOC (for chapter-level TOC)
+%% ============================================================================
+
+% Storage for chapter entries
+\newwrite\tbk@minitoc@file
+
+% Start collecting entries for mini TOC
+\newcommand{\tbkMiniTOCStart}{%
+  \immediate\openout\tbk@minitoc@file=\jobname.mtoc
+}
+
+% Add entry to mini TOC
+\newcommand{\tbk@addtominitoc}[2]{%
+  \immediate\write\tbk@minitoc@file{#1 & #2\\}%
+}
+
+% Print mini TOC
+\NewDocumentCommand{\tbkMiniTOC}{O{In this chapter}}{%
+  \begin{center}
+    \textbf{#1}
+  \end{center}
+  \hrule
+  \vspace{0.5em}
+  % Would read from file here
+  \vspace{0.5em}
+  \hrule
+}
+
+%% ============================================================================
+%% TOC STYLE PRESETS
+%% ============================================================================
+
+% Modern style (no dots, clean)
+\newcommand{\tbkTOCModern}{%
+  \renewcommand{\cftsecleader}{\hfill}%
+  \renewcommand{\cftsubsecleader}{\hfill}%
+  \renewcommand{\cftsubsubsecleader}{\hfill}%
+  \renewcommand{\cftsecafterpnum}{\vskip 4pt}%
+  \renewcommand{\cftsubsecafterpnum}{\vskip 2pt}%
+}
+
+% Classic style (with dots)
+\newcommand{\tbkTOCClassic}{%
+  \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}%
+  \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}%
+  \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}%
+}
+
+% Compact style
+\newcommand{\tbkTOCCompact}{%
+  \setlength{\cftbeforesecskip}{0.5em}%
+  \setlength{\cftbeforesubsecskip}{0.25em}%
+  \setlength{\cftbeforesubsubsecskip}{0.1em}%
+}
+
+%% ============================================================================
+%% BOOKMARK SUPPORT
+%% ============================================================================
+
+% Add PDF bookmark
+% #1 = level
+% #2 = text
+\newcommand{\tbkBookmark}[2]{%
+  \@ifpackageloaded{hyperref}{%
+    \pdfbookmark[#1]{#2}{tbkbm\thepage}%
+  }{}%
+}
+
+%% ============================================================================
+%% INITIALIZATION
+%% ============================================================================
+
+% Default settings
+\AtEndOfPackage{%
+  \setcounter{tocdepth}{4}%
+}
+
+\endinput

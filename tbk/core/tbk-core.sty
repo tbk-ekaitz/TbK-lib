@@ -1,0 +1,291 @@
+%% tbk-core.sty
+%% TbK Library - Core Module
+%% Main loader and configuration management for TbK library
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-core}[2025/01/01 v1.0 TbK Core Module]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{xparse}
+\RequirePackage{iftex}
+
+%% ============================================================================
+%% LOAD CORE DEPENDENCIES
+%% ============================================================================
+
+% Load key-value system first
+\RequirePackage{tbk-keys}
+\RequirePackage{tbk-utils}
+
+%% ============================================================================
+%% ENGINE DETECTION
+%% ============================================================================
+
+\newbool{tbk@uselualatex}
+\newbool{tbk@usexelatex}
+\newbool{tbk@usepdflatex}
+
+\ifluatex
+  \booltrue{tbk@uselualatex}
+  \typeout{[TbK] Detected LuaLaTeX engine}
+\else\ifxetex
+  \booltrue{tbk@usexelatex}
+  \typeout{[TbK] Detected XeLaTeX engine}
+\else
+  \booltrue{tbk@usepdflatex}
+  \typeout{[TbK] Detected pdfLaTeX engine}
+\fi\fi
+
+%% ============================================================================
+%% PACKAGE OPTIONS
+%% ============================================================================
+
+% Option storage
+\def\tbk@opt@language{english}
+\def\tbk@opt@colorscheme{default}
+\def\tbk@opt@fontfamily{sans}
+\newbool{tbk@opt@draft}
+\boolfalse{tbk@opt@draft}
+
+% Define package options using pgfkeys
+\pgfkeys{
+  /tbk/options/.is family,
+  /tbk/options/.cd,
+  % Language option
+  language/.store in=\tbk@opt@language,
+  language/.default=english,
+  % Color scheme option
+  color-scheme/.store in=\tbk@opt@colorscheme,
+  color-scheme/.default=default,
+  % Font family option
+  font-family/.is choice,
+  font-family/sans/.code={\def\tbk@opt@fontfamily{sans}},
+  font-family/serif/.code={\def\tbk@opt@fontfamily{serif}},
+  font-family/mono/.code={\def\tbk@opt@fontfamily{mono}},
+  font-family/custom/.code={\def\tbk@opt@fontfamily{custom}},
+  font-family/.default=sans,
+  % Draft mode
+  draft/.is if=tbk@opt@draft,
+  draft/.default=true,
+}
+
+% Process options passed to package
+\DeclareOption*{%
+  \pgfkeys{/tbk/options/.cd, \CurrentOption}%
+}
+\ProcessOptions\relax
+
+%% ============================================================================
+%% GLOBAL SETUP COMMAND
+%% ============================================================================
+
+% Main setup command
+% #1 = key-value pairs
+\NewDocumentCommand{\tbkSetup}{m}{%
+  \pgfkeys{/tbk/setup/.cd, #1}%
+  \tbk@executehook{post-setup}%
+}
+
+% Add to existing setup
+\NewDocumentCommand{\tbkAddToSetup}{m}{%
+  \pgfkeys{/tbk/setup/.cd, #1}%
+}
+
+% Define post-setup hook
+\tbk@definehook{post-setup}
+
+%% ============================================================================
+%% MODULE LOADING SYSTEM
+%% ============================================================================
+
+% Track loaded modules
+\newcommand{\tbk@loadedmodules}{}
+
+% Check if module is loaded
+% #1 = module name
+\newcommand{\tbk@ifmoduleloaded}[3]{%
+  \ifinlist{#1}{\tbk@loadedmodules}{#2}{#3}%
+}
+
+% Mark module as loaded
+% #1 = module name
+\newcommand{\tbk@markmoduleloaded}[1]{%
+  \listadd{\tbk@loadedmodules}{#1}%
+}
+
+% Load a TbK module
+% #1 = module name (without tbk- prefix)
+\NewDocumentCommand{\tbkLoadModule}{m}{%
+  \tbk@ifmoduleloaded{#1}{%
+    \tbk@debug{Module '#1' already loaded, skipping}%
+  }{%
+    \tbk@debug{Loading module: #1}%
+    \RequirePackage{tbk-#1}%
+    \tbk@markmoduleloaded{#1}%
+  }%
+}
+
+% Load multiple modules
+% #1 = comma-separated list of module names
+\NewDocumentCommand{\tbkLoadModules}{m}{%
+  \forcsvlist{\tbkLoadModule}{#1}%
+}
+
+%% ============================================================================
+%% CONDITIONAL LOADING BASED ON OPTIONS
+%% ============================================================================
+
+% Load color scheme
+\AtEndOfPackage{%
+  % Color module will be loaded by main tbk.sty
+  % Just set up the scheme
+}
+
+%% ============================================================================
+%% DRAFT MODE SUPPORT
+%% ============================================================================
+
+\ifbool{tbk@opt@draft}{%
+  % Enable debug mode in draft
+  \tbkDebugOn
+  % Define draft watermark (will be used by other modules)
+  \def\tbk@draftwatermark{DRAFT}%
+}{%
+  \def\tbk@draftwatermark{}%
+}
+
+% Command to check if in draft mode
+\newcommand{\tbkIfDraft}[2]{%
+  \ifbool{tbk@opt@draft}{#1}{#2}%
+}
+
+%% ============================================================================
+%% VERSION AND METADATA
+%% ============================================================================
+
+\def\tbk@version{1.0.0}
+\def\tbk@date{2025-01-01}
+
+\newcommand{\tbkVersion}{\tbk@version}
+\newcommand{\tbkLibraryDate}{\tbk@date}
+
+%% ============================================================================
+%% ERROR AND WARNING SYSTEM
+%% ============================================================================
+
+% Issue a TbK warning
+% #1 = warning message
+\newcommand{\tbkWarning}[1]{%
+  \PackageWarning{tbk}{#1}%
+}
+
+% Issue a TbK error
+% #1 = error message
+% #2 = help text
+\newcommand{\tbkError}[2]{%
+  \PackageError{tbk}{#1}{#2}%
+}
+
+% Deprecated command warning
+% #1 = old command
+% #2 = new command
+\newcommand{\tbk@deprecated}[2]{%
+  \tbkWarning{Command #1 is deprecated. Use #2 instead.}%
+}
+
+%% ============================================================================
+%% LANGUAGE SUPPORT
+%% ============================================================================
+
+% Store translations
+\pgfkeys{
+  /tbk/i18n/.is family,
+  /tbk/i18n/.cd,
+  % English translations (default)
+  english/chapter/.initial=Chapter,
+  english/section/.initial=Section,
+  english/figure/.initial=Figure,
+  english/table/.initial=Table,
+  english/contents/.initial=Contents,
+  english/danger/.initial=DANGER,
+  english/warning/.initial=WARNING,
+  english/notice/.initial=NOTICE,
+  english/caution/.initial=CAUTION,
+  english/info/.initial=INFO,
+  english/tip/.initial=TIP,
+  % Spanish translations
+  spanish/chapter/.initial=Cap\'itulo,
+  spanish/section/.initial=Secci\'on,
+  spanish/figure/.initial=Figura,
+  spanish/table/.initial=Tabla,
+  spanish/contents/.initial=Contenidos,
+  spanish/danger/.initial=PELIGRO,
+  spanish/warning/.initial=ADVERTENCIA,
+  spanish/notice/.initial=AVISO,
+  spanish/caution/.initial=PRECAUCI\'ON,
+  spanish/info/.initial=INFO,
+  spanish/tip/.initial=CONSEJO,
+  % Chinese translations
+  chinese/chapter/.initial=第,
+  chinese/section/.initial=节,
+  chinese/figure/.initial=图,
+  chinese/table/.initial=表,
+  chinese/contents/.initial=目录,
+  chinese/danger/.initial=危险,
+  chinese/warning/.initial=警告,
+  chinese/notice/.initial=注意,
+  chinese/caution/.initial=小心,
+  chinese/info/.initial=信息,
+  chinese/tip/.initial=提示,
+}
+
+% Get translation
+% #1 = key
+\newcommand{\tbkTranslate}[1]{%
+  \pgfkeysvalueof{/tbk/i18n/\tbk@opt@language/#1}%
+}
+
+% Add new translation
+% #1 = language
+% #2 = key
+% #3 = value
+\newcommand{\tbkAddTranslation}[3]{%
+  \pgfkeys{/tbk/i18n/#1/#2/.initial=#3}%
+}
+
+%% ============================================================================
+%% INITIALIZATION HOOKS
+%% ============================================================================
+
+% Hooks for other modules to use
+\tbk@definehook{begin-document}
+\tbk@definehook{end-document}
+
+% Execute begin-document hook
+\AtBeginDocument{%
+  \tbk@executehook{begin-document}%
+}
+
+% Execute end-document hook
+\AtEndDocument{%
+  \tbk@executehook{end-document}%
+}
+
+%% ============================================================================
+%% COMPATIBILITY LAYER
+%% ============================================================================
+
+% Provide fallback for missing commands in older LaTeX
+\providecommand{\IfPackageLoadedTF}[3]{%
+  \@ifpackageloaded{#1}{#2}{#3}%
+}
+
+\endinput
