@@ -1,0 +1,762 @@
+%% asclepius-user-guide.tex
+%% TbK Library Example - Based on TBK-99 EA Asclepius Documentation
+%%
+%% This example demonstrates all TbK library features using real
+%% product documentation for the Virtual Anatomy Table.
+%%
+%% Compile with: pdflatex asclepius-user-guide.tex
+%%
+
+\documentclass[11pt,a4paper]{article}
+
+% Load TbK library
+\usepackage{tbk}
+
+%% ============================================================================
+%% DOCUMENT CONFIGURATION
+%% ============================================================================
+
+\tbkSetup{
+  company-name = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  product-name = {Asclepius TBK-99 EA},
+  document-code = {A99 EA-EN-A04-A002},
+  version = {1.0},
+  date = {2025},
+}
+
+\tbkSetBranding{
+  company = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  website = {www.surglasses.com},
+  slogan = {Innovation in Medical Education Technology},
+}
+
+% Set header style
+\tbkSetHeaders{
+  header-left = {\small Asclepius TBK-99 EA},
+  header-center = {},
+  header-right = {\small\thepage},
+  footer-left = {\small A99 EA-EN-A04-A002},
+  footer-center = {},
+  footer-right = {\small Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  header-rule = 0.4pt,
+  footer-rule = 0.4pt,
+}
+
+\begin{document}
+
+%% ============================================================================
+%% TITLE PAGE
+%% ============================================================================
+
+\tbkTitlePage{
+  title = {TBK-99 EA},
+  subtitle = {User Guide},
+  tagline = {Virtual Electronic Anatomy Table for Education},
+}
+
+%% ============================================================================
+%% TABLE OF CONTENTS
+%% ============================================================================
+
+\tbkTableOfContents[
+  title = {Contents},
+  depth = 4,
+]
+
+%% ============================================================================
+%% CHAPTER 1: SETUP AND START
+%% ============================================================================
+
+\tbkChapter{Setup And Start}
+
+\tbkDanger{
+  Please carefully read all the installation instructions before use of the
+  multi-touch digital image dissection table for the first time.
+}
+
+This product includes instructions for the hardware computer equipment and software
+program system. Please read this manual carefully before using this product and follow
+the system start-up mode to enable and operate the multi-touch digital image dissection
+table properly to avoid personnel injury and other damages caused by improper usage.
+
+\tbkInfo{
+  If you have any questions, please refer to the instruction documentation of the
+  multi-touch digital image dissection table. If further instruction or clarification
+  is needed, please contact us.
+}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Basic Accessories}
+
+Product accessories include:
+
+\begin{tbkList}[bullet=check]
+  \item One host computer
+  \item One 99-inch touch screen display
+  \item One AC power cord
+\end{tbkList}
+
+The display can be configured in two orientations:
+
+\begin{tbkList}[bullet=arrow]
+  \item \textbf{Horizontal:} Standard table position for dissection work
+  \item \textbf{Vertical:} Upright position for presentations and lectures
+\end{tbkList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Control Panel}
+
+The control panel provides access to all device functions through physical buttons
+and a console interface.
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Console Operation}
+
+\begin{tbkOperationTable}[
+  caption = {Control Panel Button Functions},
+  label = tbl:console-buttons,
+]
+  \tbkOp{\tbkIcon{power}}{Power On/Off}
+  \tbkOp{\tbkIcon{play} \tbkIcon{pause} \tbkIcon{stop}}{Media controls}
+  \tbkOp{\tbkIcon{usb}}{Switch to USB file}
+  \tbkOp{\tbkIcon{display}}{Switch Source to CMS}
+  \tbkOp{\tbkIcon{hdmi}}{Switch Source to HDMI}
+  \tbkOp{\tbkIcon{format}}{Resolution Setting}
+  \tbkOp{\tbkIcon{home}}{Go to the Home Page}
+  \tbkOp{\tbkIcon{settings}}{Settings}
+  \tbkOp{\tbkIcon{info}}{Information}
+  \tbkOp{\tbkIcon{menu}}{Open the External Menu}
+  \tbkOp{\tbkIcon{arrow-up} \tbkIcon{arrow-down} \tbkIcon{arrow-left} \tbkIcon{arrow-right}}{Navigation buttons}
+  \tbkOp{\tbkIcon{check}}{Confirm/OK}
+\end{tbkOperationTable}
+
+Additional console controls:
+
+\begin{tbkTable}[caption={Additional Console Functions}]
+  \tbkRow{\textbf{+/--}}{Adjust the Sound Volume}
+  \tbkRow{\textbf{Splice}}{Full Screen display}
+  \tbkRow{\textbf{Divide}}{Single screen display}
+  \tbkRow{\tbkIcon{arrow-left}}{Return to Previous/Exit}
+  \tbkRow{\tbkIcon{mute}}{Mute/Unmute}
+\end{tbkTable}
+
+The console interface also includes tilt controls:
+
+\begin{tbkList}
+  \item \textbf{Tilt Upward} -- Raises the table to vertical position
+  \item \textbf{Tilt Downward} -- Lowers the table to horizontal position
+\end{tbkList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Start}
+
+Configure the hardware equipment and power cord to start operation of the
+multi-touch digital image dissection table.
+
+\begin{tbkSteps}[prefix=Step]
+  \item Connect the console of the Asclepius to the AC power cord.
+        Plugs may vary based on your country.
+  \item Turn on the Asclepius. At this time you will hear the sound
+        of the host running.
+  \item Wait for the system to initialize and display the main menu.
+\end{tbkSteps}
+
+\tbkNotice{
+  Please ensure the power supply matches local voltage standards before connecting.
+}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Main Menu Setting}
+
+%% ............................................................................
+\tbkSubsection{Connecting the Internet (WI-FI or Ethernet)}
+
+\textbf{Ethernet Connection:}
+
+Connect the Asclepius to the Ethernet interface (10/100/1000 Base-T) using a
+standard network cable.
+
+\textbf{WiFi Connection:}
+
+\begin{tbkSteps}
+  \item Click the WiFi icon \tbkIcon{wifi} on the main menu screen.
+  \item Select a WiFi name you want to connect. If the name of the WiFi
+        you want to connect does not appear automatically, click the
+        refresh button \tbkIcon{refresh} until it appears.
+  \item After clicking the keyboard icon, touch the password input field
+        to enter the WiFi password.
+  \item After entering the password, click the Connect icon.
+  \item After the connection is completed, click refresh again until the
+        WiFi name selected by the user appears in the current network field.
+\end{tbkSteps}
+
+\tbkCaution{
+  WiFi name must be composed of English letters. Chinese names will not be displayed.
+}
+
+%% ............................................................................
+\tbkSubsection{Change Language}
+
+Change the language of the software through the settings menu. Multiple languages
+are supported for international users.
+
+%% ............................................................................
+\tbkSubsection{Screen Setting}
+
+\tbkSubsubsection{Connecting Screen Synchronization}
+
+\begin{tbkSteps}
+  \item Connect the HDMI cable to the HDMI port of the multi-touch digital
+        image dissection table.
+  \item Press the screen synchronization button on the main screen to
+        synchronize the screen to the external monitor.
+  \item If the sharing screen is a touch screen, plug one end of the USB
+        cable into the USB socket of the dissection table, and the other
+        end into the USB socket of the sharing screen.
+\end{tbkSteps}
+
+\tbkSubsubsection{Vertically or Horizontally Screen Flip}
+
+The screen can be flipped vertically or horizontally to match the table orientation.
+
+\tbkSubsubsection{Horizontal Screen Flip}
+
+Horizontal screen flip is convenient for teachers to teach in various positions
+around the table.
+
+%% ............................................................................
+\tbkSubsection{Online Update}
+
+If the Asclepius table is connected to the internet, every time the dissection
+table is started, it will automatically detect whether there is a newer version
+available.
+
+\tbkWarning{
+  The installation process will take some time. During this process, please do
+  not perform any operations on the dissection table, and do not turn off the
+  power to avoid system damage.
+}
+
+If users need to delay the update:
+\begin{tbkList}
+  \item Click the update button on the homepage at an appropriate time
+  \item Select the software to be updated in the new version section
+  \item Click the download button to download and install
+\end{tbkList}
+
+%% ............................................................................
+\tbkSubsection{Technical Support}
+
+If troubleshooting steps (Section 2-3) cannot resolve your issue, please contact us.
+We will use the remote support function to provide online assistance.
+
+%% ............................................................................
+\tbkSubsection{Equipment Information}
+
+Press the information button \tbkIcon{info} to display detailed information about
+the device, including model number, software version, and system specifications.
+
+\tbkTip{
+  The password location can be found on the product label on the device (DXXX-XXXX format).
+}
+
+%% ............................................................................
+\tbkSubsection{Shutdown}
+
+\begin{tbkSteps}
+  \item Press the shutdown button on the main interface of the software.
+  \item Confirm to turn off.
+  \item Wait for the screen of the multi-touch digital image dissection table
+        to be completely dark.
+  \item Wait until the sound of the main unit has stopped.
+  \item Switch the power switch to 0.
+  \item Put the dust cover back on the screen to protect it from getting dirty.
+\end{tbkSteps}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Toolbox}
+
+The toolbox provides additional functionality for educational use.
+
+\tbkSubsection{Toolbox Mode Control}
+
+Switch the display mode of the toolbox between expanded and narrowed views.
+
+\tbkSubsection{Brush Setting}
+
+Open or close the brush functions for annotation capabilities.
+
+\tbkSubsubsection{Brush}
+
+Brush functions give users the ability to make notes or scribbles in real time.
+
+\tbkNotice{
+  When the brush is operated, the software will be locked and the user will
+  not be able to use other functions in the software.
+}
+
+\tbkSubsubsection{Color Setting}
+
+The brush color can be adjusted according to your needs.
+
+\tbkSubsubsection{Pause the Brush Function}
+
+When the icon is blue, the software lock will be unlocked, and the user can
+use all functions in the software.
+
+\tbkSubsubsection{Erase Brush}
+
+The eraser can be used to click on positions to clear brush strokes.
+
+\tbkSubsubsection{Clear All Handwriting}
+
+All brush strokes will be cleared at once.
+
+\tbkSubsubsection{Brush Adjustment}
+
+The user can adjust the brush style, line type, alpha (transparency), and width.
+
+\tbkSubsection{Multimedia Player}
+
+The multimedia player is used to view pictures and videos from a flash drive.
+
+\begin{tbkSpecTable}[caption={Supported Media Formats}]
+  \tbkSpec{Image Formats}{*.jpg, *.png, *.tif, *.gif, *.bmp}
+  \tbkSpec{Video Formats}{*.mkv, *.mp4, *.wav, *.mp3}
+\end{tbkSpecTable}
+
+\begin{tbkOperationTable}[caption={Multimedia Player Controls}]
+  \tbkOp{\tbkIcon{folder}}{Open File}
+  \tbkOp{\tbkIcon{stop}}{Media Stop}
+  \tbkOp{\tbkIcon{skip-backward} / \tbkIcon{skip-forward}}{Previous / Next}
+  \tbkOp{\tbkIcon{play} / \tbkIcon{pause}}{Media Play / Pause}
+  \tbkOp{\tbkIcon{mute}}{Mute / Unmute}
+  \tbkOp{\tbkIcon{fullscreen}}{Full Screen Mode}
+\end{tbkOperationTable}
+
+\tbkTip{
+  Double click on the screen or press \tbkKey{Esc} to exit full screen mode.
+}
+
+\tbkSubsection{Screenshot}
+
+Screenshot functionality provides users with interactive operations for capturing
+screen content for teaching and learning materials.
+
+\begin{tbkList}
+  \item Image files will be saved in \texttt{.jpg} format
+  \item Users can input operation steps or key points into a portable disc
+\end{tbkList}
+
+\tbkSubsection{Screen Recording}
+
+Screen recording provides users with the ability to record operations for
+teaching and learning materials.
+
+\begin{tbkList}
+  \item Video files will be saved in \texttt{*.mkv} format
+  \item Users can record operations while demonstrating procedures
+  \item Export videos to a portable disc for distribution
+\end{tbkList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{CD Software Update}
+
+The CD can be used to update software when the network is unavailable.
+
+\begin{tbkSteps}
+  \item Turn on the multi-touch digital image dissection table.
+  \item Insert the update disc.
+  \item Restart the virtual dissection table.
+  \item The system will ask whether to update. Press OK to start the update process.
+  \item After the update is completed, it will ask whether to update again. Press NO.
+  \item After the system enters the main page, remove the disc. The update is completed.
+\end{tbkSteps}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Moving And Positioning Setting}
+
+The Asclepius is equipped with an electronically controllable platform which
+enables converting the table position from Horizontal to Vertical using the remote.
+
+\tbkInfo{
+  Taking into consideration safety, the table also comes with surge protection.
+  In case the power is cut off during movement from horizontal to vertical,
+  the table stays at its own place and neither goes up nor down.
+}
+
+To move the multi-touch digital imaging anatomy table:
+
+\begin{tbkSteps}
+  \item Release the movable caster brake pedal on the base.
+  \item Ensure smooth movement of the table.
+  \item Lock the casters again when in position.
+\end{tbkSteps}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Lifting Control}
+
+\tbkDanger{
+  When the warning sound ``beep'' is heard, please stay away from the multi-touch
+  digital image dissection table. Wait until the process is complete before approaching.
+}
+
+\textbf{Operating Instructions:}
+
+\begin{tbkList}
+  \item Long press the \textbf{Tilt Upward} button to raise the table to vertical position
+  \item Long press the \textbf{Tilt Downward} button to lower the table to horizontal position
+\end{tbkList}
+
+\tbkWarning{
+  Do not continuously perform the hardware rotation. Each time the operation to
+  switch the upright/flat function must wait for at least \textbf{5 minutes}
+  before performing the hardware rotation again.
+}
+
+\begin{tbkCallout}[type=notice, title=Safety Protection Mechanism]
+  Due to the safety mechanism, if the machine is operated continuously for more
+  than 3 times in a short period of time (within 5 minutes), the dissection table
+  will enter the ``safety protection mechanism'' and be locked for \textbf{18 minutes}.
+
+  During this period, the vertical or horizontal function cannot be executed.
+  Please wait patiently. After the mechanism is unlocked, the machine can resume
+  rotating to the vertical or horizontal function.
+\end{tbkCallout}
+
+\tbkCaution{
+  The lifting mechanism is a shared system. When there is more than one multi-touch
+  digital image dissection table in the same space, operating the lifting mechanism
+  may cause all tables to perform the lifting mechanism simultaneously.
+}
+
+To prevent synchronous action:
+\begin{tbkList}
+  \item Remove the emergency stop latch of the lifting system of other tables
+  \item Or disconnect other tables from power
+\end{tbkList}
+
+\textbf{Emergency Stop:}
+
+If you need to stop the vertical/horizontal function in an emergency, pull the
+emergency stop latch on the lower left door panel immediately.
+
+\tbkNotice{
+  After the emergency stop latch is pulled out, reinsert it after the emergency
+  is removed. The upright/lying down function operation will then resume.
+}
+
+\tbkDanger{
+  \textbf{Do not carry the multi-touch digital imaging dissection table during
+  the switch between upright and flat functions to avoid danger.}
+
+  \textbf{For Safety Reason: Do not leave the table in inclined position.}
+}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Precautions}
+
+\tbkWarning{
+  System damage caused by not following these precautions, abnormal behavior,
+  or human factors will \textbf{not} be covered under warranty.
+}
+
+\tbkSubsection{Precautions For Power Plug And Power Cord}
+
+\begin{tbkWarningList}
+  \item Please fully insert the power plug into the power socket (if the plug
+        is loose, it may cause the table to fail to operate).
+  \item Do not damage the power cord (This may result in fire, electric shock, etc.).
+  \item Do not touch the power plug and power cord when your hands are wet.
+\end{tbkWarningList}
+
+\tbkSubsection{Precautions For Transport And Installation}
+
+\begin{tbkWarningList}
+  \item When transporting and installing, ensure the screen is completely flat.
+        Be careful with the screen.
+  \item Do not move cart with display in highest position.
+  \item Do not push cart from front or back of lift.
+  \item Have the panel at the lowest position while moving the trolley.
+  \item Do not squeeze the outer box and product during transport.
+  \item Pay attention to the operating environment. Uneven ground may cause
+        the table to fall and be damaged.
+  \item Do not disassemble, modify, or change the dissection table.
+  \item Keep the installation site ventilated. Do not block the vents.
+  \item Maintain a safe distance before using the lift/tilt mechanism.
+  \item Duty cycle: rest for 18 minutes for every 2 minutes continuous
+        operation of lift/tilt mechanism.
+  \item For Safety Reason: Do not leave the table in inclined position.
+\end{tbkWarningList}
+
+\tbkSubsection{Precautions For Information Safety}
+
+\begin{tbkWarningList}
+  \item When operating, ensure the power cord is connected. Improper power-off
+        may cause damage to the host computer and software data.
+  \item Use the lock at all times to avoid slipping/sliding of the equipment.
+  \item Improper storage or use will void the manufacturer warranty.
+  \item Be careful of the legs of the equipment stands. Do not trample on them.
+  \item The platform should not be used to store any materials (books, drinks, etc.)
+        as the surface is not waterproof.
+  \item Use appropriate force when clicking. Do not press or tap the screen heavily.
+  \item Do not use pens, pencils, rulers, or any sharp objects to operate the screen.
+  \item Age 10 or less are not advised to use the equipment without parental consent
+        and supervision by authorized personnel.
+  \item Do not deliberately dismantle the touch screen, system body, or workstation.
+\end{tbkWarningList}
+
+\tbkSubsection{Cleaning Consideration}
+
+\begin{tbkCallout}[type=caution]
+  Please do not use volatile materials, commercially available cleaners, or water
+  to rinse and clean. This may cause damage to the screen glass, panel, or hardware
+  circuit board.
+
+  Please use the special wiping cloth for the screen to dry wipe.
+
+  When not in use, please cover the table with the special dust jacket provided.
+\end{tbkCallout}
+
+%% ============================================================================
+%% CHAPTER 2: DEVICE INFORMATION
+%% ============================================================================
+
+\tbkChapter{Device Information}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Specification}
+
+\begin{tbkSpecTable}[
+  caption = {TBK-99 EA Product Specifications},
+  label = tbl:specifications,
+  key-style = bold,
+]
+  \tbkSpec{Product Name}{Asclepius}
+  \tbkSpec{Model}{TBK-99 EA}
+  \tbkSpec{Size}{99-inch}
+  \tbkSpec{Touch Module}{Optical touch / Multi-touch}
+  \tbkSpec{Overall Dimension (Horizontal)}{L 253.3cm × W 98.4cm × H 90.9cm}
+  \tbkSpec{Overall Dimension (Vertical)}{L 174.5cm × W 98.4cm × H 259.8cm}
+  \tbkSpec{Net Weight}{360 kg}
+  \tbkSpec{Max Contrast Ratio}{3500:1}
+  \tbkSpec{Resolution}{3840 × 1080}
+  \tbkSpec{Max Brightness}{500 cd/m²}
+  \tbkSpec{Screen Bezel}{Bezel to bezel 3.5mm (±5\% error allowed)}
+  \tbkSpec{Tempered Glass}{5mm}
+  \tbkSpec{Touch Method}{Stylus or Finger}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={Input/Output Specifications}]
+  \tbkSpec{Signal Input}{USB×4, CD Rom×1, RJ45×1}
+  \tbkSpec{Signal Output}{HDMI×2}
+  \tbkSpec{Power Supply}{Input: 100V\textasciitilde240V AC, 50/60Hz, 8A}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={Environmental Specifications}]
+  \tbkSpec{Operating Temperature}{0--40°C}
+  \tbkSpec{Operating Humidity}{30\%--80\% (non-condensing)}
+  \tbkSpec{Storage Temperature}{0--60°C}
+  \tbkSpec{Storage Humidity}{20\%--90\% (non-condensing)}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={Computer Specifications}]
+  \tbkSpec{CPU}{Intel(R) Core i9}
+  \tbkSpec{RAM}{32 GB}
+  \tbkSpec{HDD}{8 TB}
+  \tbkSpec{SSD}{2 TB}
+  \tbkSpec{System}{Windows 11}
+  \tbkSpec{Software}{ANATOMY, RADIOLOGY, HISTOPATHOLOGY ATLAS, CTRENDER, EMBRYOLOGY, ANIMAL ANATOMY}
+  \tbkSpec{Year of Manufacture}{2025}
+\end{tbkSpecTable}
+
+\tbkInfo{
+  Taiwan Main Orthopaedic Biotechnology Co., Ltd. will upgrade the system for
+  better performance at our own discretion.
+}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{FCC Supplier's Declaration of Conformity}
+
+This device complies with part 15 of the FCC Rules. Operation is subject to the
+following two conditions:
+
+\begin{tbkNumberedList}
+  \item This device may not cause harmful interference.
+  \item This device must accept any interference received, including interference
+        that may cause undesired operation.
+\end{tbkNumberedList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Troubleshooting}
+
+\tbkSubsection{Unable To Boot Normally}
+
+\begin{tbkSteps}
+  \item Confirm whether the host computer and touch screen power supply are
+        normally connected and powered on.
+  \item Confirm whether the power transformer is normally turned on.
+  \item If power is connected, confirm whether the host computer is powered on.
+        Otherwise, press the power on key.
+  \item If still cannot power on normally, contact technical support (Section 2-5).
+\end{tbkSteps}
+
+\tbkSubsection{Unable To Operate Normally}
+
+If the software operation is completely inoperable and the software cannot be
+switched during use:
+
+\textbf{Keyboard Hot Keys:}
+
+\begin{tbkTable}[caption={Emergency Keyboard Shortcuts}]
+  \tbkRow{\tbkShortcut{Ctrl+Alt+F1}}{Shut down}
+  \tbkRow{\tbkShortcut{Ctrl+Alt+F2}}{Restart}
+  \tbkRow{\tbkShortcut{Ctrl+Alt+F11}}{Close and restart the software}
+\end{tbkTable}
+
+If hot keys cannot work:
+\begin{tbkSteps}
+  \item Press the host computer power switch for \textbf{five seconds} to shut down.
+  \item Restart the system.
+  \item If the system still fails to operate normally, contact technical support.
+\end{tbkSteps}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Product Warranty Statement}
+
+\tbkSubsection{Warranty Coverage}
+
+Taiwan Main Orthopaedic Biotechnology Co., Ltd. provides the following warranty
+services to protect the rights and interests of our customers.
+
+\tbkSubsubsection{Warranty Period}
+
+Each product unit is labeled with its warranty period before shipment.
+
+\tbkSubsubsection{Warranty Details}
+
+\begin{tbkFeatureList}
+  \item During the warranty period, the software will be automatically updated
+        to the latest version free of charge, with at least 3 to 4 updates per year.
+  \item If the product malfunctions due to defective materials or manufacturing
+        defects, the Company will provide free repair or parts replacement.
+  \item If the original parts are discontinued or unavailable, the Company reserves
+        the right to replace them with functionally equivalent components.
+  \item Replaced parts shall continue under the original warranty period and will
+        not extend the warranty term.
+\end{tbkFeatureList}
+
+\tbkSubsection{Exclusions from Warranty Coverage}
+
+The following conditions are \textbf{not} covered by the free warranty:
+
+\tbkSubsubsection{Damage Due to Human Factors or Improper Operation}
+
+\begin{tbkList}
+  \item Malfunctions caused by failure to follow the user manual
+  \item Collision, drop, foreign object intrusion, liquid ingress
+  \item Moisture or excessive heat exposure
+  \item Disassembly resulting in broken warranty seals
+  \item Modification, soldering, or repairs by unauthorized personnel
+\end{tbkList}
+
+\tbkSubsubsection{External Forces and Environmental Conditions}
+
+\begin{tbkList}
+  \item Damage caused by natural disasters (fire, flood, earthquake, lightning)
+  \item Power surge or pest infestation
+  \item Usage in environment inconsistent with recommendations
+\end{tbkList}
+
+\begin{tbkSpecTable}[caption={Recommended Operating Environment}]
+  \tbkSpec{Operating Temperature}{0°C to 40°C}
+  \tbkSpec{Operating Humidity}{30\% to 80\% (non-condensing)}
+  \tbkSpec{Storage Temperature}{0°C to 60°C}
+  \tbkSpec{Storage Humidity}{20\% to 90\% (non-condensing)}
+\end{tbkSpecTable}
+
+\tbkWarning{
+  Product damage resulting from use outside these conditions is not covered
+  under warranty.
+}
+
+\tbkSubsubsection{Issues Caused by Non-Genuine Parts or Accessories}
+
+Use of non-genuine or unauthorized accessories, components, software, or
+consumables voids warranty coverage.
+
+\tbkSubsubsection{Installation or Use of Unauthorized Software}
+
+The Company provides warranty and technical support only for officially licensed
+software and firmware versions.
+
+\tbkSubsubsection{Expired Warranty}
+
+After the warranty period expires, repair or replacement services will be subject
+to material and service fees.
+
+\tbkSubsection{Supplementary Warranty Terms}
+
+\begin{tbkList}
+  \item The warranty applies solely to product defects and excludes damages
+        caused by human error or natural disasters.
+  \item Improper operation, such as unplugging the power without following
+        the shutdown procedure, is not covered.
+  \item In the event of power instability, customers are advised to use a UPS
+        (Uninterruptible Power Supply) to protect the equipment.
+  \item Screen defects with fewer than five bright pixels, observed at 35cm
+        under lighting above 200 Lux, comply with international standards.
+  \item This product uses tempered glass. If the tempered glass produces a
+        little white fog, it is considered normal and not a defect.
+\end{tbkList}
+
+\tbkSubsection{Additional Notes}
+
+\begin{tbkList}
+  \item This warranty statement applies only to products purchased through
+        officially authorized sales channels.
+  \item The Company reserves the right to make final amendments and
+        interpretations of the warranty terms.
+\end{tbkList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{Contact Information}
+
+\begin{tbkSpecTable}[
+  caption = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
+  label = tbl:contact,
+]
+  \tbkSpec{Company Name}{Taiwan Main Orthopaedic Biotechnology Co., Ltd. (Surglasses)}
+  \tbkSpec{Address}{2F, No. 41, Keya Rd., Daya Dist., Taichung City, Taiwan}
+  \tbkSpec{Phone}{(+886) 4-2565-2818}
+  \tbkSpec{Email}{support@surglasses.com}
+  \tbkSpec{Service Hours}{Monday to Friday, 09:00--18:00}
+\end{tbkSpecTable}
+
+%% ============================================================================
+%% DOCUMENT FOOTER
+%% ============================================================================
+
+\clearpage
+\tbkSection*{Document Information}
+
+\vspace{1cm}
+
+\tbkDocumentInfo
+
+\vspace{2cm}
+
+\begin{center}
+  \tbkCopyright[2025]
+\end{center}
+
+\vspace{1cm}
+
+\tbkDisclaimer[
+  The information contained in this document is the property of Taiwan Main
+  Orthopaedic Biotechnology Co., Ltd. and may not be copied, reproduced, or
+  distributed without prior written consent. All specifications are subject
+  to change without notice.
+]
+
+\end{document}
