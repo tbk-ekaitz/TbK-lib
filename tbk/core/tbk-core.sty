@@ -181,9 +181,9 @@
 %% ERROR AND WARNING SYSTEM
 %% ============================================================================
 
-% Issue a TbK warning
+% Issue a TbK package warning (internal use)
 % #1 = warning message
-\newcommand{\tbkWarning}[1]{%
+\newcommand{\tbkPackageWarning}[1]{%
   \PackageWarning{tbk}{#1}%
 }
 
@@ -198,7 +198,7 @@
 % #1 = old command
 % #2 = new command
 \newcommand{\tbk@deprecated}[2]{%
-  \tbkWarning{Command #1 is deprecated. Use #2 instead.}%
+  \tbkPackageWarning{Command #1 is deprecated. Use #2 instead.}%
 }
 
 %% ============================================================================

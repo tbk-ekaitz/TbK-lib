@@ -60,18 +60,18 @@
 \newcommand{\tbk@icondef@record}{\faCircle}
 \newcommand{\tbk@icondef@forward}{\faForward}
 \newcommand{\tbk@icondef@backward}{\faBackward}
-\newcommand{\tbk@icondef@skip-forward}{\faStepForward}
-\newcommand{\tbk@icondef@skip-backward}{\faStepBackward}
+\expandafter\newcommand\csname tbk@icondef@skip-forward\endcsname{\faStepForward}
+\expandafter\newcommand\csname tbk@icondef@skip-backward\endcsname{\faStepBackward}
 
 % Arrows
-\newcommand{\tbk@icondef@arrow-up}{\faArrowUp}
-\newcommand{\tbk@icondef@arrow-down}{\faArrowDown}
-\newcommand{\tbk@icondef@arrow-left}{\faArrowLeft}
-\newcommand{\tbk@icondef@arrow-right}{\faArrowRight}
-\newcommand{\tbk@icondef@chevron-up}{\faChevronUp}
-\newcommand{\tbk@icondef@chevron-down}{\faChevronDown}
-\newcommand{\tbk@icondef@chevron-left}{\faChevronLeft}
-\newcommand{\tbk@icondef@chevron-right}{\faChevronRight}
+\expandafter\newcommand\csname tbk@icondef@arrow-up\endcsname{\faArrowUp}
+\expandafter\newcommand\csname tbk@icondef@arrow-down\endcsname{\faArrowDown}
+\expandafter\newcommand\csname tbk@icondef@arrow-left\endcsname{\faArrowLeft}
+\expandafter\newcommand\csname tbk@icondef@arrow-right\endcsname{\faArrowRight}
+\expandafter\newcommand\csname tbk@icondef@chevron-up\endcsname{\faChevronUp}
+\expandafter\newcommand\csname tbk@icondef@chevron-down\endcsname{\faChevronDown}
+\expandafter\newcommand\csname tbk@icondef@chevron-left\endcsname{\faChevronLeft}
+\expandafter\newcommand\csname tbk@icondef@chevron-right\endcsname{\faChevronRight}
 
 % Connectivity
 \newcommand{\tbk@icondef@usb}{\faUsb}
@@ -110,13 +110,13 @@
 \newcommand{\tbk@icondef@cut}{\faCut}
 
 % View
-\newcommand{\tbk@icondef@zoom-in}{\faSearchPlus}
-\newcommand{\tbk@icondef@zoom-out}{\faSearchMinus}
+\expandafter\newcommand\csname tbk@icondef@zoom-in\endcsname{\faSearchPlus}
+\expandafter\newcommand\csname tbk@icondef@zoom-out\endcsname{\faSearchMinus}
 \newcommand{\tbk@icondef@fullscreen}{\faExpand}
 \newcommand{\tbk@icondef@minimize}{\faCompress}
 \newcommand{\tbk@icondef@search}{\faSearch}
 \newcommand{\tbk@icondef@eye}{\faEye}
-\newcommand{\tbk@icondef@eye-slash}{\faEyeSlash}
+\expandafter\newcommand\csname tbk@icondef@eye-slash\endcsname{\faEyeSlash}
 
 % User
 \newcommand{\tbk@icondef@user}{\faUser}
@@ -141,7 +141,7 @@
 \newcommand{\tbk@icondef@flag}{\faFlag}
 \newcommand{\tbk@icondef@tag}{\faTag}
 \newcommand{\tbk@icondef@link}{\faLink}
-\newcommand{\tbk@icondef@external-link}{\faExternalLinkAlt}
+\expandafter\newcommand\csname tbk@icondef@external-link\endcsname{\faExternalLinkAlt}
 \newcommand{\tbk@icondef@refresh}{\faSync}
 \newcommand{\tbk@icondef@sync}{\faSync}
 

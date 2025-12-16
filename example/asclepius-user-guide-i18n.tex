@@ -1,0 +1,359 @@
+%% asclepius-user-guide-i18n.tex
+%% TbK Library Example - Internationalized Version
+%% Uses external strings file for easy translation
+%%
+%% To compile:
+%%   pdflatex asclepius-user-guide-i18n.tex
+%%
+%% To change language:
+%%   Replace strings/strings-en with strings/strings-XX where XX is language code
+%%
+
+\documentclass[11pt,a4paper]{article}
+
+% Load TbK library
+\usepackage{tbk}
+
+% Load strings for current language
+\usepackage{strings/strings-en}
+
+%% ============================================================================
+%% DOCUMENT CONFIGURATION (using string references)
+%% ============================================================================
+
+\tbkSetup{
+  company-name = {\str{company.name}},
+  product-name = {Asclepius \str{doc.title}},
+  document-code = {A99 EA-EN-A04-A002},
+  version = {1.0},
+  date = {2025},
+}
+
+\tbkSetBranding{
+  company = {\str{company.name}},
+  website = {\str{company.website}},
+  slogan = {\str{company.slogan}},
+}
+
+% Set header style
+\tbkSetHeaders{
+  header-left = {\small Asclepius \str{doc.title}},
+  header-center = {},
+  header-right = {\small\thepage},
+  footer-left = {\small A99 EA-EN-A04-A002},
+  footer-center = {},
+  footer-right = {\small \str{company.name}},
+  header-rule = 0.4pt,
+  footer-rule = 0.4pt,
+}
+
+\begin{document}
+
+%% ============================================================================
+%% TITLE PAGE
+%% ============================================================================
+
+\tbkTitlePage{
+  title = {\str{doc.title}},
+  subtitle = {\str{doc.subtitle}},
+  tagline = {\str{doc.tagline}},
+}
+
+%% ============================================================================
+%% TABLE OF CONTENTS
+%% ============================================================================
+
+\tbkTableOfContents[
+  title = {\str{doc.toc_title}},
+  depth = 4,
+]
+
+%% ============================================================================
+%% CHAPTER 1: SETUP AND START
+%% ============================================================================
+
+\tbkChapter{\str{ch.setup}}
+
+\tbkDanger{\str{call.danger_read}}
+
+\str{txt.intro}
+
+\tbkInfo{\str{call.info_questions}}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.basic_accessories}}
+
+\str{txt.accessories_intro}
+
+\begin{tbkList}[bullet=check]
+  \item \str{txt.accessory_host}
+  \item \str{txt.accessory_screen}
+  \item \str{txt.accessory_power}
+\end{tbkList}
+
+\str{txt.orientation_intro}
+
+\begin{tbkList}[bullet=arrow]
+  \item \textbf{\str{txt.orientation_horizontal}}
+  \item \textbf{\str{txt.orientation_vertical}}
+\end{tbkList}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.control_panel}}
+
+\str{txt.control_intro}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.console_operation}}
+
+\begin{tbkOperationTable}[
+  caption = {\str{tbl.console_buttons}},
+  label = tbl:console-buttons,
+]
+  \tbkOp{\tbkIcon{power}}{\str{op.power}}
+  \tbkOp{\tbkIcon{play} \tbkIcon{pause} \tbkIcon{stop}}{\str{op.media}}
+  \tbkOp{\tbkIcon{usb}}{\str{op.usb}}
+  \tbkOp{\tbkIcon{display}}{\str{op.cms}}
+  \tbkOp{\tbkIcon{hdmi}}{\str{op.hdmi}}
+  \tbkOp{\tbkIcon{format}}{\str{op.resolution}}
+  \tbkOp{\tbkIcon{home}}{\str{op.home}}
+  \tbkOp{\tbkIcon{settings}}{\str{op.settings}}
+  \tbkOp{\tbkIcon{info}}{\str{op.info}}
+  \tbkOp{\tbkIcon{menu}}{\str{op.menu}}
+  \tbkOp{\tbkIcon{arrow-up} \tbkIcon{arrow-down} \tbkIcon{arrow-left} \tbkIcon{arrow-right}}{\str{op.navigation}}
+  \tbkOp{\tbkIcon{check}}{\str{op.confirm}}
+\end{tbkOperationTable}
+
+\begin{tbkTable}[caption={\str{tbl.additional_console}}]
+  \tbkRow{\textbf{+/--}}{\str{op.volume}}
+  \tbkRow{\textbf{Splice}}{\str{op.fullscreen}}
+  \tbkRow{\textbf{Divide}}{\str{op.singlescreen}}
+  \tbkRow{\tbkIcon{arrow-left}}{\str{op.return}}
+  \tbkRow{\tbkIcon{mute}}{\str{op.mute}}
+\end{tbkTable}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.start}}
+
+\str{txt.start_intro}
+
+\begin{tbkSteps}[prefix=Step]
+  \item \str{txt.step_connect}
+  \item \str{txt.step_turnon}
+  \item \str{txt.step_wait}
+\end{tbkSteps}
+
+\tbkNotice{\str{call.notice_power}}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.main_menu}}
+
+\tbkSubsection{\str{sub.internet}}
+
+\textbf{Ethernet Connection:}
+
+Connect the Asclepius to the Ethernet interface (10/100/1000 Base-T) using a
+standard network cable.
+
+\textbf{WiFi Connection:}
+
+\begin{tbkSteps}
+  \item Click the WiFi icon \tbkIcon{wifi} on the main menu screen.
+  \item Select a WiFi name you want to connect. If the name of the WiFi
+        you want to connect does not appear automatically, click the
+        refresh button \tbkIcon{refresh} until it appears.
+  \item After clicking the keyboard icon, touch the password input field
+        to enter the WiFi password.
+  \item After entering the password, click the Connect icon.
+  \item After the connection is completed, click refresh again until the
+        WiFi name selected by the user appears in the current network field.
+\end{tbkSteps}
+
+\tbkCaution{\str{call.caution_wifi}}
+
+\tbkSubsection{\str{sub.language}}
+
+Change the language of the software through the settings menu. Multiple languages
+are supported for international users.
+
+\tbkSubsection{\str{sub.screen}}
+
+\tbkSubsubsection{\str{subsub.screen_sync}}
+
+\begin{tbkSteps}
+  \item Connect the HDMI cable to the HDMI port of the multi-touch digital
+        image dissection table.
+  \item Press the screen synchronization button on the main screen to
+        synchronize the screen to the external monitor.
+  \item If the sharing screen is a touch screen, plug one end of the USB
+        cable into the USB socket of the dissection table, and the other
+        end into the USB socket of the sharing screen.
+\end{tbkSteps}
+
+\tbkSubsubsection{\str{subsub.screen_flip_vh}}
+
+The screen can be flipped vertically or horizontally to match the table orientation.
+
+\tbkSubsubsection{\str{subsub.screen_flip_h}}
+
+Horizontal screen flip is convenient for teachers to teach in various positions
+around the table.
+
+\tbkSubsection{\str{sub.online_update}}
+
+If the Asclepius table is connected to the internet, every time the dissection
+table is started, it will automatically detect whether there is a newer version
+available.
+
+\tbkWarning{\str{call.warning_update}}
+
+\tbkSubsection{\str{sub.tech_support}}
+
+If troubleshooting steps cannot resolve your issue, please contact us.
+We will use the remote support function to provide online assistance.
+
+\tbkSubsection{\str{sub.equipment_info}}
+
+Press the information button \tbkIcon{info} to display detailed information about
+the device, including model number, software version, and system specifications.
+
+\tbkTip{\str{call.tip_password}}
+
+\tbkSubsection{\str{sub.shutdown}}
+
+\begin{tbkSteps}
+  \item Press the shutdown button on the main interface of the software.
+  \item Confirm to turn off.
+  \item Wait for the screen of the multi-touch digital image dissection table
+        to be completely dark.
+  \item Wait until the sound of the main unit has stopped.
+  \item Switch the power switch to 0.
+  \item Put the dust cover back on the screen to protect it from getting dirty.
+\end{tbkSteps}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.lifting}}
+
+\tbkDanger{\str{call.danger_beep}}
+
+\tbkWarning{\str{call.warning_rotation}}
+
+\begin{tbkCallout}[type=notice, title=Safety Protection Mechanism]
+  \str{call.notice_safety}
+\end{tbkCallout}
+
+\tbkCaution{\str{call.caution_lifting}}
+
+\tbkNotice{\str{call.notice_estop}}
+
+\tbkDanger{\str{call.danger_carry}}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.precautions}}
+
+\tbkWarning{\str{call.warning_warranty}}
+
+\tbkSubsection{\str{sub.power_precautions}}
+
+\begin{tbkWarningList}
+  \item Please fully insert the power plug into the power socket.
+  \item Do not damage the power cord (This may result in fire, electric shock, etc.).
+  \item Do not touch the power plug and power cord when your hands are wet.
+\end{tbkWarningList}
+
+\tbkSubsection{\str{sub.cleaning}}
+
+\begin{tbkCallout}[type=caution]
+  \str{call.caution_clean}
+\end{tbkCallout}
+
+%% ============================================================================
+%% CHAPTER 2: DEVICE INFORMATION
+%% ============================================================================
+
+\tbkChapter{\str{ch.device_info}}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.specification}}
+
+\begin{tbkSpecTable}[
+  caption = {\str{tbl.specifications}},
+  label = tbl:specifications,
+  key-style = bold,
+]
+  \tbkSpec{\str{spec.product_name}}{Asclepius}
+  \tbkSpec{\str{spec.model}}{TBK-99 EA}
+  \tbkSpec{\str{spec.size}}{99-inch}
+  \tbkSpec{\str{spec.touch_module}}{Optical touch / Multi-touch}
+  \tbkSpec{\str{spec.dim_horizontal}}{L 253.3cm × W 98.4cm × H 90.9cm}
+  \tbkSpec{\str{spec.dim_vertical}}{L 174.5cm × W 98.4cm × H 259.8cm}
+  \tbkSpec{\str{spec.weight}}{360 kg}
+  \tbkSpec{\str{spec.contrast}}{3500:1}
+  \tbkSpec{\str{spec.resolution}}{3840 × 1080}
+  \tbkSpec{\str{spec.brightness}}{500 cd/m²}
+  \tbkSpec{\str{spec.bezel}}{Bezel to bezel 3.5mm (±5\% error allowed)}
+  \tbkSpec{\str{spec.glass}}{5mm}
+  \tbkSpec{\str{spec.touch_method}}{Stylus or Finger}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={\str{tbl.io_specs}}]
+  \tbkSpec{\str{spec.signal_in}}{USB×4, CD Rom×1, RJ45×1}
+  \tbkSpec{\str{spec.signal_out}}{HDMI×2}
+  \tbkSpec{\str{spec.power}}{Input: 100V\textasciitilde240V AC, 50/60Hz, 8A}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={\str{tbl.env_specs}}]
+  \tbkSpec{\str{spec.op_temp}}{0--40°C}
+  \tbkSpec{\str{spec.op_humidity}}{30\%--80\% (non-condensing)}
+  \tbkSpec{\str{spec.st_temp}}{0--60°C}
+  \tbkSpec{\str{spec.st_humidity}}{20\%--90\% (non-condensing)}
+\end{tbkSpecTable}
+
+\begin{tbkSpecTable}[caption={\str{tbl.computer_specs}}]
+  \tbkSpec{\str{spec.cpu}}{Intel(R) Core i9}
+  \tbkSpec{\str{spec.ram}}{32 GB}
+  \tbkSpec{\str{spec.hdd}}{8 TB}
+  \tbkSpec{\str{spec.ssd}}{2 TB}
+  \tbkSpec{\str{spec.system}}{Windows 11}
+  \tbkSpec{\str{spec.software}}{ANATOMY, RADIOLOGY, HISTOPATHOLOGY ATLAS, CTRENDER, EMBRYOLOGY, ANIMAL ANATOMY}
+  \tbkSpec{\str{spec.year}}{2025}
+\end{tbkSpecTable}
+
+\tbkInfo{\str{call.info_upgrade}}
+
+%% ----------------------------------------------------------------------------
+\tbkSection{\str{sec.contact}}
+
+\begin{tbkSpecTable}[
+  caption = {\str{tbl.contact}},
+  label = tbl:contact,
+]
+  \tbkSpec{\str{spec.company}}{\str{company.name} (\str{company.short_name})}
+  \tbkSpec{\str{spec.address}}{\str{company.address}}
+  \tbkSpec{\str{spec.phone}}{\str{company.phone}}
+  \tbkSpec{\str{spec.email}}{\str{company.email}}
+  \tbkSpec{\str{spec.hours}}{\str{company.service_hours}}
+\end{tbkSpecTable}
+
+%% ============================================================================
+%% DOCUMENT FOOTER
+%% ============================================================================
+
+\clearpage
+\tbkSection*{\str{doc.info_title}}
+
+\vspace{1cm}
+
+\tbkDocumentInfo
+
+\vspace{2cm}
+
+\begin{center}
+  \tbkCopyright[2025]
+\end{center}
+
+\vspace{1cm}
+
+\tbkDisclaimer[\str{legal.disclaimer}]
+
+\end{document}

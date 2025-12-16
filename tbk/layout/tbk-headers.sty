@@ -170,7 +170,7 @@
     \tbkSetHeaders{%
       header-left={\tbkCompanyName},
       header-center={\tbkProductName},
-      header-right={\tbkVersion},
+      header-right={\tbkDocVersion},
       footer-left={\tbkDate},
       footer-center={\thepage\ of \pageref{LastPage}},
       footer-right={\tbkDocumentCode},
@@ -255,8 +255,13 @@
   \markright{#1}%
 }
 
-\renewcommand{\chaptermark}[1]{%
-  \markboth{#1}{}%
+% Only define chaptermark if chapter command exists (book/report class)
+\@ifundefined{chapter}{%
+  % Article class - no chapters, do nothing
+}{%
+  \renewcommand{\chaptermark}[1]{%
+    \markboth{#1}{}%
+  }%
 }
 
 %% ============================================================================
@@ -281,9 +286,9 @@
 %% HEADER/FOOTER ELEMENTS
 %% ============================================================================
 
-% Logo in header
-% #1 = options (height)
-\NewDocumentCommand{\tbkLogo}{O{height=1cm}}{%
+% Logo in header - use providecommand to avoid conflict with tbk-branding
+% If tbk-branding is loaded, it provides the primary \tbkLogo command
+\providecommand{\tbkLogo}[1][height=1cm]{%
   \ifdef{\tbk@branding@logo}{%
     \includegraphics[#1]{\tbk@branding@logo}%
   }{%

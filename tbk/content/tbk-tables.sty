@@ -27,15 +27,14 @@
 %% TABLE COLORS
 %% ============================================================================
 
-% Define table colors (using colors from tbk-colors if available)
-\@ifpackageloaded{tbk-colors}{%
-  % Use predefined colors
-}{%
-  \definecolor{tbk@table@header}{RGB}{60, 60, 60}
-  \definecolor{tbk@table@headertext}{RGB}{255, 255, 255}
-  \definecolor{tbk@table@rowalt}{RGB}{248, 248, 248}
-  \definecolor{tbk@table@border}{RGB}{180, 180, 180}
-}
+% Always define table colors (xcolor required for \definecolor)
+\RequirePackage{xcolor}
+
+% Define table colors unconditionally
+\definecolor{tbk@table@header}{RGB}{60, 60, 60}
+\definecolor{tbk@table@headertext}{RGB}{255, 255, 255}
+\definecolor{tbk@table@rowalt}{RGB}{248, 248, 248}
+\definecolor{tbk@table@border}{RGB}{180, 180, 180}
 
 %% ============================================================================
 %% TABLE CONFIGURATION KEYS

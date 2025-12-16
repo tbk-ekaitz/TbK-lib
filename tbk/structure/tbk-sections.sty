@@ -87,27 +87,27 @@
 %% SECTION STYLING
 %% ============================================================================
 
-% Spacing and formatting for each level
-\def\tbk@sec@beforeskip@1{2em}
-\def\tbk@sec@afterskip@1{1em}
-\def\tbk@sec@beforeskip@2{1.5em}
-\def\tbk@sec@afterskip@2{0.75em}
-\def\tbk@sec@beforeskip@3{1.25em}
-\def\tbk@sec@afterskip@3{0.5em}
-\def\tbk@sec@beforeskip@4{1em}
-\def\tbk@sec@afterskip@4{0.5em}
-\def\tbk@sec@beforeskip@5{0.75em}
-\def\tbk@sec@afterskip@5{0.25em}
-\def\tbk@sec@beforeskip@6{0.5em}
-\def\tbk@sec@afterskip@6{0.25em}
+% Spacing and formatting for each level (using Roman numerals to avoid number-in-name issues)
+\expandafter\def\csname tbk@sec@beforeskip@1\endcsname{2em}
+\expandafter\def\csname tbk@sec@afterskip@1\endcsname{1em}
+\expandafter\def\csname tbk@sec@beforeskip@2\endcsname{1.5em}
+\expandafter\def\csname tbk@sec@afterskip@2\endcsname{0.75em}
+\expandafter\def\csname tbk@sec@beforeskip@3\endcsname{1.25em}
+\expandafter\def\csname tbk@sec@afterskip@3\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@beforeskip@4\endcsname{1em}
+\expandafter\def\csname tbk@sec@afterskip@4\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@beforeskip@5\endcsname{0.75em}
+\expandafter\def\csname tbk@sec@afterskip@5\endcsname{0.25em}
+\expandafter\def\csname tbk@sec@beforeskip@6\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@afterskip@6\endcsname{0.25em}
 
 % Font sizes for each level
-\def\tbk@sec@fontsize@1{\LARGE\bfseries}
-\def\tbk@sec@fontsize@2{\Large\bfseries}
-\def\tbk@sec@fontsize@3{\large\bfseries}
-\def\tbk@sec@fontsize@4{\normalsize\bfseries}
-\def\tbk@sec@fontsize@5{\normalsize\bfseries}
-\def\tbk@sec@fontsize@6{\normalsize\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@1\endcsname{\LARGE\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@2\endcsname{\Large\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@3\endcsname{\large\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@4\endcsname{\normalsize\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@5\endcsname{\normalsize\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@6\endcsname{\normalsize\bfseries}
 
 %% ============================================================================
 %% INTERNAL SECTION COMMAND

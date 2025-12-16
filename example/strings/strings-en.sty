@@ -1,0 +1,275 @@
+%% strings-en.sty
+%% TbK Library - English Strings for Asclepius User Guide
+%% Generated from en.json - Do not edit directly
+%%
+%% Usage: \usepackage{strings/strings-en}
+%% Then use \str{key} to access strings
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{strings/strings-en}[2025/01/01 v1.0 English Strings]
+
+\RequirePackage{xparse}
+
+%% ============================================================================
+%% STRING ACCESS COMMAND
+%% ============================================================================
+
+% Access a string by key
+\NewDocumentCommand{\str}{m}{%
+  \csname str@#1\endcsname
+}
+
+% Check if string exists
+\NewDocumentCommand{\strIfExists}{mmm}{%
+  \ifcsname str@#1\endcsname#2\else#3\fi
+}
+
+%% ============================================================================
+%% DOCUMENT METADATA
+%% ============================================================================
+
+\expandafter\newcommand\csname str@doc.title\endcsname{TBK-99 EA}
+\expandafter\newcommand\csname str@doc.subtitle\endcsname{User Guide}
+\expandafter\newcommand\csname str@doc.tagline\endcsname{Virtual Electronic Anatomy Table for Education}
+\expandafter\newcommand\csname str@doc.toc_title\endcsname{Contents}
+\expandafter\newcommand\csname str@doc.info_title\endcsname{Document Information}
+
+%% ============================================================================
+%% COMPANY INFORMATION
+%% ============================================================================
+
+\expandafter\newcommand\csname str@company.name\endcsname{Taiwan Main Orthopaedic Biotechnology Co., Ltd.}
+\expandafter\newcommand\csname str@company.website\endcsname{www.surglasses.com}
+\expandafter\newcommand\csname str@company.slogan\endcsname{Innovation in Medical Education Technology}
+\expandafter\newcommand\csname str@company.short_name\endcsname{Surglasses}
+\expandafter\newcommand\csname str@company.address\endcsname{2F, No. 41, Keya Rd., Daya Dist., Taichung City, Taiwan}
+\expandafter\newcommand\csname str@company.phone\endcsname{(+886) 4-2565-2818}
+\expandafter\newcommand\csname str@company.email\endcsname{support@surglasses.com}
+\expandafter\newcommand\csname str@company.service_hours\endcsname{Monday to Friday, 09:00--18:00}
+
+%% ============================================================================
+%% CHAPTERS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@ch.setup\endcsname{Setup And Start}
+\expandafter\newcommand\csname str@ch.device_info\endcsname{Device Information}
+
+%% ============================================================================
+%% SECTIONS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@sec.basic_accessories\endcsname{Basic Accessories}
+\expandafter\newcommand\csname str@sec.control_panel\endcsname{Control Panel}
+\expandafter\newcommand\csname str@sec.console_operation\endcsname{Console Operation}
+\expandafter\newcommand\csname str@sec.start\endcsname{Start}
+\expandafter\newcommand\csname str@sec.main_menu\endcsname{Main Menu Setting}
+\expandafter\newcommand\csname str@sec.toolbox\endcsname{Toolbox}
+\expandafter\newcommand\csname str@sec.cd_update\endcsname{CD Software Update}
+\expandafter\newcommand\csname str@sec.moving\endcsname{Moving And Positioning Setting}
+\expandafter\newcommand\csname str@sec.lifting\endcsname{Lifting Control}
+\expandafter\newcommand\csname str@sec.precautions\endcsname{Precautions}
+\expandafter\newcommand\csname str@sec.specification\endcsname{Specification}
+\expandafter\newcommand\csname str@sec.fcc\endcsname{FCC Supplier's Declaration of Conformity}
+\expandafter\newcommand\csname str@sec.troubleshooting\endcsname{Troubleshooting}
+\expandafter\newcommand\csname str@sec.warranty\endcsname{Product Warranty Statement}
+\expandafter\newcommand\csname str@sec.contact\endcsname{Contact Information}
+
+%% ============================================================================
+%% SUBSECTIONS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@sub.internet\endcsname{Connecting the Internet (WI-FI or Ethernet)}
+\expandafter\newcommand\csname str@sub.language\endcsname{Change Language}
+\expandafter\newcommand\csname str@sub.screen\endcsname{Screen Setting}
+\expandafter\newcommand\csname str@sub.online_update\endcsname{Online Update}
+\expandafter\newcommand\csname str@sub.tech_support\endcsname{Technical Support}
+\expandafter\newcommand\csname str@sub.equipment_info\endcsname{Equipment Information}
+\expandafter\newcommand\csname str@sub.shutdown\endcsname{Shutdown}
+\expandafter\newcommand\csname str@sub.toolbox_mode\endcsname{Toolbox Mode Control}
+\expandafter\newcommand\csname str@sub.brush\endcsname{Brush Setting}
+\expandafter\newcommand\csname str@sub.multimedia\endcsname{Multimedia Player}
+\expandafter\newcommand\csname str@sub.screenshot\endcsname{Screenshot}
+\expandafter\newcommand\csname str@sub.recording\endcsname{Screen Recording}
+\expandafter\newcommand\csname str@sub.unable_boot\endcsname{Unable To Boot Normally}
+\expandafter\newcommand\csname str@sub.unable_operate\endcsname{Unable To Operate Normally}
+\expandafter\newcommand\csname str@sub.warranty_coverage\endcsname{Warranty Coverage}
+\expandafter\newcommand\csname str@sub.exclusions\endcsname{Exclusions from Warranty Coverage}
+\expandafter\newcommand\csname str@sub.supplementary\endcsname{Supplementary Warranty Terms}
+\expandafter\newcommand\csname str@sub.additional_notes\endcsname{Additional Notes}
+\expandafter\newcommand\csname str@sub.power_precautions\endcsname{Precautions For Power Plug And Power Cord}
+\expandafter\newcommand\csname str@sub.transport\endcsname{Precautions For Transport And Installation}
+\expandafter\newcommand\csname str@sub.info_safety\endcsname{Precautions For Information Safety}
+\expandafter\newcommand\csname str@sub.cleaning\endcsname{Cleaning Consideration}
+
+%% ============================================================================
+%% SUBSUBSECTIONS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@subsub.screen_sync\endcsname{Connecting Screen Synchronization}
+\expandafter\newcommand\csname str@subsub.screen_flip_vh\endcsname{Vertically or Horizontally Screen Flip}
+\expandafter\newcommand\csname str@subsub.screen_flip_h\endcsname{Horizontal Screen Flip}
+\expandafter\newcommand\csname str@subsub.brush\endcsname{Brush}
+\expandafter\newcommand\csname str@subsub.color\endcsname{Color Setting}
+\expandafter\newcommand\csname str@subsub.pause_brush\endcsname{Pause the Brush Function}
+\expandafter\newcommand\csname str@subsub.erase_brush\endcsname{Erase Brush}
+\expandafter\newcommand\csname str@subsub.clear_all\endcsname{Clear All Handwriting}
+\expandafter\newcommand\csname str@subsub.brush_adjust\endcsname{Brush Adjustment}
+\expandafter\newcommand\csname str@subsub.warranty_period\endcsname{Warranty Period}
+\expandafter\newcommand\csname str@subsub.warranty_details\endcsname{Warranty Details}
+\expandafter\newcommand\csname str@subsub.damage_human\endcsname{Damage Due to Human Factors or Improper Operation}
+\expandafter\newcommand\csname str@subsub.external_forces\endcsname{External Forces and Environmental Conditions}
+\expandafter\newcommand\csname str@subsub.non_genuine\endcsname{Issues Caused by Non-Genuine Parts or Accessories}
+\expandafter\newcommand\csname str@subsub.unauth_software\endcsname{Installation or Use of Unauthorized Software}
+\expandafter\newcommand\csname str@subsub.expired\endcsname{Expired Warranty}
+
+%% ============================================================================
+%% CALLOUT MESSAGES (DANGER, WARNING, NOTICE, etc.)
+%% ============================================================================
+
+\expandafter\newcommand\csname str@call.danger_read\endcsname{Please carefully read all the installation instructions before use of the multi-touch digital image dissection table for the first time.}
+
+\expandafter\newcommand\csname str@call.info_questions\endcsname{If you have any questions, please refer to the instruction documentation of the multi-touch digital image dissection table. If further instruction or clarification is needed, please contact us.}
+
+\expandafter\newcommand\csname str@call.notice_power\endcsname{Please ensure the power supply matches local voltage standards before connecting.}
+
+\expandafter\newcommand\csname str@call.caution_wifi\endcsname{WiFi name must be composed of English letters. Chinese names will not be displayed.}
+
+\expandafter\newcommand\csname str@call.warning_update\endcsname{The installation process will take some time. During this process, please do not perform any operations on the dissection table, and do not turn off the power to avoid system damage.}
+
+\expandafter\newcommand\csname str@call.tip_password\endcsname{The password location can be found on the product label on the device (DXXX-XXXX format).}
+
+\expandafter\newcommand\csname str@call.notice_brush\endcsname{When the brush is operated, the software will be locked and the user will not be able to use other functions in the software.}
+
+\expandafter\newcommand\csname str@call.tip_fullscreen\endcsname{Double click on the screen or press Esc to exit full screen mode.}
+
+\expandafter\newcommand\csname str@call.info_surge\endcsname{Taking into consideration safety, the table also comes with surge protection. In case the power is cut off during movement from horizontal to vertical, the table stays at its own place and neither goes up nor down.}
+
+\expandafter\newcommand\csname str@call.danger_beep\endcsname{When the warning sound ``beep'' is heard, please stay away from the multi-touch digital image dissection table. Wait until the process is complete before approaching.}
+
+\expandafter\newcommand\csname str@call.warning_rotation\endcsname{Do not continuously perform the hardware rotation. Each time the operation to switch the upright/flat function must wait for at least \textbf{5 minutes} before performing the hardware rotation again.}
+
+\expandafter\newcommand\csname str@call.notice_safety\endcsname{Due to the safety mechanism, if the machine is operated continuously for more than 3 times in a short period of time (within 5 minutes), the dissection table will enter the ``safety protection mechanism'' and be locked for \textbf{18 minutes}. During this period, the vertical or horizontal function cannot be executed. Please wait patiently. After the mechanism is unlocked, the machine can resume rotating to the vertical or horizontal function.}
+
+\expandafter\newcommand\csname str@call.caution_lifting\endcsname{The lifting mechanism is a shared system. When there is more than one multi-touch digital image dissection table in the same space, operating the lifting mechanism may cause all tables to perform the lifting mechanism simultaneously.}
+
+\expandafter\newcommand\csname str@call.notice_estop\endcsname{After the emergency stop latch is pulled out, reinsert it after the emergency is removed. The upright/lying down function operation will then resume.}
+
+\expandafter\newcommand\csname str@call.danger_carry\endcsname{\textbf{Do not carry the multi-touch digital imaging dissection table during the switch between upright and flat functions to avoid danger.} \textbf{For Safety Reason: Do not leave the table in inclined position.}}
+
+\expandafter\newcommand\csname str@call.warning_warranty\endcsname{System damage caused by not following these precautions, abnormal behavior, or human factors will \textbf{not} be covered under warranty.}
+
+\expandafter\newcommand\csname str@call.caution_clean\endcsname{Please do not use volatile materials, commercially available cleaners, or water to rinse and clean. This may cause damage to the screen glass, panel, or hardware circuit board. Please use the special wiping cloth for the screen to dry wipe. When not in use, please cover the table with the special dust jacket provided.}
+
+\expandafter\newcommand\csname str@call.info_upgrade\endcsname{Taiwan Main Orthopaedic Biotechnology Co., Ltd. will upgrade the system for better performance at our own discretion.}
+
+\expandafter\newcommand\csname str@call.warning_env\endcsname{Product damage resulting from use outside these conditions is not covered under warranty.}
+
+%% ============================================================================
+%% BODY TEXT CONTENT
+%% ============================================================================
+
+\expandafter\newcommand\csname str@txt.intro\endcsname{This product includes instructions for the hardware computer equipment and software program system. Please read this manual carefully before using this product and follow the system start-up mode to enable and operate the multi-touch digital image dissection table properly to avoid personnel injury and other damages caused by improper usage.}
+
+\expandafter\newcommand\csname str@txt.accessories_intro\endcsname{Product accessories include:}
+
+\expandafter\newcommand\csname str@txt.accessory_host\endcsname{One host computer}
+\expandafter\newcommand\csname str@txt.accessory_screen\endcsname{One 99-inch touch screen display}
+\expandafter\newcommand\csname str@txt.accessory_power\endcsname{One AC power cord}
+
+\expandafter\newcommand\csname str@txt.orientation_intro\endcsname{The display can be configured in two orientations:}
+\expandafter\newcommand\csname str@txt.orientation_horizontal\endcsname{Horizontal: Standard table position for dissection work}
+\expandafter\newcommand\csname str@txt.orientation_vertical\endcsname{Vertical: Upright position for presentations and lectures}
+
+\expandafter\newcommand\csname str@txt.control_intro\endcsname{The control panel provides access to all device functions through physical buttons and a console interface.}
+
+\expandafter\newcommand\csname str@txt.start_intro\endcsname{Configure the hardware equipment and power cord to start operation of the multi-touch digital image dissection table.}
+
+\expandafter\newcommand\csname str@txt.step_connect\endcsname{Connect the console of the Asclepius to the AC power cord. Plugs may vary based on your country.}
+\expandafter\newcommand\csname str@txt.step_turnon\endcsname{Turn on the Asclepius. At this time you will hear the sound of the host running.}
+\expandafter\newcommand\csname str@txt.step_wait\endcsname{Wait for the system to initialize and display the main menu.}
+
+%% ============================================================================
+%% TABLE CAPTIONS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@tbl.console_buttons\endcsname{Control Panel Button Functions}
+\expandafter\newcommand\csname str@tbl.additional_console\endcsname{Additional Console Functions}
+\expandafter\newcommand\csname str@tbl.media_formats\endcsname{Supported Media Formats}
+\expandafter\newcommand\csname str@tbl.media_player\endcsname{Multimedia Player Controls}
+\expandafter\newcommand\csname str@tbl.shortcuts\endcsname{Emergency Keyboard Shortcuts}
+\expandafter\newcommand\csname str@tbl.specifications\endcsname{TBK-99 EA Product Specifications}
+\expandafter\newcommand\csname str@tbl.io_specs\endcsname{Input/Output Specifications}
+\expandafter\newcommand\csname str@tbl.env_specs\endcsname{Environmental Specifications}
+\expandafter\newcommand\csname str@tbl.computer_specs\endcsname{Computer Specifications}
+\expandafter\newcommand\csname str@tbl.operating_env\endcsname{Recommended Operating Environment}
+\expandafter\newcommand\csname str@tbl.contact\endcsname{Taiwan Main Orthopaedic Biotechnology Co., Ltd.}
+
+%% ============================================================================
+%% OPERATION DESCRIPTIONS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@op.power\endcsname{Power On/Off}
+\expandafter\newcommand\csname str@op.media\endcsname{Media controls}
+\expandafter\newcommand\csname str@op.usb\endcsname{Switch to USB file}
+\expandafter\newcommand\csname str@op.cms\endcsname{Switch Source to CMS}
+\expandafter\newcommand\csname str@op.hdmi\endcsname{Switch Source to HDMI}
+\expandafter\newcommand\csname str@op.resolution\endcsname{Resolution Setting}
+\expandafter\newcommand\csname str@op.home\endcsname{Go to the Home Page}
+\expandafter\newcommand\csname str@op.settings\endcsname{Settings}
+\expandafter\newcommand\csname str@op.info\endcsname{Information}
+\expandafter\newcommand\csname str@op.menu\endcsname{Open the External Menu}
+\expandafter\newcommand\csname str@op.navigation\endcsname{Navigation buttons}
+\expandafter\newcommand\csname str@op.confirm\endcsname{Confirm/OK}
+\expandafter\newcommand\csname str@op.volume\endcsname{Adjust the Sound Volume}
+\expandafter\newcommand\csname str@op.fullscreen\endcsname{Full Screen display}
+\expandafter\newcommand\csname str@op.singlescreen\endcsname{Single screen display}
+\expandafter\newcommand\csname str@op.return\endcsname{Return to Previous/Exit}
+\expandafter\newcommand\csname str@op.mute\endcsname{Mute/Unmute}
+
+%% ============================================================================
+%% SPECIFICATION LABELS
+%% ============================================================================
+
+\expandafter\newcommand\csname str@spec.product_name\endcsname{Product Name}
+\expandafter\newcommand\csname str@spec.model\endcsname{Model}
+\expandafter\newcommand\csname str@spec.size\endcsname{Size}
+\expandafter\newcommand\csname str@spec.touch_module\endcsname{Touch Module}
+\expandafter\newcommand\csname str@spec.dim_horizontal\endcsname{Overall Dimension (Horizontal)}
+\expandafter\newcommand\csname str@spec.dim_vertical\endcsname{Overall Dimension (Vertical)}
+\expandafter\newcommand\csname str@spec.weight\endcsname{Net Weight}
+\expandafter\newcommand\csname str@spec.contrast\endcsname{Max Contrast Ratio}
+\expandafter\newcommand\csname str@spec.resolution\endcsname{Resolution}
+\expandafter\newcommand\csname str@spec.brightness\endcsname{Max Brightness}
+\expandafter\newcommand\csname str@spec.bezel\endcsname{Screen Bezel}
+\expandafter\newcommand\csname str@spec.glass\endcsname{Tempered Glass}
+\expandafter\newcommand\csname str@spec.touch_method\endcsname{Touch Method}
+\expandafter\newcommand\csname str@spec.signal_in\endcsname{Signal Input}
+\expandafter\newcommand\csname str@spec.signal_out\endcsname{Signal Output}
+\expandafter\newcommand\csname str@spec.power\endcsname{Power Supply}
+\expandafter\newcommand\csname str@spec.op_temp\endcsname{Operating Temperature}
+\expandafter\newcommand\csname str@spec.op_humidity\endcsname{Operating Humidity}
+\expandafter\newcommand\csname str@spec.st_temp\endcsname{Storage Temperature}
+\expandafter\newcommand\csname str@spec.st_humidity\endcsname{Storage Humidity}
+\expandafter\newcommand\csname str@spec.cpu\endcsname{CPU}
+\expandafter\newcommand\csname str@spec.ram\endcsname{RAM}
+\expandafter\newcommand\csname str@spec.hdd\endcsname{HDD}
+\expandafter\newcommand\csname str@spec.ssd\endcsname{SSD}
+\expandafter\newcommand\csname str@spec.system\endcsname{System}
+\expandafter\newcommand\csname str@spec.software\endcsname{Software}
+\expandafter\newcommand\csname str@spec.year\endcsname{Year of Manufacture}
+\expandafter\newcommand\csname str@spec.image_formats\endcsname{Image Formats}
+\expandafter\newcommand\csname str@spec.video_formats\endcsname{Video Formats}
+\expandafter\newcommand\csname str@spec.company\endcsname{Company Name}
+\expandafter\newcommand\csname str@spec.address\endcsname{Address}
+\expandafter\newcommand\csname str@spec.phone\endcsname{Phone}
+\expandafter\newcommand\csname str@spec.email\endcsname{Email}
+\expandafter\newcommand\csname str@spec.hours\endcsname{Service Hours}
+
+%% ============================================================================
+%% LEGAL TEXT
+%% ============================================================================
+
+\expandafter\newcommand\csname str@legal.disclaimer\endcsname{The information contained in this document is the property of Taiwan Main Orthopaedic Biotechnology Co., Ltd. and may not be copied, reproduced, or distributed without prior written consent. All specifications are subject to change without notice.}
+
+\endinput
