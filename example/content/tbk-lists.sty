@@ -1,0 +1,366 @@
+%% tbk-lists.sty
+%% TbK Library - Lists Module
+%% Customizable lists with various bullet styles
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-lists}[2025/01/01 v1.0 TbK Lists]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{enumitem}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{amssymb}
+\RequirePackage{pifont}
+
+%% ============================================================================
+%% LIST CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/list/.is family,
+  /tbk/list/.cd,
+  % Bullet style
+  bullet/.is choice,
+  bullet/disc/.code={\def\tbk@list@bullet{$\bullet$}},
+  bullet/circle/.code={\def\tbk@list@bullet{$\circ$}},
+  bullet/square/.code={\def\tbk@list@bullet{$\blacksquare$}},
+  bullet/arrow/.code={\def\tbk@list@bullet{$\rightarrow$}},
+  bullet/check/.code={\def\tbk@list@bullet{\ding{51}}},
+  bullet/star/.code={\def\tbk@list@bullet{$\star$}},
+  bullet/dash/.code={\def\tbk@list@bullet{--}},
+  bullet/none/.code={\def\tbk@list@bullet{}},
+  bullet/.default=disc,
+  % Indentation
+  indent/.store in=\tbk@list@indent,
+  indent/.default={1.5em},
+  % Item spacing
+  spacing/.store in=\tbk@list@spacing,
+  spacing/.default={0.5em},
+  % Label width
+  label-width/.store in=\tbk@list@labelwidth,
+  label-width/.default={1em},
+}
+
+% Default values
+\def\tbk@list@bullet{$\bullet$}
+\def\tbk@list@indent{1.5em}
+\def\tbk@list@spacing{0.5em}
+\def\tbk@list@labelwidth{1em}
+
+% Reset defaults
+\newcommand{\tbk@list@reset}{%
+  \def\tbk@list@bullet{$\bullet$}%
+  \def\tbk@list@indent{1.5em}%
+  \def\tbk@list@spacing{0.5em}%
+  \def\tbk@list@labelwidth{1em}%
+}
+
+%% ============================================================================
+%% MAIN LIST ENVIRONMENT
+%% ============================================================================
+
+% Custom bullet list
+% #1 = options
+\NewDocumentEnvironment{tbkList}{O{}}{%
+  \pgfkeys{/tbk/list/.cd, #1}%
+  \begin{itemize}[%
+    label=\tbk@list@bullet,
+    leftmargin=\tbk@list@indent,
+    itemsep=\tbk@list@spacing,
+    parsep=0pt,
+    topsep=0.5em,
+  ]%
+}{%
+  \end{itemize}%
+  \tbk@list@reset
+}
+
+%% ============================================================================
+%% NUMBERED LIST
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/numlist/.is family,
+  /tbk/numlist/.cd,
+  % Number style
+  style/.is choice,
+  style/arabic/.code={\def\tbk@numlist@style{\arabic*}},
+  style/alpha/.code={\def\tbk@numlist@style{\alph*}},
+  style/Alpha/.code={\def\tbk@numlist@style{\Alph*}},
+  style/roman/.code={\def\tbk@numlist@style{\roman*}},
+  style/Roman/.code={\def\tbk@numlist@style{\Roman*}},
+  style/.default=arabic,
+  % Suffix
+  suffix/.store in=\tbk@numlist@suffix,
+  suffix/.default={.},
+  % Prefix
+  prefix/.store in=\tbk@numlist@prefix,
+  prefix/.default={},
+}
+
+\def\tbk@numlist@style{\arabic*}
+\def\tbk@numlist@suffix{.}
+\def\tbk@numlist@prefix{}
+
+% Numbered list environment
+% #1 = options
+\NewDocumentEnvironment{tbkNumberedList}{O{}}{%
+  \pgfkeys{/tbk/numlist/.cd, #1}%
+  \begin{enumerate}[%
+    label=\tbk@numlist@prefix\tbk@numlist@style\tbk@numlist@suffix,
+    leftmargin=2em,
+    itemsep=0.5em,
+    parsep=0pt,
+    topsep=0.5em,
+  ]%
+}{%
+  \end{enumerate}%
+}
+
+%% ============================================================================
+%% STEPS LIST
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/steps/.is family,
+  /tbk/steps/.cd,
+  % Prefix word
+  prefix/.store in=\tbk@steps@prefix,
+  prefix/.default={Step},
+  % Connector
+  connector/.store in=\tbk@steps@connector,
+  connector/.default={.},
+  % Show prefix
+  show-prefix/.is if=tbk@steps@showprefix,
+  show-prefix/.default=true,
+}
+
+\def\tbk@steps@prefix{Step}
+\def\tbk@steps@connector{.}
+\newbool{tbk@steps@showprefix}
+\booltrue{tbk@steps@showprefix}
+
+% Steps list environment
+% #1 = options
+\NewDocumentEnvironment{tbkSteps}{O{}}{%
+  \pgfkeys{/tbk/steps/.cd, #1}%
+  \begin{enumerate}[%
+    label={%
+      \ifbool{tbk@steps@showprefix}{\tbk@steps@prefix~}{}%
+      \arabic*\tbk@steps@connector
+    },
+    leftmargin=4em,
+    itemsep=0.75em,
+    parsep=0pt,
+    topsep=0.5em,
+    font=\bfseries,
+  ]%
+}{%
+  \end{enumerate}%
+}
+
+%% ============================================================================
+%% CHECKLIST
+%% ============================================================================
+
+% Checkbox symbols
+\newcommand{\tbk@checkbox@unchecked}{$\square$}
+\newcommand{\tbk@checkbox@checked}{\ding{51}}
+
+% Checklist environment
+\NewDocumentEnvironment{tbkChecklist}{O{}}{%
+  \begin{itemize}[%
+    label=\tbk@checkbox@unchecked,
+    leftmargin=2em,
+    itemsep=0.5em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+% Checked item
+\newcommand{\tbkChecked}[1]{%
+  \item[\tbk@checkbox@checked] #1%
+}
+
+% Unchecked item
+\newcommand{\tbkUnchecked}[1]{%
+  \item[\tbk@checkbox@unchecked] #1%
+}
+
+%% ============================================================================
+%% WARNING LIST
+%% ============================================================================
+
+% List with warning icons
+\NewDocumentEnvironment{tbkWarningList}{O{}}{%
+  \begin{itemize}[%
+    label={\textcolor{tbk@color@warning}{$\blacktriangle$}},
+    leftmargin=2em,
+    itemsep=0.5em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+%% ============================================================================
+%% DESCRIPTION LIST
+%% ============================================================================
+
+% Description list with custom styling
+% #1 = options
+\NewDocumentEnvironment{tbkDescList}{O{}}{%
+  \begin{description}[%
+    style=nextline,
+    leftmargin=1em,
+    itemsep=0.75em,
+    font=\bfseries,
+  ]%
+}{%
+  \end{description}%
+}
+
+% Description item shorthand
+\newcommand{\tbkDesc}[2]{\item[#1] #2}
+
+%% ============================================================================
+%% INLINE LIST
+%% ============================================================================
+
+% Inline list (items on same line)
+\NewDocumentEnvironment{tbkInlineList}{O{}}{%
+  \begin{itemize*}[%
+    label=\textbullet,
+    itemjoin={{, }},
+    itemjoin*={{, and }},
+  ]%
+}{%
+  \end{itemize*}%
+}
+
+%% ============================================================================
+%% FEATURE LIST
+%% ============================================================================
+
+% Feature list (with checkmarks)
+\NewDocumentEnvironment{tbkFeatureList}{O{}}{%
+  \begin{itemize}[%
+    label={\textcolor{green!60!black}{\ding{51}}},
+    leftmargin=2em,
+    itemsep=0.5em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+%% ============================================================================
+%% PROS/CONS LIST
+%% ============================================================================
+
+% Pros list
+\NewDocumentEnvironment{tbkProsList}{O{}}{%
+  \begin{itemize}[%
+    label={\textcolor{green!60!black}{$+$}},
+    leftmargin=2em,
+    itemsep=0.3em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+% Cons list
+\NewDocumentEnvironment{tbkConsList}{O{}}{%
+  \begin{itemize}[%
+    label={\textcolor{red!70!black}{$-$}},
+    leftmargin=2em,
+    itemsep=0.3em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+%% ============================================================================
+%% NESTED LIST CONFIGURATION
+%% ============================================================================
+
+% Configure nested list bullets
+\setlist[itemize,1]{label=$\bullet$}
+\setlist[itemize,2]{label=$\circ$}
+\setlist[itemize,3]{label=$\diamond$}
+\setlist[itemize,4]{label=$\cdot$}
+
+% Configure nested numbered lists
+\setlist[enumerate,1]{label=\arabic*.}
+\setlist[enumerate,2]{label=\alph*.}
+\setlist[enumerate,3]{label=\roman*.}
+\setlist[enumerate,4]{label=\Alph*.}
+
+%% ============================================================================
+%% LIST SPACING PRESETS
+%% ============================================================================
+
+% Compact list style
+\newcommand{\tbkListCompact}{%
+  \setlist{itemsep=0.1em, parsep=0pt, topsep=0.25em}%
+}
+
+% Normal list style
+\newcommand{\tbkListNormal}{%
+  \setlist{itemsep=0.5em, parsep=0pt, topsep=0.5em}%
+}
+
+% Spacious list style
+\newcommand{\tbkListSpacious}{%
+  \setlist{itemsep=0.75em, parsep=0.25em, topsep=0.75em}%
+}
+
+%% ============================================================================
+%% QUICK LIST COMMANDS
+%% ============================================================================
+
+% Quick bullet list (one level)
+% #1 = items separated by \\
+\NewDocumentCommand{\tbkQuickList}{m}{%
+  \begin{itemize}[label=$\bullet$, leftmargin=1.5em, itemsep=0.3em, topsep=0.3em]
+    \tbk@parseitems{#1}
+  \end{itemize}
+}
+
+% Parse items separated by \\
+\ExplSyntaxOn
+\cs_new:Npn \tbk@parseitems #1 {
+  \seq_set_split:Nnn \l_tmpa_seq { \\ } { #1 }
+  \seq_map_inline:Nn \l_tmpa_seq {
+    \tl_if_blank:nF { ##1 } { \item ##1 }
+  }
+}
+\ExplSyntaxOff
+
+%% ============================================================================
+%% TODO LIST
+%% ============================================================================
+
+% Todo list environment
+\NewDocumentEnvironment{tbkTodoList}{O{}}{%
+  \begin{itemize}[%
+    label={$\square$},
+    leftmargin=2em,
+    itemsep=0.4em,
+  ]%
+}{%
+  \end{itemize}%
+}
+
+% Done item (crossed out)
+\newcommand{\tbkDone}[1]{%
+  \item[\ding{51}] \textcolor{gray}{\sout{#1}}%
+}
+
+\endinput

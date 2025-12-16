@@ -1,0 +1,328 @@
+%% tbk-typography.sty
+%% TbK Library - Typography Module
+%% Font configuration and text styling
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-typography}[2025/01/01 v1.0 TbK Typography]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{iftex}
+
+%% ============================================================================
+%% ENGINE-SPECIFIC FONT LOADING
+%% ============================================================================
+
+\ifluatex
+  \RequirePackage{fontspec}
+  \def\tbk@fontengine{fontspec}
+\else\ifxetex
+  \RequirePackage{fontspec}
+  \def\tbk@fontengine{fontspec}
+\else
+  % pdfLaTeX - use traditional font packages
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[utf8]{inputenc}
+  \def\tbk@fontengine{traditional}
+\fi\fi
+
+%% ============================================================================
+%% DEFAULT FONT FAMILIES (pdfLaTeX)
+%% ============================================================================
+
+\ifdefstring{\tbk@fontengine}{traditional}{%
+  % Sans-serif default (Helvetica-like)
+  \RequirePackage{helvet}
+  % Serif option
+  \RequirePackage{mathptmx}
+  % Monospace
+  \RequirePackage{courier}
+}{}
+
+%% ============================================================================
+%% FONT CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/typography/.is family,
+  /tbk/typography/.cd,
+  % Main font family
+  main-font/.store in=\tbk@typo@mainfont,
+  main-font/.default={},
+  % Heading font
+  heading-font/.store in=\tbk@typo@headingfont,
+  heading-font/.default={},
+  % Monospace font
+  mono-font/.store in=\tbk@typo@monofont,
+  mono-font/.default={},
+  % Base font size
+  base-size/.store in=\tbk@typo@basesize,
+  base-size/.default=11pt,
+  % Line spacing
+  line-spacing/.store in=\tbk@typo@linespacing,
+  line-spacing/.default=1.2,
+  % Paragraph spacing
+  paragraph-spacing/.store in=\tbk@typo@paraspacing,
+  paragraph-spacing/.default=0.5em,
+  % Paragraph indent
+  paragraph-indent/.store in=\tbk@typo@paraindent,
+  paragraph-indent/.default=0pt,
+}
+
+% Default values
+\def\tbk@typo@mainfont{}
+\def\tbk@typo@headingfont{}
+\def\tbk@typo@monofont{}
+\def\tbk@typo@basesize{11pt}
+\def\tbk@typo@linespacing{1.2}
+\def\tbk@typo@paraspacing{0.5em}
+\def\tbk@typo@paraindent{0pt}
+
+%% ============================================================================
+%% FONT SETUP COMMAND
+%% ============================================================================
+
+% Configure typography
+% #1 = key-value options
+\NewDocumentCommand{\tbkSetFonts}{m}{%
+  \pgfkeys{/tbk/typography/.cd, #1}%
+  \tbk@applytypography
+}
+
+% Apply typography settings
+\newcommand{\tbk@applytypography}{%
+  % Apply line spacing
+  \linespread{\tbk@typo@linespacing}%
+  % Apply paragraph settings
+  \setlength{\parindent}{\tbk@typo@paraindent}%
+  \setlength{\parskip}{\tbk@typo@paraspacing}%
+  % Apply fonts (fontspec only)
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    \ifdefempty{\tbk@typo@mainfont}{}{%
+      \setmainfont{\tbk@typo@mainfont}%
+    }%
+    \ifdefempty{\tbk@typo@headingfont}{}{%
+      \newfontfamily\tbkHeadingFont{\tbk@typo@headingfont}%
+    }%
+    \ifdefempty{\tbk@typo@monofont}{}{%
+      \setmonofont{\tbk@typo@monofont}%
+    }%
+  }{}%
+}
+
+%% ============================================================================
+%% FONT FAMILY SELECTION
+%% ============================================================================
+
+% Sans-serif family (default for technical docs)
+\newcommand{\tbkSansFamily}{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    \sffamily
+  }{%
+    \fontfamily{phv}\selectfont
+  }%
+}
+
+% Serif family
+\newcommand{\tbkSerifFamily}{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    \rmfamily
+  }{%
+    \fontfamily{ptm}\selectfont
+  }%
+}
+
+% Monospace family
+\newcommand{\tbkMonoFamily}{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    \ttfamily
+  }{%
+    \fontfamily{pcr}\selectfont
+  }%
+}
+
+%% ============================================================================
+%% TEXT SIZE COMMANDS
+%% ============================================================================
+
+% Hierarchical heading sizes
+\newcommand{\tbkHeading}[2]{%
+  \ifcase#1\relax
+    {\Huge\bfseries #2}%            % Level 0 (title)
+  \or
+    {\LARGE\bfseries #2}%           % Level 1
+  \or
+    {\Large\bfseries #2}%           % Level 2
+  \or
+    {\large\bfseries #2}%           % Level 3
+  \or
+    {\normalsize\bfseries #2}%      % Level 4
+  \or
+    {\normalsize\bfseries #2}%      % Level 5
+  \else
+    {\normalsize\bfseries #2}%      % Level 6+
+  \fi
+}
+
+% Body text
+\newcommand{\tbkBody}[1]{%
+  {\normalsize #1}%
+}
+
+% Caption text
+\newcommand{\tbkCaption}[1]{%
+  {\small #1}%
+}
+
+% Small text
+\newcommand{\tbkSmall}[1]{%
+  {\footnotesize #1}%
+}
+
+% Tiny text
+\newcommand{\tbkTiny}[1]{%
+  {\scriptsize #1}%
+}
+
+%% ============================================================================
+%% TEXT STYLE COMMANDS
+%% ============================================================================
+
+% Bold text
+\newcommand{\tbkBold}[1]{\textbf{#1}}
+
+% Italic text
+\newcommand{\tbkItalic}[1]{\textit{#1}}
+
+% Bold italic
+\newcommand{\tbkBoldItalic}[1]{\textbf{\textit{#1}}}
+
+% Emphasized text
+\newcommand{\tbkEmphasis}[1]{\emph{#1}}
+
+% Code/monospace text
+\newcommand{\tbkCode}[1]{%
+  {\tbkMonoFamily #1}%
+}
+
+% Underlined text
+\newcommand{\tbkUnderline}[1]{\underline{#1}}
+
+% Strikethrough (requires ulem or soul)
+\@ifpackageloaded{soul}{%
+  \newcommand{\tbkStrike}[1]{\st{#1}}%
+}{%
+  \@ifpackageloaded{ulem}{%
+    \newcommand{\tbkStrike}[1]{\sout{#1}}%
+  }{%
+    \newcommand{\tbkStrike}[1]{%
+      \PackageWarning{tbk-typography}{Strikethrough requires 'soul' or 'ulem' package}%
+      #1%
+    }%
+  }%
+}
+
+%% ============================================================================
+%% SPECIAL TEXT TREATMENTS
+%% ============================================================================
+
+% All caps
+\newcommand{\tbkAllCaps}[1]{\MakeUppercase{#1}}
+
+% Small caps
+\newcommand{\tbkSmallCaps}[1]{\textsc{#1}}
+
+% Superscript
+\newcommand{\tbkSuper}[1]{\textsuperscript{#1}}
+
+% Subscript
+\newcommand{\tbkSub}[1]{\textsubscript{#1}}
+
+%% ============================================================================
+%% ALIGNMENT COMMANDS
+%% ============================================================================
+
+% Centered text
+\newcommand{\tbkCenter}[1]{%
+  \begin{center}#1\end{center}%
+}
+
+% Left aligned
+\newcommand{\tbkLeft}[1]{%
+  \begin{flushleft}#1\end{flushleft}%
+}
+
+% Right aligned
+\newcommand{\tbkRight}[1]{%
+  \begin{flushright}#1\end{flushright}%
+}
+
+%% ============================================================================
+%% PARAGRAPH STYLES
+%% ============================================================================
+
+% Block quote style
+\newenvironment{tbkBlockQuote}{%
+  \begin{quote}%
+  \itshape
+}{%
+  \end{quote}%
+}
+
+% Lead paragraph (first paragraph, larger)
+\newcommand{\tbkLead}[1]{%
+  {\large #1}%
+}
+
+%% ============================================================================
+%% FONT WEIGHT UTILITIES
+%% ============================================================================
+
+% Light weight (if available)
+\newcommand{\tbkLight}[1]{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    {\fontseries{l}\selectfont #1}%
+  }{#1}%
+}
+
+% Medium weight
+\newcommand{\tbkMedium}[1]{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    {\fontseries{m}\selectfont #1}%
+  }{#1}%
+}
+
+% Semibold weight
+\newcommand{\tbkSemibold}[1]{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    {\fontseries{sb}\selectfont #1}%
+  }{\textbf{#1}}%
+}
+
+% Extra bold weight
+\newcommand{\tbkExtraBold}[1]{%
+  \ifdefstring{\tbk@fontengine}{fontspec}{%
+    {\fontseries{eb}\selectfont #1}%
+  }{\textbf{#1}}%
+}
+
+%% ============================================================================
+%% INITIALIZATION
+%% ============================================================================
+
+% Set default typography on load
+\AtEndOfPackage{%
+  % Default to sans-serif for technical documents
+  \renewcommand{\familydefault}{\sfdefault}%
+  % Apply default settings
+  \tbk@applytypography
+}
+
+\endinput

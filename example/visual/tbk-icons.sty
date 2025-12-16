@@ -1,0 +1,387 @@
+%% tbk-icons.sty
+%% TbK Library - Icons Module
+%% Iconography and UI symbols
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-icons}[2025/01/01 v1.0 TbK Icons]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{fontawesome5}
+\RequirePackage{graphicx}
+\RequirePackage{xparse}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+
+%% ============================================================================
+%% ICON CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/icon/.is family,
+  /tbk/icon/.cd,
+  % Size
+  size/.store in=\tbk@icon@size,
+  size/.default={1em},
+  % Color
+  color/.store in=\tbk@icon@color,
+  color/.default={},
+  % Custom path
+  path/.store in=\tbk@icon@path,
+  path/.default={},
+}
+
+\def\tbk@icon@size{1em}
+\def\tbk@icon@color{}
+\def\tbk@icon@path{}
+
+%% ============================================================================
+%% PREDEFINED ICONS MAPPING
+%% ============================================================================
+
+% Power and controls
+\newcommand{\tbk@icondef@power}{\faPowerOff}
+\newcommand{\tbk@icondef@settings}{\faCog}
+\newcommand{\tbk@icondef@gear}{\faCog}
+\newcommand{\tbk@icondef@home}{\faHome}
+\newcommand{\tbk@icondef@menu}{\faBars}
+
+% Media controls
+\newcommand{\tbk@icondef@play}{\faPlay}
+\newcommand{\tbk@icondef@pause}{\faPause}
+\newcommand{\tbk@icondef@stop}{\faStop}
+\newcommand{\tbk@icondef@record}{\faCircle}
+\newcommand{\tbk@icondef@forward}{\faForward}
+\newcommand{\tbk@icondef@backward}{\faBackward}
+\expandafter\newcommand\csname tbk@icondef@skip-forward\endcsname{\faStepForward}
+\expandafter\newcommand\csname tbk@icondef@skip-backward\endcsname{\faStepBackward}
+
+% Arrows
+\expandafter\newcommand\csname tbk@icondef@arrow-up\endcsname{\faArrowUp}
+\expandafter\newcommand\csname tbk@icondef@arrow-down\endcsname{\faArrowDown}
+\expandafter\newcommand\csname tbk@icondef@arrow-left\endcsname{\faArrowLeft}
+\expandafter\newcommand\csname tbk@icondef@arrow-right\endcsname{\faArrowRight}
+\expandafter\newcommand\csname tbk@icondef@chevron-up\endcsname{\faChevronUp}
+\expandafter\newcommand\csname tbk@icondef@chevron-down\endcsname{\faChevronDown}
+\expandafter\newcommand\csname tbk@icondef@chevron-left\endcsname{\faChevronLeft}
+\expandafter\newcommand\csname tbk@icondef@chevron-right\endcsname{\faChevronRight}
+
+% Connectivity
+\newcommand{\tbk@icondef@usb}{\faUsb}
+\newcommand{\tbk@icondef@wifi}{\faWifi}
+\newcommand{\tbk@icondef@bluetooth}{\faBluetooth}
+\newcommand{\tbk@icondef@ethernet}{\faEthernet}
+\newcommand{\tbk@icondef@hdmi}{\faTv}
+\newcommand{\tbk@icondef@display}{\faDesktop}
+\newcommand{\tbk@icondef@monitor}{\faDesktop}
+
+% Status icons
+\newcommand{\tbk@icondef@warning}{\faExclamationTriangle}
+\newcommand{\tbk@icondef@danger}{\faExclamationTriangle}
+\newcommand{\tbk@icondef@info}{\faInfoCircle}
+\newcommand{\tbk@icondef@check}{\faCheck}
+\newcommand{\tbk@icondef@cross}{\faTimes}
+\newcommand{\tbk@icondef@error}{\faTimesCircle}
+\newcommand{\tbk@icondef@success}{\faCheckCircle}
+\newcommand{\tbk@icondef@question}{\faQuestionCircle}
+
+% File operations
+\newcommand{\tbk@icondef@file}{\faFile}
+\newcommand{\tbk@icondef@folder}{\faFolder}
+\newcommand{\tbk@icondef@save}{\faSave}
+\newcommand{\tbk@icondef@download}{\faDownload}
+\newcommand{\tbk@icondef@upload}{\faUpload}
+\newcommand{\tbk@icondef@print}{\faPrint}
+\newcommand{\tbk@icondef@copy}{\faCopy}
+\newcommand{\tbk@icondef@paste}{\faPaste}
+\newcommand{\tbk@icondef@trash}{\faTrash}
+
+% Edit operations
+\newcommand{\tbk@icondef@edit}{\faEdit}
+\newcommand{\tbk@icondef@undo}{\faUndo}
+\newcommand{\tbk@icondef@redo}{\faRedo}
+\newcommand{\tbk@icondef@cut}{\faCut}
+
+% View
+\expandafter\newcommand\csname tbk@icondef@zoom-in\endcsname{\faSearchPlus}
+\expandafter\newcommand\csname tbk@icondef@zoom-out\endcsname{\faSearchMinus}
+\newcommand{\tbk@icondef@fullscreen}{\faExpand}
+\newcommand{\tbk@icondef@minimize}{\faCompress}
+\newcommand{\tbk@icondef@search}{\faSearch}
+\newcommand{\tbk@icondef@eye}{\faEye}
+\expandafter\newcommand\csname tbk@icondef@eye-slash\endcsname{\faEyeSlash}
+
+% User
+\newcommand{\tbk@icondef@user}{\faUser}
+\newcommand{\tbk@icondef@users}{\faUsers}
+\newcommand{\tbk@icondef@lock}{\faLock}
+\newcommand{\tbk@icondef@unlock}{\faUnlock}
+\newcommand{\tbk@icondef@key}{\faKey}
+
+% Communication
+\newcommand{\tbk@icondef@phone}{\faPhone}
+\newcommand{\tbk@icondef@email}{\faEnvelope}
+\newcommand{\tbk@icondef@message}{\faComment}
+\newcommand{\tbk@icondef@bell}{\faBell}
+\newcommand{\tbk@icondef@globe}{\faGlobe}
+
+% Misc
+\newcommand{\tbk@icondef@clock}{\faClock}
+\newcommand{\tbk@icondef@calendar}{\faCalendar}
+\newcommand{\tbk@icondef@star}{\faStar}
+\newcommand{\tbk@icondef@heart}{\faHeart}
+\newcommand{\tbk@icondef@bookmark}{\faBookmark}
+\newcommand{\tbk@icondef@flag}{\faFlag}
+\newcommand{\tbk@icondef@tag}{\faTag}
+\newcommand{\tbk@icondef@link}{\faLink}
+\expandafter\newcommand\csname tbk@icondef@external-link\endcsname{\faExternalLinkAlt}
+\newcommand{\tbk@icondef@refresh}{\faSync}
+\newcommand{\tbk@icondef@sync}{\faSync}
+
+% Format
+\newcommand{\tbk@icondef@format}{\faSlidersH}
+\newcommand{\tbk@icondef@list}{\faList}
+\newcommand{\tbk@icondef@grid}{\faTh}
+\newcommand{\tbk@icondef@table}{\faTable}
+\newcommand{\tbk@icondef@image}{\faImage}
+\newcommand{\tbk@icondef@video}{\faVideo}
+\newcommand{\tbk@icondef@audio}{\faVolumeUp}
+\newcommand{\tbk@icondef@mute}{\faVolumeMute}
+
+% Hardware
+\newcommand{\tbk@icondef@keyboard}{\faKeyboard}
+\newcommand{\tbk@icondef@mouse}{\faMouse}
+\newcommand{\tbk@icondef@battery}{\faBatteryFull}
+\newcommand{\tbk@icondef@plug}{\faPlug}
+\newcommand{\tbk@icondef@microphone}{\faMicrophone}
+\newcommand{\tbk@icondef@camera}{\faCamera}
+\newcommand{\tbk@icondef@headphones}{\faHeadphones}
+
+% CMS/Special (custom symbols)
+\newcommand{\tbk@icondef@cms}{\faDatabase}
+
+%% ============================================================================
+%% MAIN ICON COMMAND
+%% ============================================================================
+
+% Get icon by name
+% #1 = optional settings
+% #2 = icon name
+\NewDocumentCommand{\tbkIcon}{O{}m}{%
+  \pgfkeys{/tbk/icon/.cd, #1}%
+  % Check if it's a predefined icon
+  \ifcsdef{tbk@icondef@#2}{%
+    % Use predefined icon
+    \ifdefempty{\tbk@icon@color}{%
+      {\fontsize{\tbk@icon@size}{\tbk@icon@size}\selectfont\csname tbk@icondef@#2\endcsname}%
+    }{%
+      {\fontsize{\tbk@icon@size}{\tbk@icon@size}\selectfont\textcolor{\tbk@icon@color}{\csname tbk@icondef@#2\endcsname}}%
+    }%
+  }{%
+    % Check if it's a custom icon path
+    \ifdefempty{\tbk@icon@path}{%
+      % Icon not found - show warning
+      \PackageWarning{tbk-icons}{Icon '#2' not found}%
+      {\fontsize{\tbk@icon@size}{\tbk@icon@size}\selectfont\faQuestion}%
+    }{%
+      % Use custom image
+      \includegraphics[height=\tbk@icon@size]{\tbk@icon@path}%
+    }%
+  }%
+  % Reset
+  \def\tbk@icon@size{1em}%
+  \def\tbk@icon@color{}%
+  \def\tbk@icon@path{}%
+}
+
+%% ============================================================================
+%% DEFINE CUSTOM ICONS
+%% ============================================================================
+
+% Define a new icon
+% #1 = icon name
+% #2 = icon command or image path
+\NewDocumentCommand{\tbkDefineIcon}{mm}{%
+  \expandafter\newcommand\csname tbk@icondef@#1\endcsname{%
+    \IfFileExists{#2}{%
+      \includegraphics[height=1em]{#2}%
+    }{%
+      #2%
+    }%
+  }%
+}
+
+%% ============================================================================
+%% BUTTON COMMAND
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/button/.is family,
+  /tbk/button/.cd,
+  % Style
+  style/.is choice,
+  style/filled/.code={\def\tbk@button@style{filled}},
+  style/outlined/.code={\def\tbk@button@style{outlined}},
+  style/text/.code={\def\tbk@button@style{text}},
+  style/.default=filled,
+  % Icon
+  icon/.store in=\tbk@button@icon,
+  icon/.default={},
+  % Color
+  color/.store in=\tbk@button@color,
+  color/.default={black},
+  % Background
+  background/.store in=\tbk@button@bg,
+  background/.default={gray!20},
+}
+
+\def\tbk@button@style{filled}
+\def\tbk@button@icon{}
+\def\tbk@button@color{black}
+\def\tbk@button@bg{gray!20}
+
+% Button with text
+% #1 = options
+% #2 = text
+\NewDocumentCommand{\tbkButton}{O{}m}{%
+  \pgfkeys{/tbk/button/.cd, #1}%
+  \ifdefstring{\tbk@button@style}{filled}{%
+    \tikz[baseline=(text.base)]{%
+      \node[%
+        fill=\tbk@button@bg,
+        rounded corners=3pt,
+        inner sep=4pt,
+        font=\small\sffamily,
+      ] (text) {%
+        \ifdefempty{\tbk@button@icon}{}{\tbkIcon{\tbk@button@icon}~}%
+        #2%
+      };
+    }%
+  }{}%
+  \ifdefstring{\tbk@button@style}{outlined}{%
+    \tikz[baseline=(text.base)]{%
+      \node[%
+        draw=\tbk@button@color,
+        rounded corners=3pt,
+        inner sep=4pt,
+        font=\small\sffamily,
+      ] (text) {%
+        \ifdefempty{\tbk@button@icon}{}{\tbkIcon{\tbk@button@icon}~}%
+        #2%
+      };
+    }%
+  }{}%
+  \ifdefstring{\tbk@button@style}{text}{%
+    {\small\sffamily
+      \ifdefempty{\tbk@button@icon}{}{\tbkIcon{\tbk@button@icon}~}%
+      #2%
+    }%
+  }{}%
+  % Reset
+  \def\tbk@button@style{filled}%
+  \def\tbk@button@icon{}%
+  \def\tbk@button@color{black}%
+  \def\tbk@button@bg{gray!20}%
+}
+
+%% ============================================================================
+%% KEYBOARD KEY
+%% ============================================================================
+
+% Keyboard key style
+% #1 = key text
+\NewDocumentCommand{\tbkKey}{m}{%
+  \tikz[baseline=(key.base)]{%
+    \node[%
+      draw=gray!60,
+      fill=gray!10,
+      rounded corners=2pt,
+      inner sep=3pt,
+      font=\small\ttfamily,
+      minimum height=1.5em,
+    ] (key) {#1};
+  }%
+}
+
+% Common key shortcuts
+\newcommand{\tbkKeyCtrl}{\tbkKey{Ctrl}}
+\newcommand{\tbkKeyAlt}{\tbkKey{Alt}}
+\newcommand{\tbkKeyShift}{\tbkKey{Shift}}
+\newcommand{\tbkKeyEnter}{\tbkKey{Enter}}
+\newcommand{\tbkKeyEsc}{\tbkKey{Esc}}
+\newcommand{\tbkKeyTab}{\tbkKey{Tab}}
+\newcommand{\tbkKeySpace}{\tbkKey{Space}}
+\newcommand{\tbkKeyBackspace}{\tbkKey{Backspace}}
+\newcommand{\tbkKeyDelete}{\tbkKey{Del}}
+
+% Keyboard shortcut
+% #1 = keys separated by +
+\NewDocumentCommand{\tbkShortcut}{m}{%
+  \tbk@parseshortcut#1+\@nil
+}
+
+\def\tbk@parseshortcut#1+#2\@nil{%
+  \tbkKey{#1}%
+  \ifx\relax#2\relax\else
+    ~+~\tbk@parseshortcut#2\@nil
+  \fi
+}
+
+%% ============================================================================
+%% ICON SIZES
+%% ============================================================================
+
+% Size presets
+\newcommand{\tbkIconTiny}[1]{\tbkIcon[size=0.7em]{#1}}
+\newcommand{\tbkIconSmall}[1]{\tbkIcon[size=0.85em]{#1}}
+\newcommand{\tbkIconNormal}[1]{\tbkIcon[size=1em]{#1}}
+\newcommand{\tbkIconLarge}[1]{\tbkIcon[size=1.5em]{#1}}
+\newcommand{\tbkIconHuge}[1]{\tbkIcon[size=2em]{#1}}
+
+%% ============================================================================
+%% COLORED ICONS
+%% ============================================================================
+
+% Icon with semantic color
+\newcommand{\tbkIconDanger}[1]{\tbkIcon[color=red!70!black]{#1}}
+\newcommand{\tbkIconWarning}[1]{\tbkIcon[color=orange!80!black]{#1}}
+\newcommand{\tbkIconSuccess}[1]{\tbkIcon[color=green!60!black]{#1}}
+\newcommand{\tbkIconInfo}[1]{\tbkIcon[color=blue!70!black]{#1}}
+\newcommand{\tbkIconMuted}[1]{\tbkIcon[color=gray]{#1}}
+
+%% ============================================================================
+%% ICON LIST
+%% ============================================================================
+
+% Print all available icons (for reference)
+\newcommand{\tbkIconList}{%
+  \begin{description}[font=\ttfamily, leftmargin=8em, style=sameline]
+    \item[power] \tbkIcon{power}
+    \item[settings] \tbkIcon{settings}
+    \item[home] \tbkIcon{home}
+    \item[menu] \tbkIcon{menu}
+    \item[play] \tbkIcon{play}
+    \item[pause] \tbkIcon{pause}
+    \item[stop] \tbkIcon{stop}
+    \item[usb] \tbkIcon{usb}
+    \item[wifi] \tbkIcon{wifi}
+    \item[hdmi] \tbkIcon{hdmi}
+    \item[warning] \tbkIcon{warning}
+    \item[info] \tbkIcon{info}
+    \item[check] \tbkIcon{check}
+    \item[cross] \tbkIcon{cross}
+    \item[arrow-up] \tbkIcon{arrow-up}
+    \item[arrow-down] \tbkIcon{arrow-down}
+    \item[arrow-left] \tbkIcon{arrow-left}
+    \item[arrow-right] \tbkIcon{arrow-right}
+  \end{description}
+}
+
+\endinput

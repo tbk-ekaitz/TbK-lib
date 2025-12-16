@@ -1,0 +1,375 @@
+%% tbk-tables.sty
+%% TbK Library - Tables Module
+%% Styled tables with various formatting options
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-tables}[2025/01/01 v1.0 TbK Tables]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{longtable}
+\RequirePackage{multirow}
+\RequirePackage{colortbl}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{caption}
+
+%% ============================================================================
+%% TABLE COLORS
+%% ============================================================================
+
+% Always define table colors (xcolor required for \definecolor)
+\RequirePackage{xcolor}
+
+% Define table colors unconditionally
+\definecolor{tbk@table@header}{RGB}{60, 60, 60}
+\definecolor{tbk@table@headertext}{RGB}{255, 255, 255}
+\definecolor{tbk@table@rowalt}{RGB}{248, 248, 248}
+\definecolor{tbk@table@border}{RGB}{180, 180, 180}
+
+%% ============================================================================
+%% TABLE CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/table/.is family,
+  /tbk/table/.cd,
+  % Caption
+  caption/.store in=\tbk@tbl@caption,
+  caption/.default={},
+  % Label
+  label/.store in=\tbk@tbl@label,
+  label/.default={},
+  % Column definition (semantic)
+  columns/.store in=\tbk@tbl@columns,
+  columns/.default={},
+  % Column widths
+  column-widths/.store in=\tbk@tbl@colwidths,
+  column-widths/.default={},
+  % Header style
+  header-style/.is choice,
+  header-style/bold-bg/.code={\def\tbk@tbl@headerstyle{bold-bg}},
+  header-style/bold/.code={\def\tbk@tbl@headerstyle{bold}},
+  header-style/underline/.code={\def\tbk@tbl@headerstyle{underline}},
+  header-style/none/.code={\def\tbk@tbl@headerstyle{none}},
+  header-style/.default=bold-bg,
+  % Alternating row colors
+  row-alt-colors/.is if=tbk@tbl@altcolors,
+  row-alt-colors/.default=true,
+  % Borders
+  borders/.is choice,
+  borders/all/.code={\def\tbk@tbl@borders{all}},
+  borders/horizontal/.code={\def\tbk@tbl@borders{horizontal}},
+  borders/vertical/.code={\def\tbk@tbl@borders{vertical}},
+  borders/none/.code={\def\tbk@tbl@borders{none}},
+  borders/outer/.code={\def\tbk@tbl@borders{outer}},
+  borders/.default=horizontal,
+  % Width
+  width/.store in=\tbk@tbl@width,
+  width/.default={\textwidth},
+  % Position
+  position/.store in=\tbk@tbl@position,
+  position/.default={htbp},
+}
+
+% Default values
+\def\tbk@tbl@caption{}
+\def\tbk@tbl@label{}
+\def\tbk@tbl@columns{}
+\def\tbk@tbl@colwidths{}
+\def\tbk@tbl@headerstyle{bold-bg}
+\newbool{tbk@tbl@altcolors}
+\booltrue{tbk@tbl@altcolors}
+\def\tbk@tbl@borders{horizontal}
+\def\tbk@tbl@width{\textwidth}
+\def\tbk@tbl@position{htbp}
+
+% Reset defaults
+\newcommand{\tbk@tbl@reset}{%
+  \def\tbk@tbl@caption{}%
+  \def\tbk@tbl@label{}%
+  \def\tbk@tbl@columns{}%
+  \def\tbk@tbl@colwidths{}%
+  \def\tbk@tbl@headerstyle{bold-bg}%
+  \booltrue{tbk@tbl@altcolors}%
+  \def\tbk@tbl@borders{horizontal}%
+  \def\tbk@tbl@width{\textwidth}%
+  \def\tbk@tbl@position{htbp}%
+}
+
+%% ============================================================================
+%% ROW COUNTER FOR ALTERNATING COLORS
+%% ============================================================================
+
+\newcounter{tbk@rownum}
+\newcommand{\tbk@resetrownum}{\setcounter{tbk@rownum}{0}}
+\newcommand{\tbk@rowcolor}{%
+  \stepcounter{tbk@rownum}%
+  \ifbool{tbk@tbl@altcolors}{%
+    \ifodd\value{tbk@rownum}%
+    \else
+      \rowcolor{tbk@table@rowalt}%
+    \fi
+  }{}%
+}
+
+%% ============================================================================
+%% MAIN TABLE ENVIRONMENT
+%% ============================================================================
+
+% Table environment
+% #1 = options
+\NewDocumentEnvironment{tbkTable}{O{}+b}{%
+  \pgfkeys{/tbk/table/.cd, #1}%
+  \tbk@resetrownum
+  \begin{table}[\tbk@tbl@position]%
+    \centering
+    \ifdefempty{\tbk@tbl@caption}{}{%
+      \caption{\tbk@tbl@caption}%
+    }%
+    \ifdefempty{\tbk@tbl@label}{}{%
+      \label{\tbk@tbl@label}%
+    }%
+    % Set up borders based on style
+    \tbk@setupborders
+    \begin{tabularx}{\tbk@tbl@width}{@{}\tbk@tbl@colspec@{}}\tbk@tbl@toprule
+      #2
+    \tbk@tbl@bottomrule
+    \end{tabularx}%
+  \end{table}%
+  \tbk@tbl@reset
+}{}
+
+% Internal: Setup borders
+\newcommand{\tbk@setupborders}{%
+  \ifdefstring{\tbk@tbl@borders}{all}{%
+    \def\tbk@tbl@toprule{\hline}%
+    \def\tbk@tbl@midrule{\hline}%
+    \def\tbk@tbl@bottomrule{\hline}%
+  }{}%
+  \ifdefstring{\tbk@tbl@borders}{horizontal}{%
+    \def\tbk@tbl@toprule{\toprule}%
+    \def\tbk@tbl@midrule{\midrule}%
+    \def\tbk@tbl@bottomrule{\bottomrule}%
+  }{}%
+  \ifdefstring{\tbk@tbl@borders}{none}{%
+    \def\tbk@tbl@toprule{}%
+    \def\tbk@tbl@midrule{}%
+    \def\tbk@tbl@bottomrule{}%
+  }{}%
+  \ifdefstring{\tbk@tbl@borders}{outer}{%
+    \def\tbk@tbl@toprule{\toprule}%
+    \def\tbk@tbl@midrule{}%
+    \def\tbk@tbl@bottomrule{\bottomrule}%
+  }{}%
+}
+
+% Default column spec (2 columns, expandable)
+\def\tbk@tbl@colspec{X X}
+
+%% ============================================================================
+%% TABLE ROW COMMANDS
+%% ============================================================================
+
+% Header row
+% #1, #2, ... = header cells
+\NewDocumentCommand{\tbkHeader}{>{\SplitList{|}}m}{%
+  \ifdefstring{\tbk@tbl@headerstyle}{bold-bg}{%
+    \rowcolor{tbk@table@header}%
+    \color{tbk@table@headertext}\bfseries
+  }{}%
+  \ifdefstring{\tbk@tbl@headerstyle}{bold}{%
+    \bfseries
+  }{}%
+  \ProcessList{#1}{\tbk@headercell}%
+  \\
+  \tbk@tbl@midrule
+}
+
+\newcommand{\tbk@headercell}[1]{%
+  #1 &
+}
+
+% Data row (simple 2-column)
+% #1 = first column
+% #2 = second column
+\NewDocumentCommand{\tbkRow}{mm}{%
+  \tbk@rowcolor
+  #1 & #2 \\
+}
+
+% Multi-column row
+% #1 = pipe-separated values
+\NewDocumentCommand{\tbkRowMulti}{>{\SplitList{|}}m}{%
+  \tbk@rowcolor
+  \ProcessList{#1}{\tbk@datacell}%
+  \\
+}
+
+\newcommand{\tbk@datacell}[1]{%
+  #1 &
+}
+
+%% ============================================================================
+%% SIMPLE TABLE SHORTCUT
+%% ============================================================================
+
+% Quick 2-column table
+% #1 = options
+% #2 = rows as comma-separated pairs
+\NewDocumentCommand{\tbkSimpleTable}{O{}m}{%
+  \pgfkeys{/tbk/table/.cd, #1}%
+  \begin{table}[\tbk@tbl@position]%
+    \centering
+    \ifdefempty{\tbk@tbl@caption}{}{%
+      \caption{\tbk@tbl@caption}%
+    }%
+    \ifdefempty{\tbk@tbl@label}{}{%
+      \label{\tbk@tbl@label}%
+    }%
+    \begin{tabular}{ll}
+      \toprule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@tbl@reset
+}
+
+%% ============================================================================
+%% OPERATION TABLE (Button | Operation)
+%% ============================================================================
+
+% Operation table environment
+% #1 = options
+\NewDocumentEnvironment{tbkOperationTable}{O{}+b}{%
+  \pgfkeys{/tbk/table/.cd, #1}%
+  \tbk@resetrownum
+  \begin{table}[\tbk@tbl@position]%
+    \centering
+    \ifdefempty{\tbk@tbl@caption}{}{%
+      \caption{\tbk@tbl@caption}%
+    }%
+    \ifdefempty{\tbk@tbl@label}{}{%
+      \label{\tbk@tbl@label}%
+    }%
+    \begin{tabular}{c p{0.7\textwidth}}
+      \toprule
+      \rowcolor{tbk@table@header}%
+      \color{tbk@table@headertext}\bfseries Button &
+      \color{tbk@table@headertext}\bfseries Operation \\
+      \midrule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@tbl@reset
+}{}
+
+% Operation row
+% #1 = button/icon
+% #2 = operation description
+\NewDocumentCommand{\tbkOp}{mm}{%
+  \tbk@rowcolor
+  #1 & #2 \\
+}
+
+%% ============================================================================
+%% LONG TABLE (MULTI-PAGE)
+%% ============================================================================
+
+% Long table environment (spans multiple pages)
+% #1 = options
+% #2 = column spec
+\NewDocumentEnvironment{tbkLongTable}{O{}m+b}{%
+  \pgfkeys{/tbk/table/.cd, #1}%
+  \tbk@resetrownum
+  \begin{longtable}{#2}%
+    \ifdefempty{\tbk@tbl@caption}{}{%
+      \caption{\tbk@tbl@caption}%
+    }%
+    \ifdefempty{\tbk@tbl@label}{}{%
+      \label{\tbk@tbl@label}%
+    }\\
+    \toprule
+    #3
+    \bottomrule
+  \end{longtable}%
+  \tbk@tbl@reset
+}{}
+
+%% ============================================================================
+%% TABLE CELL UTILITIES
+%% ============================================================================
+
+% Multirow cell
+% #1 = number of rows
+% #2 = content
+\NewDocumentCommand{\tbkMultiRow}{mm}{%
+  \multirow{#1}{*}{#2}%
+}
+
+% Multicolumn cell
+% #1 = number of columns
+% #2 = alignment (l/c/r)
+% #3 = content
+\NewDocumentCommand{\tbkMultiCol}{mmm}{%
+  \multicolumn{#1}{#2}{#3}%
+}
+
+% Horizontal line
+\newcommand{\tbkHLine}{\midrule}
+
+% Partial horizontal line
+% #1 = start column
+% #2 = end column
+\NewDocumentCommand{\tbkCLine}{mm}{%
+  \cmidrule{#1-#2}%
+}
+
+%% ============================================================================
+%% TABLE STYLING
+%% ============================================================================
+
+% Set default table style
+\newcommand{\tbkTableStyle}[1]{%
+  \ifstrequal{#1}{minimal}{%
+    \def\tbk@tbl@borders{none}%
+    \boolfalse{tbk@tbl@altcolors}%
+    \def\tbk@tbl@headerstyle{bold}%
+  }{}%
+  \ifstrequal{#1}{striped}{%
+    \def\tbk@tbl@borders{horizontal}%
+    \booltrue{tbk@tbl@altcolors}%
+    \def\tbk@tbl@headerstyle{bold-bg}%
+  }{}%
+  \ifstrequal{#1}{bordered}{%
+    \def\tbk@tbl@borders{all}%
+    \boolfalse{tbk@tbl@altcolors}%
+    \def\tbk@tbl@headerstyle{bold-bg}%
+  }{}%
+}
+
+%% ============================================================================
+%% CAPTION STYLING
+%% ============================================================================
+
+\captionsetup[table]{%
+  font=small,
+  labelfont=bf,
+  labelsep=period,
+  justification=centering,
+  singlelinecheck=true,
+  position=top,
+}
+
+\endinput

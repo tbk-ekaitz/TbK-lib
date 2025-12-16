@@ -1,0 +1,345 @@
+%% tbk-subpages.sty
+%% TbK Library - Subpages Module
+%% Insert external documents (PDFs, other TeX files) as pages
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-subpages}[2025/01/01 v1.0 TbK Subpages]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{pdfpages}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% SUBPAGES CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/subpages/.is family,
+  /tbk/subpages/.cd,
+  % File path
+  path/.store in=\tbk@sub@path,
+  path/.default={},
+  % Pages to include
+  pages/.store in=\tbk@sub@pages,
+  pages/.default={-},
+  % Page numbering
+  continue-page-numbers/.is if=tbk@sub@continuepages,
+  continue-page-numbers/.default=true,
+  % TOC entry
+  toc-entry/.store in=\tbk@sub@tocentry,
+  toc-entry/.default={},
+  toc-level/.store in=\tbk@sub@toclevel,
+  toc-level/.default={section},
+  % Visual adjustments
+  scale/.store in=\tbk@sub@scale,
+  scale/.default={1},
+  fit/.is if=tbk@sub@fit,
+  fit/.default=false,
+  trim/.store in=\tbk@sub@trim,
+  trim/.default={0 0 0 0},
+  % Headers/footers
+  headers/.is choice,
+  headers/parent/.code={\def\tbk@sub@headers{parent}},
+  headers/original/.code={\def\tbk@sub@headers{original}},
+  headers/none/.code={\def\tbk@sub@headers{none}},
+  headers/.default=parent,
+  footers/.is choice,
+  footers/parent/.code={\def\tbk@sub@footers{parent}},
+  footers/original/.code={\def\tbk@sub@footers{original}},
+  footers/none/.code={\def\tbk@sub@footers{none}},
+  footers/.default=parent,
+  % Rotation
+  landscape-pages/.is choice,
+  landscape-pages/auto-rotate/.code={\def\tbk@sub@landscape{auto-rotate}},
+  landscape-pages/keep/.code={\def\tbk@sub@landscape{keep}},
+  landscape-pages/force-portrait/.code={\def\tbk@sub@landscape{force-portrait}},
+  landscape-pages/.default=auto-rotate,
+}
+
+% Default values
+\def\tbk@sub@path{}
+\def\tbk@sub@pages{-}
+\newbool{tbk@sub@continuepages}
+\booltrue{tbk@sub@continuepages}
+\def\tbk@sub@tocentry{}
+\def\tbk@sub@toclevel{section}
+\def\tbk@sub@scale{1}
+\newbool{tbk@sub@fit}
+\boolfalse{tbk@sub@fit}
+\def\tbk@sub@trim{0 0 0 0}
+\def\tbk@sub@headers{parent}
+\def\tbk@sub@footers{parent}
+\def\tbk@sub@landscape{auto-rotate}
+
+% Reset
+\newcommand{\tbk@sub@reset}{%
+  \def\tbk@sub@path{}%
+  \def\tbk@sub@pages{-}%
+  \booltrue{tbk@sub@continuepages}%
+  \def\tbk@sub@tocentry{}%
+  \def\tbk@sub@toclevel{section}%
+  \def\tbk@sub@scale{1}%
+  \boolfalse{tbk@sub@fit}%
+  \def\tbk@sub@trim{0 0 0 0}%
+  \def\tbk@sub@headers{parent}%
+  \def\tbk@sub@footers{parent}%
+  \def\tbk@sub@landscape{auto-rotate}%
+}
+
+%% ============================================================================
+%% MAIN INSERT COMMAND
+%% ============================================================================
+
+% Insert external document
+% #1 = key-value options
+\NewDocumentCommand{\tbkInsertDocument}{m}{%
+  \pgfkeys{/tbk/subpages/.cd, #1}%
+  %
+  % Add TOC entry if specified
+  \ifdefempty{\tbk@sub@tocentry}{}{%
+    \addcontentsline{toc}{\tbk@sub@toclevel}{\tbk@sub@tocentry}%
+  }%
+  %
+  % Build pdfpages options
+  \edef\tbk@sub@opts{pages={\tbk@sub@pages}}%
+  %
+  % Add scale if not 1
+  \ifdefstring{\tbk@sub@scale}{1}{}{%
+    \eappto\tbk@sub@opts{,scale=\tbk@sub@scale}%
+  }%
+  %
+  % Add fit option
+  \ifbool{tbk@sub@fit}{%
+    \eappto\tbk@sub@opts{,fitpaper=true}%
+  }{}%
+  %
+  % Handle page style
+  \ifdefstring{\tbk@sub@headers}{none}{%
+    \eappto\tbk@sub@opts{,pagecommand={\thispagestyle{empty}}}%
+  }{}%
+  \ifdefstring{\tbk@sub@headers}{parent}{%
+    \eappto\tbk@sub@opts{,pagecommand={\thispagestyle{fancy}}}%
+  }{}%
+  %
+  % Handle rotation
+  \ifdefstring{\tbk@sub@landscape}{auto-rotate}{%
+    \eappto\tbk@sub@opts{,rotateoversize=true}%
+  }{}%
+  %
+  % Include the PDF
+  \expandafter\includepdf\expandafter[\tbk@sub@opts]{\tbk@sub@path}%
+  %
+  \tbk@sub@reset
+}
+
+%% ============================================================================
+%% CONVENIENCE COMMANDS
+%% ============================================================================
+
+% Insert all pages from PDF
+% #1 = file path
+% #2 = TOC entry (optional)
+\NewDocumentCommand{\tbkInsertPDF}{mO{}}{%
+  \tbkInsertDocument{%
+    path={#1},
+    pages=-,
+    toc-entry={#2},
+  }%
+}
+
+% Insert specific page range
+% #1 = file path
+% #2 = page range (e.g., 1-5, 3, 7-10)
+\NewDocumentCommand{\tbkInsertPages}{mm}{%
+  \tbkInsertDocument{%
+    path={#1},
+    pages={#2},
+  }%
+}
+
+% Insert single page
+% #1 = file path
+% #2 = page number
+\NewDocumentCommand{\tbkInsertPage}{mm}{%
+  \tbkInsertDocument{%
+    path={#1},
+    pages={#2},
+  }%
+}
+
+%% ============================================================================
+%% APPENDIX INSERTION
+%% ============================================================================
+
+% Insert as appendix
+% #1 = title
+% #2 = file path
+\NewDocumentCommand{\tbkAppendix}{mm}{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{section}{#1}%
+  \includepdf[pages=-, pagecommand={\thispagestyle{fancy}}]{#2}%
+}
+
+%% ============================================================================
+%% INSERT WITH COVER PAGE
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/insertwithcover/.is family,
+  /tbk/insertwithcover/.cd,
+  path/.store in=\tbk@iwc@path,
+  cover-title/.store in=\tbk@iwc@title,
+  cover-title/.default={},
+  cover-subtitle/.store in=\tbk@iwc@subtitle,
+  cover-subtitle/.default={},
+  cover-style/.is choice,
+  cover-style/minimal/.code={\def\tbk@iwc@style{minimal}},
+  cover-style/full/.code={\def\tbk@iwc@style{full}},
+  cover-style/.default=minimal,
+}
+
+\def\tbk@iwc@path{}
+\def\tbk@iwc@title{}
+\def\tbk@iwc@subtitle{}
+\def\tbk@iwc@style{minimal}
+
+% Insert document with transition cover page
+% #1 = key-value options
+\NewDocumentCommand{\tbkInsertWithCover}{m}{%
+  \pgfkeys{/tbk/insertwithcover/.cd, #1}%
+  %
+  % Create cover page
+  \clearpage
+  \thispagestyle{empty}
+  \begin{center}
+    \vspace*{5cm}
+    {\Huge\bfseries\tbk@iwc@title}\\[1cm]
+    \ifdefempty{\tbk@iwc@subtitle}{}{%
+      {\Large\tbk@iwc@subtitle}\\[2cm]
+    }%
+    \rule{0.5\textwidth}{0.5pt}
+  \end{center}
+  \clearpage
+  %
+  % Add to TOC
+  \ifdefempty{\tbk@iwc@title}{}{%
+    \addcontentsline{toc}{section}{\tbk@iwc@title}%
+  }%
+  %
+  % Insert the document
+  \includepdf[pages=-]{\tbk@iwc@path}%
+}
+
+%% ============================================================================
+%% TEX DOCUMENT INCLUSION
+%% ============================================================================
+
+% Include another TeX document (assumes it's already compiled to PDF)
+% #1 = options
+% #2 = path to .tex file (will look for .pdf)
+\NewDocumentCommand{\tbkIncludeTexDocument}{om}{%
+  \IfNoValueTF{#1}{%
+    \def\tbk@tex@opts{}%
+  }{%
+    \pgfkeys{/tbk/subpages/.cd, #1}%
+  }%
+  % Convert .tex to .pdf path
+  \StrSubstitute{#2}{.tex}{.pdf}[\tbk@tex@pdfpath]%
+  % Check if PDF exists
+  \IfFileExists{\tbk@tex@pdfpath}{%
+    \tbkInsertDocument{path={\tbk@tex@pdfpath}}%
+  }{%
+    \PackageWarning{tbk-subpages}{PDF file \tbk@tex@pdfpath not found. Compile #2 first.}%
+  }%
+}
+
+%% ============================================================================
+%% EMPTY PAGES
+%% ============================================================================
+
+% Insert blank page
+\newcommand{\tbkBlankPage}{%
+  \clearpage
+  \thispagestyle{empty}
+  \mbox{}
+  \clearpage
+}
+
+% Insert blank pages (for book layout)
+% #1 = number of pages
+\NewDocumentCommand{\tbkBlankPages}{m}{%
+  \foreach \i in {1,...,#1} {%
+    \tbkBlankPage
+  }%
+}
+
+%% ============================================================================
+%% PAGE COUNTER MANAGEMENT
+%% ============================================================================
+
+% Save current page counter
+\newcounter{tbk@savedpage}
+
+\newcommand{\tbkSavePageCounter}{%
+  \setcounter{tbk@savedpage}{\value{page}}%
+}
+
+\newcommand{\tbkRestorePageCounter}{%
+  \setcounter{page}{\value{tbk@savedpage}}%
+}
+
+% Temporarily disable page counting
+\newcommand{\tbkPausePageNumbers}{%
+  \tbkSavePageCounter
+}
+
+\newcommand{\tbkResumePageNumbers}{%
+  \tbkRestorePageCounter
+}
+
+%% ============================================================================
+%% EXTRACT PAGES TO SEPARATE FILE
+%% ============================================================================
+
+% Note: This would require shell escape and external tools
+% Providing a placeholder command
+\NewDocumentCommand{\tbkExtractPages}{mmm}{%
+  \PackageWarning{tbk-subpages}{%
+    Page extraction requires shell escape. Use external tools like pdftk or qpdf.%
+  }%
+}
+
+%% ============================================================================
+%% DOCUMENT MERGING INFO
+%% ============================================================================
+
+% Store information about merged documents
+\newcounter{tbk@mergeddocs}
+\def\tbk@mergedlist{}
+
+% Add to merged documents list
+\newcommand{\tbk@addtomerged}[2]{%
+  \stepcounter{tbk@mergeddocs}%
+  \listadd{\tbk@mergedlist}{{#1}{#2}}%
+}
+
+% Print list of merged documents
+\newcommand{\tbkListMergedDocuments}{%
+  \begin{description}
+    \renewcommand*{\do}[1]{%
+      \item[##1]
+    }%
+    \dolistloop{\tbk@mergedlist}%
+  \end{description}
+}
+
+\endinput

@@ -1,0 +1,379 @@
+%% tbk-sections.sty
+%% TbK Library - Sections Module
+%% Hierarchical section system with deep numbering (up to 6 levels)
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-sections}[2025/01/01 v1.0 TbK Sections]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{xparse}
+\RequirePackage{titlesec}
+\RequirePackage{hyperref}
+
+%% ============================================================================
+%% COUNTER SETUP
+%% ============================================================================
+
+% Define counters for all 6 levels
+\newcounter{tbkchapter}
+\newcounter{tbksection}[tbkchapter]
+\newcounter{tbksubsection}[tbksection]
+\newcounter{tbksubsubsection}[tbksubsection]
+\newcounter{tbkparagraph}[tbksubsubsection]
+\newcounter{tbksubparagraph}[tbkparagraph]
+
+%% ============================================================================
+%% NUMBER FORMAT
+%% ============================================================================
+
+% Format: 1-2-3-4-5-6 (dash separated)
+\renewcommand{\thetbkchapter}{\arabic{tbkchapter}}
+\renewcommand{\thetbksection}{\thetbkchapter-\arabic{tbksection}}
+\renewcommand{\thetbksubsection}{\thetbksection-\arabic{tbksubsection}}
+\renewcommand{\thetbksubsubsection}{\thetbksubsection-\arabic{tbksubsubsection}}
+\renewcommand{\thetbkparagraph}{\thetbksubsubsection-\arabic{tbkparagraph}}
+\renewcommand{\thetbksubparagraph}{\thetbkparagraph-\arabic{tbksubparagraph}}
+
+%% ============================================================================
+%% SECTION OPTIONS KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/section/.is family,
+  /tbk/section/.cd,
+  % Label for references
+  label/.store in=\tbk@sec@label,
+  label/.default={},
+  % Include in TOC
+  toc/.is if=tbk@sec@toc,
+  toc/.default=true,
+  % Show number
+  numbered/.is if=tbk@sec@numbered,
+  numbered/.default=true,
+  % Page break
+  page-break/.is choice,
+  page-break/none/.code={\def\tbk@sec@pagebreak{none}},
+  page-break/before/.code={\def\tbk@sec@pagebreak{before}},
+  page-break/after/.code={\def\tbk@sec@pagebreak{after}},
+  page-break/both/.code={\def\tbk@sec@pagebreak{both}},
+  page-break/.default=none,
+}
+
+% Default values
+\def\tbk@sec@label{}
+\newbool{tbk@sec@toc}
+\booltrue{tbk@sec@toc}
+\newbool{tbk@sec@numbered}
+\booltrue{tbk@sec@numbered}
+\def\tbk@sec@pagebreak{none}
+
+% Reset options to defaults
+\newcommand{\tbk@sec@resetoptions}{%
+  \def\tbk@sec@label{}%
+  \booltrue{tbk@sec@toc}%
+  \booltrue{tbk@sec@numbered}%
+  \def\tbk@sec@pagebreak{none}%
+}
+
+%% ============================================================================
+%% SECTION STYLING
+%% ============================================================================
+
+% Spacing and formatting for each level (using Roman numerals to avoid number-in-name issues)
+\expandafter\def\csname tbk@sec@beforeskip@1\endcsname{2em}
+\expandafter\def\csname tbk@sec@afterskip@1\endcsname{1em}
+\expandafter\def\csname tbk@sec@beforeskip@2\endcsname{1.5em}
+\expandafter\def\csname tbk@sec@afterskip@2\endcsname{0.75em}
+\expandafter\def\csname tbk@sec@beforeskip@3\endcsname{1.25em}
+\expandafter\def\csname tbk@sec@afterskip@3\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@beforeskip@4\endcsname{1em}
+\expandafter\def\csname tbk@sec@afterskip@4\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@beforeskip@5\endcsname{0.75em}
+\expandafter\def\csname tbk@sec@afterskip@5\endcsname{0.25em}
+\expandafter\def\csname tbk@sec@beforeskip@6\endcsname{0.5em}
+\expandafter\def\csname tbk@sec@afterskip@6\endcsname{0.25em}
+
+% Font sizes for each level
+\expandafter\def\csname tbk@sec@fontsize@1\endcsname{\LARGE\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@2\endcsname{\Large\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@3\endcsname{\large\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@4\endcsname{\normalsize\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@5\endcsname{\normalsize\bfseries}
+\expandafter\def\csname tbk@sec@fontsize@6\endcsname{\normalsize\bfseries}
+
+%% ============================================================================
+%% INTERNAL SECTION COMMAND
+%% ============================================================================
+
+% Internal command for creating sections
+% #1 = level (1-6)
+% #2 = counter name
+% #3 = title
+\newcommand{\tbk@makesection}[3]{%
+  % Handle page break before
+  \ifdefstring{\tbk@sec@pagebreak}{before}{\clearpage}{}%
+  \ifdefstring{\tbk@sec@pagebreak}{both}{\clearpage}{}%
+  % Spacing before
+  \vspace*{\csname tbk@sec@beforeskip@#1\endcsname}%
+  % Increment counter if numbered
+  \ifbool{tbk@sec@numbered}{%
+    \refstepcounter{#2}%
+  }{}%
+  % Create the heading
+  \noindent
+  {\csname tbk@sec@fontsize@#1\endcsname
+    \ifbool{tbk@sec@numbered}{%
+      \csname the#2\endcsname\quad
+    }{}%
+    #3%
+  }%
+  \par
+  % Add to TOC if requested
+  \ifbool{tbk@sec@toc}{%
+    \ifbool{tbk@sec@numbered}{%
+      \addcontentsline{toc}{\tbk@toclevel{#1}}{\protect\numberline{\csname the#2\endcsname}#3}%
+    }{%
+      \addcontentsline{toc}{\tbk@toclevel{#1}}{#3}%
+    }%
+  }{}%
+  % Set label if provided
+  \ifdefempty{\tbk@sec@label}{}{%
+    \label{\tbk@sec@label}%
+  }%
+  % Mark for headers
+  \tbk@marksection{#1}{#3}%
+  % Spacing after
+  \vspace{\csname tbk@sec@afterskip@#1\endcsname}%
+  % Handle page break after
+  \ifdefstring{\tbk@sec@pagebreak}{after}{\clearpage}{}%
+  \ifdefstring{\tbk@sec@pagebreak}{both}{\clearpage}{}%
+  % Reset options
+  \tbk@sec@resetoptions
+}
+
+% Map level to TOC level name
+\newcommand{\tbk@toclevel}[1]{%
+  \ifcase#1\relax
+    section% 0 (not used)
+  \or
+    section% 1 = chapter -> section in TOC
+  \or
+    subsection% 2
+  \or
+    subsubsection% 3
+  \or
+    paragraph% 4
+  \or
+    subparagraph% 5
+  \else
+    subparagraph% 6
+  \fi
+}
+
+% Mark section for headers
+\newcommand{\tbk@marksection}[2]{%
+  \ifnum#1=1\relax
+    \markboth{#2}{}%
+  \fi
+  \ifnum#1=2\relax
+    \markright{#2}%
+  \fi
+}
+
+%% ============================================================================
+%% PUBLIC SECTION COMMANDS
+%% ============================================================================
+
+% Level 1: Chapter
+% \tbkChapter[options]{Title} or \tbkChapter{Title}
+\NewDocumentCommand{\tbkChapter}{som}{%
+  \IfBooleanTF{#1}{%
+    % Starred version - unnumbered
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{1}{tbkchapter}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      % No options
+      \tbk@makesection{1}{tbkchapter}{#3}%
+    }{%
+      % With options
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{1}{tbkchapter}{#3}%
+    }%
+  }%
+}
+
+% Level 2: Section
+\NewDocumentCommand{\tbkSection}{som}{%
+  \IfBooleanTF{#1}{%
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{2}{tbksection}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      \tbk@makesection{2}{tbksection}{#3}%
+    }{%
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{2}{tbksection}{#3}%
+    }%
+  }%
+}
+
+% Level 3: Subsection
+\NewDocumentCommand{\tbkSubsection}{som}{%
+  \IfBooleanTF{#1}{%
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{3}{tbksubsection}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      \tbk@makesection{3}{tbksubsection}{#3}%
+    }{%
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{3}{tbksubsection}{#3}%
+    }%
+  }%
+}
+
+% Level 4: Subsubsection
+\NewDocumentCommand{\tbkSubsubsection}{som}{%
+  \IfBooleanTF{#1}{%
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{4}{tbksubsubsection}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      \tbk@makesection{4}{tbksubsubsection}{#3}%
+    }{%
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{4}{tbksubsubsection}{#3}%
+    }%
+  }%
+}
+
+% Level 5: Paragraph
+\NewDocumentCommand{\tbkParagraph}{som}{%
+  \IfBooleanTF{#1}{%
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{5}{tbkparagraph}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      \tbk@makesection{5}{tbkparagraph}{#3}%
+    }{%
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{5}{tbkparagraph}{#3}%
+    }%
+  }%
+}
+
+% Level 6: Subparagraph
+\NewDocumentCommand{\tbkSubparagraph}{som}{%
+  \IfBooleanTF{#1}{%
+    \boolfalse{tbk@sec@numbered}%
+    \tbk@makesection{6}{tbksubparagraph}{#3}%
+  }{%
+    \IfNoValueTF{#2}{%
+      \tbk@makesection{6}{tbksubparagraph}{#3}%
+    }{%
+      \pgfkeys{/tbk/section/.cd, #2}%
+      \tbk@makesection{6}{tbksubparagraph}{#3}%
+    }%
+  }%
+}
+
+%% ============================================================================
+%% SECTION NUMBERING CONTROL
+%% ============================================================================
+
+% Set numbering depth (how deep to show numbers)
+% #1 = depth (1-6)
+\newcommand{\tbkSetNumberingDepth}[1]{%
+  \setcounter{secnumdepth}{#1}%
+}
+
+% Set TOC depth (how deep to show in TOC)
+% #1 = depth (1-6)
+\newcommand{\tbkSetTOCDepth}[1]{%
+  \setcounter{tocdepth}{#1}%
+}
+
+%% ============================================================================
+%% RESET COUNTERS
+%% ============================================================================
+
+% Reset all section counters
+\newcommand{\tbkResetSections}{%
+  \setcounter{tbkchapter}{0}%
+  \setcounter{tbksection}{0}%
+  \setcounter{tbksubsection}{0}%
+  \setcounter{tbksubsubsection}{0}%
+  \setcounter{tbkparagraph}{0}%
+  \setcounter{tbksubparagraph}{0}%
+}
+
+% Start appendix numbering (letters instead of numbers)
+\newcommand{\tbkAppendices}{%
+  \setcounter{tbkchapter}{0}%
+  \renewcommand{\thetbkchapter}{\Alph{tbkchapter}}%
+}
+
+%% ============================================================================
+%% STYLING CONFIGURATION
+%% ============================================================================
+
+% Configure section styling
+% #1 = level (1-6)
+% #2 = key-value options
+\pgfkeys{
+  /tbk/section-style/.is family,
+  /tbk/section-style/.cd,
+  before-skip/.store in=\tbk@secstyle@beforeskip,
+  after-skip/.store in=\tbk@secstyle@afterskip,
+  font/.store in=\tbk@secstyle@font,
+}
+
+\NewDocumentCommand{\tbkSetSectionStyle}{mm}{%
+  \pgfkeys{/tbk/section-style/.cd, #2}%
+  \expandafter\def\csname tbk@sec@beforeskip@#1\endcsname{\tbk@secstyle@beforeskip}%
+  \expandafter\def\csname tbk@sec@afterskip@#1\endcsname{\tbk@secstyle@afterskip}%
+  \expandafter\def\csname tbk@sec@fontsize@#1\endcsname{\tbk@secstyle@font}%
+}
+
+%% ============================================================================
+%% CROSS-REFERENCING
+%% ============================================================================
+
+% Reference a section by label
+% #1 = label
+\newcommand{\tbkRef}[1]{\ref{#1}}
+
+% Reference with page number
+% #1 = label
+\newcommand{\tbkRefPage}[1]{\ref{#1} on page~\pageref{#1}}
+
+% Reference with section name
+% #1 = label
+\newcommand{\tbkRefName}[1]{\nameref{#1}}
+
+%% ============================================================================
+%% HYPERREF INTEGRATION
+%% ============================================================================
+
+% Make sure hyperref bookmarks work
+\AtBeginDocument{%
+  \@ifpackageloaded{hyperref}{%
+    % Hyperref is loaded, configure bookmarks
+    \hypersetup{%
+      bookmarksnumbered=true,
+      bookmarksopen=true,
+      bookmarksopenlevel=2,
+    }%
+  }{}%
+}
+
+\endinput

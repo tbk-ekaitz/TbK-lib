@@ -1,0 +1,61 @@
+%% basic-manual.tex
+%% TbK Library - Basic Manual Example
+%% A simple example showing basic TbK usage
+%%
+
+\documentclass[11pt,a4paper]{article}
+\usepackage{tbk}
+
+\tbkSetup{
+  company-name = {ACME Corporation},
+  product-name = {Widget Pro 3000},
+  document-code = {WP3K-UM-001},
+  version = {1.0},
+}
+
+\begin{document}
+
+\tbkTitlePage{
+  title = {Widget Pro 3000},
+  subtitle = {User Manual},
+}
+
+\tbkTableOfContents
+
+\tbkChapter{Getting Started}
+
+Welcome to the Widget Pro 3000 User Manual.
+
+\tbkSection{Package Contents}
+
+\begin{tbkList}
+  \item Widget Pro 3000 device
+  \item Power adapter
+  \item USB cable
+  \item Quick start guide
+\end{tbkList}
+
+\tbkSection{Safety Warnings}
+
+\tbkDanger{Do not expose to water or moisture.}
+
+\tbkWarning{Keep away from heat sources.}
+
+\tbkChapter{Operation}
+
+\tbkSection{Basic Controls}
+
+\begin{tbkOperationTable}[caption={Button Functions}]
+  \tbkOp{\tbkIcon{power}}{Turn on/off}
+  \tbkOp{\tbkIcon{settings}}{Open settings}
+\end{tbkOperationTable}
+
+\tbkChapter{Specifications}
+
+\begin{tbkSpecTable}[caption={Technical Specifications}]
+  \tbkSpec{Dimensions}{100 × 50 × 25 mm}
+  \tbkSpec{Weight}{150 g}
+  \tbkSpec{Power}{5V DC, 2A}
+\end{tbkSpecTable}
+
+\end{document}

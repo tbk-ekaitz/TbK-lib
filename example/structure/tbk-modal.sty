@@ -1,0 +1,383 @@
+%% tbk-modal.sty
+%% TbK Library - Modal/Overlay Module
+%% Positioned overlays on pages for callouts, annotations, and floating content
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-modal}[2025/01/01 v1.0 TbK Modal System]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{tikz}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+\RequirePackage{calc}
+
+\usetikzlibrary{calc,positioning,shadows,shapes}
+
+%% ============================================================================
+%% MODAL CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/modal/.is family,
+  /tbk/modal/.cd,
+  % Anchor point
+  anchor/.is choice,
+  anchor/center/.code={\def\tbk@modal@anchor{center}},
+  anchor/north/.code={\def\tbk@modal@anchor{north}},
+  anchor/south/.code={\def\tbk@modal@anchor{south}},
+  anchor/east/.code={\def\tbk@modal@anchor{east}},
+  anchor/west/.code={\def\tbk@modal@anchor{west}},
+  anchor/north-east/.code={\def\tbk@modal@anchor{north east}},
+  anchor/north-west/.code={\def\tbk@modal@anchor{north west}},
+  anchor/south-east/.code={\def\tbk@modal@anchor{south east}},
+  anchor/south-west/.code={\def\tbk@modal@anchor{south west}},
+  anchor/.default=center,
+  % Position (relative 0-1)
+  position/.store in=\tbk@modal@position,
+  position/.default={0.5, 0.5},
+  % Absolute position
+  absolute-position/.store in=\tbk@modal@absposition,
+  absolute-position/.default={},
+  % Size
+  width/.store in=\tbk@modal@width,
+  width/.default={0.5\paperwidth},
+  height/.store in=\tbk@modal@height,
+  height/.default={auto},
+  max-height/.store in=\tbk@modal@maxheight,
+  max-height/.default={0.8\paperheight},
+  min-width/.store in=\tbk@modal@minwidth,
+  min-width/.default={3cm},
+  min-height/.store in=\tbk@modal@minheight,
+  min-height/.default={2cm},
+  % Layer
+  layer/.is choice,
+  layer/foreground/.code={\def\tbk@modal@layer{foreground}},
+  layer/background/.code={\def\tbk@modal@layer{background}},
+  layer/.default=foreground,
+  % Appearance
+  background/.store in=\tbk@modal@bg,
+  background/.default={white},
+  border/.store in=\tbk@modal@border,
+  border/.default={1pt solid gray},
+  border-radius/.store in=\tbk@modal@radius,
+  border-radius/.default={5pt},
+  shadow/.store in=\tbk@modal@shadow,
+  shadow/.default={},
+  padding/.store in=\tbk@modal@padding,
+  padding/.default={10pt},
+  % Clip content
+  clip/.is if=tbk@modal@clip,
+  clip/.default=true,
+}
+
+% Default values
+\def\tbk@modal@anchor{center}
+\def\tbk@modal@position{0.5, 0.5}
+\def\tbk@modal@absposition{}
+\def\tbk@modal@width{0.5\paperwidth}
+\def\tbk@modal@height{auto}
+\def\tbk@modal@maxheight{0.8\paperheight}
+\def\tbk@modal@minwidth{3cm}
+\def\tbk@modal@minheight{2cm}
+\def\tbk@modal@layer{foreground}
+\def\tbk@modal@bg{white}
+\def\tbk@modal@border{1pt solid gray}
+\def\tbk@modal@radius{5pt}
+\def\tbk@modal@shadow{}
+\def\tbk@modal@padding{10pt}
+\newbool{tbk@modal@clip}
+\booltrue{tbk@modal@clip}
+
+% Reset
+\newcommand{\tbk@modal@reset}{%
+  \def\tbk@modal@anchor{center}%
+  \def\tbk@modal@position{0.5, 0.5}%
+  \def\tbk@modal@absposition{}%
+  \def\tbk@modal@width{0.5\paperwidth}%
+  \def\tbk@modal@height{auto}%
+  \def\tbk@modal@maxheight{0.8\paperheight}%
+  \def\tbk@modal@minwidth{3cm}%
+  \def\tbk@modal@minheight{2cm}%
+  \def\tbk@modal@layer{foreground}%
+  \def\tbk@modal@bg{white}%
+  \def\tbk@modal@border{1pt solid gray}%
+  \def\tbk@modal@radius{5pt}%
+  \def\tbk@modal@shadow{}%
+  \def\tbk@modal@padding{10pt}%
+  \booltrue{tbk@modal@clip}%
+}
+
+%% ============================================================================
+%% PARSE POSITION
+%% ============================================================================
+
+% Parse position {x, y} into coordinates
+\newcommand{\tbk@modal@parseposition}[1]{%
+  \tbk@modal@parsecoords#1\@nil
+}
+
+\def\tbk@modal@parsecoords#1,#2\@nil{%
+  \def\tbk@modal@posx{#1}%
+  \def\tbk@modal@posy{#2}%
+}
+
+%% ============================================================================
+%% PARSE BORDER
+%% ============================================================================
+
+% Parse border "width style color"
+\newcommand{\tbk@modal@parseborder}[1]{%
+  \def\tbk@modal@borderwidth{1pt}%
+  \def\tbk@modal@bordercolor{gray}%
+  % Simple parsing - assumes "Xpt solid color" format
+  % More robust parsing would require more complex code
+}
+
+%% ============================================================================
+%% MAIN MODAL ENVIRONMENT
+%% ============================================================================
+
+% Modal environment
+% #1 = options
+\NewDocumentEnvironment{tbkModal}{O{}+b}{%
+  \pgfkeys{/tbk/modal/.cd, #1}%
+  \tbk@modal@parseposition{\tbk@modal@position}%
+  %
+  \begin{tikzpicture}[remember picture, overlay]
+    % Calculate position
+    \coordinate (modalpos) at ($(current page.south west)!
+      \tbk@modal@posx!(current page.south east)$|-$(current page.south west)!
+      \tbk@modal@posy!(current page.north west)$);
+    %
+    % Draw modal box
+    \node[
+      anchor=\tbk@modal@anchor,
+      fill=\tbk@modal@bg,
+      draw=gray,
+      line width=1pt,
+      rounded corners=\tbk@modal@radius,
+      minimum width=\tbk@modal@minwidth,
+      minimum height=\tbk@modal@minheight,
+      text width=\dimexpr\tbk@modal@width-2*\tbk@modal@padding\relax,
+      inner sep=\tbk@modal@padding,
+      \ifdefempty{\tbk@modal@shadow}{}{drop shadow},
+    ] at (modalpos) {%
+      #2%
+    };
+  \end{tikzpicture}%
+  \tbk@modal@reset
+}{}
+
+%% ============================================================================
+%% SIMPLE MODAL BOX
+%% ============================================================================
+
+% Quick modal box
+% #1 = options
+% #2 = content
+\NewDocumentCommand{\tbkModalBox}{O{}+m}{%
+  \begin{tbkModal}[#1]
+    #2
+  \end{tbkModal}%
+}
+
+%% ============================================================================
+%% POPOVER (SMALL FLOATING BOX)
+%% ============================================================================
+
+% Popover for tooltips/annotations
+% #1 = options
+% #2 = content
+\NewDocumentCommand{\tbkPopover}{O{}+m}{%
+  \begin{tbkModal}[%
+    width=6cm,
+    min-width=4cm,
+    min-height=1cm,
+    border-radius=3pt,
+    padding=8pt,
+    #1
+  ]
+    {\small #2}
+  \end{tbkModal}%
+}
+
+%% ============================================================================
+%% CALLOUT POINTER
+%% ============================================================================
+
+% Callout with pointer arrow
+% #1 = options
+% #2 = target position {x, y}
+% #3 = content
+\NewDocumentCommand{\tbkCalloutBox}{O{}mm+m}{%
+  \pgfkeys{/tbk/modal/.cd, #1}%
+  \tbk@modal@parseposition{\tbk@modal@position}%
+  %
+  \begin{tikzpicture}[remember picture, overlay]
+    % Modal position
+    \coordinate (modalpos) at ($(current page.south west)!
+      \tbk@modal@posx!(current page.south east)$|-$(current page.south west)!
+      \tbk@modal@posy!(current page.north west)$);
+    % Target position
+    \tbk@modal@parseposition{#2}%
+    \coordinate (targetpos) at ($(current page.south west)!
+      \tbk@modal@posx!(current page.south east)$|-$(current page.south west)!
+      \tbk@modal@posy!(current page.north west)$);
+    %
+    % Draw line to target
+    \draw[gray, thick, ->] (modalpos) -- (targetpos);
+    %
+    % Draw modal
+    \node[
+      anchor=\tbk@modal@anchor,
+      fill=\tbk@modal@bg,
+      draw=gray,
+      rounded corners=3pt,
+      text width=5cm,
+      inner sep=8pt,
+    ] at (modalpos) {%
+      {\small #4}%
+    };
+  \end{tikzpicture}%
+  \tbk@modal@reset
+}
+
+%% ============================================================================
+%% NUMBERED ANNOTATION
+%% ============================================================================
+
+\newcounter{tbk@annotation}
+
+% Reset annotation counter
+\newcommand{\tbkResetAnnotations}{%
+  \setcounter{tbk@annotation}{0}%
+}
+
+% Numbered annotation marker
+% #1 = position {x, y}
+% #2 = label text (for legend)
+\NewDocumentCommand{\tbkAnnotationMarker}{mm}{%
+  \stepcounter{tbk@annotation}%
+  \tbk@modal@parseposition{#1}%
+  %
+  \begin{tikzpicture}[remember picture, overlay]
+    \coordinate (annpos) at ($(current page.south west)!
+      \tbk@modal@posx!(current page.south east)$|-$(current page.south west)!
+      \tbk@modal@posy!(current page.north west)$);
+    %
+    \node[
+      circle,
+      fill=red!80,
+      text=white,
+      font=\tiny\bfseries,
+      minimum size=1.2em,
+      inner sep=1pt,
+    ] at (annpos) {\thetbk@annotation};
+  \end{tikzpicture}%
+}
+
+%% ============================================================================
+%% FLOATING NOTE
+%% ============================================================================
+
+% Floating note (appears in margin-like position)
+% #1 = options (position, etc.)
+% #2 = content
+\NewDocumentCommand{\tbkFloatingNote}{O{}+m}{%
+  \begin{tbkModal}[%
+    position={0.9, 0.5},
+    anchor=east,
+    width=4cm,
+    background=yellow!20,
+    border=0.5pt solid orange,
+    border-radius=2pt,
+    padding=6pt,
+    #1
+  ]
+    {\footnotesize #2}
+  \end{tbkModal}%
+}
+
+%% ============================================================================
+%% OVERLAY SHADING
+%% ============================================================================
+
+% Semi-transparent overlay for entire page
+% #1 = color (default black)
+% #2 = opacity (0-1)
+\NewDocumentCommand{\tbkOverlay}{O{black}O{0.5}}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[#1, opacity=#2] (current page.south west) rectangle (current page.north east);
+  \end{tikzpicture}%
+}
+
+%% ============================================================================
+%% SPOTLIGHT EFFECT
+%% ============================================================================
+
+% Spotlight on a region (darken everything except specified area)
+% #1 = center position {x, y}
+% #2 = radius
+\NewDocumentCommand{\tbkSpotlight}{mm}{%
+  \tbk@modal@parseposition{#1}%
+  \begin{tikzpicture}[remember picture, overlay]
+    \coordinate (spotcenter) at ($(current page.south west)!
+      \tbk@modal@posx!(current page.south east)$|-$(current page.south west)!
+      \tbk@modal@posy!(current page.north west)$);
+    %
+    % Dark overlay with hole
+    \fill[black, opacity=0.6, even odd rule]
+      (current page.south west) rectangle (current page.north east)
+      (spotcenter) circle (#2);
+  \end{tikzpicture}%
+}
+
+%% ============================================================================
+%% COMPARISON SPLIT VIEW
+%% ============================================================================
+
+% Split page into left/right comparison
+% #1 = left content
+% #2 = right content
+\NewDocumentCommand{\tbkSplitView}{+m+m}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    % Left side
+    \node[
+      anchor=north west,
+      text width=0.45\paperwidth,
+      inner sep=1cm,
+    ] at ($(current page.north west)+(0.5cm,-2cm)$) {#1};
+    %
+    % Divider
+    \draw[gray, thick] (current page.north) -- (current page.south);
+    %
+    % Right side
+    \node[
+      anchor=north east,
+      text width=0.45\paperwidth,
+      inner sep=1cm,
+    ] at ($(current page.north east)+(-0.5cm,-2cm)$) {#2};
+  \end{tikzpicture}%
+}
+
+%% ============================================================================
+%% Z-INDEX MANAGEMENT
+%% ============================================================================
+
+% Higher z-index modal (drawn later, appears on top)
+\newcounter{tbk@modal@zindex}
+\setcounter{tbk@modal@zindex}{0}
+
+% Increment z-index for next modal
+\newcommand{\tbkModalBringToFront}{%
+  \stepcounter{tbk@modal@zindex}%
+}
+
+\endinput

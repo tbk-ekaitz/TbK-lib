@@ -1,0 +1,330 @@
+%% tbk-specs.sty
+%% TbK Library - Specifications Tables Module
+%% Key-value specification tables for technical documentation
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-specs}[2025/01/01 v1.0 TbK Specifications Tables]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{colortbl}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% SPEC TABLE COLORS
+%% ============================================================================
+
+\@ifpackageloaded{tbk-colors}{}{%
+  \definecolor{tbk@spec@keybg}{RGB}{245, 245, 245}
+  \definecolor{tbk@spec@border}{RGB}{200, 200, 200}
+}
+
+%% ============================================================================
+%% SPEC TABLE CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/spec/.is family,
+  /tbk/spec/.cd,
+  % Caption
+  caption/.store in=\tbk@spec@caption,
+  caption/.default={},
+  % Label
+  label/.store in=\tbk@spec@label,
+  label/.default={},
+  % Key column width
+  key-width/.store in=\tbk@spec@keywidth,
+  key-width/.default={0.35\textwidth},
+  % Key style
+  key-style/.is choice,
+  key-style/bold/.code={\def\tbk@spec@keystyle{\bfseries}},
+  key-style/normal/.code={\def\tbk@spec@keystyle{}},
+  key-style/italic/.code={\def\tbk@spec@keystyle{\itshape}},
+  key-style/.default=bold,
+  % Borders
+  borders/.is choice,
+  borders/horizontal/.code={\def\tbk@spec@borders{horizontal}},
+  borders/all/.code={\def\tbk@spec@borders{all}},
+  borders/none/.code={\def\tbk@spec@borders{none}},
+  borders/.default=horizontal,
+  % Position
+  position/.store in=\tbk@spec@position,
+  position/.default={htbp},
+}
+
+% Default values
+\def\tbk@spec@caption{}
+\def\tbk@spec@label{}
+\def\tbk@spec@keywidth{0.35\textwidth}
+\def\tbk@spec@keystyle{\bfseries}
+\def\tbk@spec@borders{horizontal}
+\def\tbk@spec@position{htbp}
+
+% Reset defaults
+\newcommand{\tbk@spec@reset}{%
+  \def\tbk@spec@caption{}%
+  \def\tbk@spec@label{}%
+  \def\tbk@spec@keywidth{0.35\textwidth}%
+  \def\tbk@spec@keystyle{\bfseries}%
+  \def\tbk@spec@borders{horizontal}%
+  \def\tbk@spec@position{htbp}%
+}
+
+%% ============================================================================
+%% SPEC TABLE ENVIRONMENT
+%% ============================================================================
+
+% Specification table
+% #1 = options
+% #2 = content (key-value pairs)
+\NewDocumentEnvironment{tbkSpecTable}{O{}+b}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}>{\tbk@spec@keystyle}p{\tbk@spec@keywidth} p{\dimexpr\textwidth-\tbk@spec@keywidth-4\tabcolsep\relax}@{}}
+      \tbk@spec@toprule
+      #2
+      \tbk@spec@bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}{}
+
+% Set up rules based on border style
+\newcommand{\tbk@spec@toprule}{%
+  \ifdefstring{\tbk@spec@borders}{horizontal}{\toprule}{}%
+  \ifdefstring{\tbk@spec@borders}{all}{\hline}{}%
+}
+\newcommand{\tbk@spec@midrule}{%
+  \ifdefstring{\tbk@spec@borders}{horizontal}{\midrule}{}%
+  \ifdefstring{\tbk@spec@borders}{all}{\hline}{}%
+}
+\newcommand{\tbk@spec@bottomrule}{%
+  \ifdefstring{\tbk@spec@borders}{horizontal}{\bottomrule}{}%
+  \ifdefstring{\tbk@spec@borders}{all}{\hline}{}%
+}
+
+%% ============================================================================
+%% SPEC ROW COMMAND
+%% ============================================================================
+
+% Single specification row
+% #1 = key
+% #2 = value
+\NewDocumentCommand{\tbkSpec}{mm}{%
+  #1 & #2 \\
+}
+
+% Specification row with horizontal rule after
+% #1 = key
+% #2 = value
+\NewDocumentCommand{\tbkSpecLine}{mm}{%
+  #1 & #2 \\
+  \tbk@spec@midrule
+}
+
+%% ============================================================================
+%% QUICK SPEC TABLE
+%% ============================================================================
+
+% Quick specification table from list
+% #1 = options
+% #2 = comma-separated {key}{value} pairs
+\NewDocumentCommand{\tbkSpecs}{O{}m}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}>{\tbk@spec@keystyle}p{\tbk@spec@keywidth} p{\dimexpr\textwidth-\tbk@spec@keywidth-4\tabcolsep\relax}@{}}
+      \toprule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}
+
+%% ============================================================================
+%% GROUPED SPEC TABLE
+%% ============================================================================
+
+% Storage for current group
+\def\tbk@spec@currentgroup{}
+
+% Grouped specification table
+% #1 = options
+\NewDocumentEnvironment{tbkSpecTableGrouped}{O{}+b}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}>{\tbk@spec@keystyle}p{\tbk@spec@keywidth} p{\dimexpr\textwidth-\tbk@spec@keywidth-4\tabcolsep\relax}@{}}
+      \toprule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}{}
+
+% Specification group
+% #1 = group title
+% #2 = content (spec rows)
+\NewDocumentEnvironment{tbkSpecGroup}{m+b}{%
+  \multicolumn{2}{@{}l@{}}{\textbf{\large #1}} \\
+  \midrule
+  #2
+  \addlinespace[0.5em]
+}{}
+
+%% ============================================================================
+%% INLINE SPEC LIST
+%% ============================================================================
+
+% Inline specification (no table, description list style)
+% #1 = options
+\NewDocumentEnvironment{tbkSpecList}{O{}+b}{%
+  \begin{description}[leftmargin=!, labelwidth=\tbk@spec@keywidth]
+    #2
+  \end{description}%
+}{}
+
+% Inline spec item
+% #1 = key
+% #2 = value
+\NewDocumentCommand{\tbkSpecItem}{mm}{%
+  \item[\tbk@spec@keystyle #1] #2
+}
+
+%% ============================================================================
+%% COMPARISON TABLE
+%% ============================================================================
+
+% Comparison table (multiple specs side by side)
+% #1 = options
+% #2 = column headers (pipe-separated)
+\NewDocumentEnvironment{tbkComparisonTable}{O{}m+b}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}>{\bfseries}l *{3}{c}@{}}
+      \toprule
+      & #2 \\
+      \midrule
+      #3
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}{}
+
+% Comparison row
+% #1 = spec name
+% #2 = values (pipe-separated for each column)
+\NewDocumentCommand{\tbkCompare}{mm}{%
+  #1 & #2 \\
+}
+
+%% ============================================================================
+%% PARAMETER TABLE
+%% ============================================================================
+
+% Parameter table (for API/function documentation)
+% #1 = options
+\NewDocumentEnvironment{tbkParamTable}{O{}+b}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}l l p{0.5\textwidth}@{}}
+      \toprule
+      \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+      \midrule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}{}
+
+% Parameter row
+% #1 = parameter name
+% #2 = type
+% #3 = description
+\NewDocumentCommand{\tbkParam}{mmm}{%
+  \texttt{#1} & \texttt{#2} & #3 \\
+}
+
+%% ============================================================================
+%% REQUIREMENTS TABLE
+%% ============================================================================
+
+% Requirements table (for system requirements)
+% #1 = options
+\NewDocumentEnvironment{tbkRequirementsTable}{O{}+b}{%
+  \pgfkeys{/tbk/spec/.cd, #1}%
+  \begin{table}[\tbk@spec@position]%
+    \centering
+    \ifdefempty{\tbk@spec@caption}{}{%
+      \caption{\tbk@spec@caption}%
+    }%
+    \ifdefempty{\tbk@spec@label}{}{%
+      \label{\tbk@spec@label}%
+    }%
+    \begin{tabular}{@{}l c c@{}}
+      \toprule
+      \textbf{Component} & \textbf{Minimum} & \textbf{Recommended} \\
+      \midrule
+      #2
+      \bottomrule
+    \end{tabular}%
+  \end{table}%
+  \tbk@spec@reset
+}{}
+
+% Requirements row
+% #1 = component
+% #2 = minimum
+% #3 = recommended
+\NewDocumentCommand{\tbkRequirement}{mmm}{%
+  #1 & #2 & #3 \\
+}
+
+\endinput

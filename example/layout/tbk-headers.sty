@@ -1,0 +1,314 @@
+%% tbk-headers.sty
+%% TbK Library - Headers and Footers Module
+%% Customizable page headers and footers
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-headers}[2025/01/01 v1.0 TbK Headers and Footers]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{fancyhdr}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{lastpage}
+
+%% ============================================================================
+%% HEADER/FOOTER CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/headers/.is family,
+  /tbk/headers/.cd,
+  % Header content
+  header-left/.store in=\tbk@hdr@left,
+  header-center/.store in=\tbk@hdr@center,
+  header-right/.store in=\tbk@hdr@right,
+  % Footer content
+  footer-left/.store in=\tbk@ftr@left,
+  footer-center/.store in=\tbk@ftr@center,
+  footer-right/.store in=\tbk@ftr@right,
+  % Rules
+  header-rule/.store in=\tbk@hdr@rule,
+  footer-rule/.store in=\tbk@ftr@rule,
+  % Even page content (for two-sided)
+  header-left-even/.store in=\tbk@hdr@left@even,
+  header-center-even/.store in=\tbk@hdr@center@even,
+  header-right-even/.store in=\tbk@hdr@right@even,
+  footer-left-even/.store in=\tbk@ftr@left@even,
+  footer-center-even/.store in=\tbk@ftr@center@even,
+  footer-right-even/.store in=\tbk@ftr@right@even,
+}
+
+% Default values
+\def\tbk@hdr@left{}
+\def\tbk@hdr@center{}
+\def\tbk@hdr@right{\thepage}
+\def\tbk@ftr@left{}
+\def\tbk@ftr@center{}
+\def\tbk@ftr@right{}
+\def\tbk@hdr@rule{0.4pt}
+\def\tbk@ftr@rule{0pt}
+% Even page defaults (same as odd)
+\def\tbk@hdr@left@even{}
+\def\tbk@hdr@center@even{}
+\def\tbk@hdr@right@even{}
+\def\tbk@ftr@left@even{}
+\def\tbk@ftr@center@even{}
+\def\tbk@ftr@right@even{}
+
+%% ============================================================================
+%% HEADER SETUP COMMAND
+%% ============================================================================
+
+% Configure headers and footers
+% #1 = key-value options
+% Note: Settings are stored and applied at \begin{document} via \AtBeginDocument
+\NewDocumentCommand{\tbkSetHeaders}{O{}m}{%
+  % Check for odd/even specification
+  \ifstrequal{#1}{even}{%
+    \pgfkeys{/tbk/headers/.cd,
+      header-left-even/.store in=\tbk@hdr@left@even,
+      header-center-even/.store in=\tbk@hdr@center@even,
+      header-right-even/.store in=\tbk@hdr@right@even,
+      footer-left-even/.store in=\tbk@ftr@left@even,
+      footer-center-even/.store in=\tbk@ftr@center@even,
+      footer-right-even/.store in=\tbk@ftr@right@even,
+      #2
+    }%
+  }{%
+    \pgfkeys{/tbk/headers/.cd, #2}%
+  }%
+}
+
+% Apply header/footer configuration
+\newcommand{\tbk@applyheaders}{%
+  \pagestyle{fancy}%
+  \fancyhf{}% Clear all
+  % Set rule widths
+  \renewcommand{\headrulewidth}{\tbk@hdr@rule}%
+  \renewcommand{\footrulewidth}{\tbk@ftr@rule}%
+  % Odd pages (and single-sided)
+  \fancyhead[L]{\tbk@hdr@left}%
+  \fancyhead[C]{\tbk@hdr@center}%
+  \fancyhead[R]{\tbk@hdr@right}%
+  \fancyfoot[L]{\tbk@ftr@left}%
+  \fancyfoot[C]{\tbk@ftr@center}%
+  \fancyfoot[R]{\tbk@ftr@right}%
+}
+
+% Apply two-sided headers
+\newcommand{\tbk@applytwosiededheaders}{%
+  \pagestyle{fancy}%
+  \fancyhf{}%
+  % Odd pages
+  \fancyhead[LO]{\tbk@hdr@left}%
+  \fancyhead[CO]{\tbk@hdr@center}%
+  \fancyhead[RO]{\tbk@hdr@right}%
+  \fancyfoot[LO]{\tbk@ftr@left}%
+  \fancyfoot[CO]{\tbk@ftr@center}%
+  \fancyfoot[RO]{\tbk@ftr@right}%
+  % Even pages
+  \fancyhead[LE]{\tbk@hdr@left@even}%
+  \fancyhead[CE]{\tbk@hdr@center@even}%
+  \fancyhead[RE]{\tbk@hdr@right@even}%
+  \fancyfoot[LE]{\tbk@ftr@left@even}%
+  \fancyfoot[CE]{\tbk@ftr@center@even}%
+  \fancyfoot[RE]{\tbk@ftr@right@even}%
+  % Rules
+  \renewcommand{\headrulewidth}{\tbk@hdr@rule}%
+  \renewcommand{\footrulewidth}{\tbk@ftr@rule}%
+}
+
+%% ============================================================================
+%% PREDEFINED HEADER STYLES
+%% ============================================================================
+
+% Technical manual style
+\newcommand{\tbkHeaderStyle}[1]{%
+  \ifstrequal{#1}{technical-manual}{%
+    \tbkSetHeaders{%
+      header-left={\small\tbkProductName},
+      header-center={},
+      header-right={\small\thepage\ / \pageref{LastPage}},
+      footer-left={\small\tbkDocumentCode},
+      footer-center={},
+      footer-right={\small\tbkCompanyName},
+      header-rule=0.4pt,
+      footer-rule=0.4pt,
+    }%
+  }{}%
+  \ifstrequal{#1}{minimal}{%
+    \tbkSetHeaders{%
+      header-left={},
+      header-center={},
+      header-right={\thepage},
+      footer-left={},
+      footer-center={},
+      footer-right={},
+      header-rule=0pt,
+      footer-rule=0pt,
+    }%
+  }{}%
+  \ifstrequal{#1}{academic}{%
+    \tbkSetHeaders{%
+      header-left={\leftmark},
+      header-center={},
+      header-right={\rightmark},
+      footer-left={},
+      footer-center={\thepage},
+      footer-right={},
+      header-rule=0.4pt,
+      footer-rule=0pt,
+    }%
+  }{}%
+  \ifstrequal{#1}{branded}{%
+    \tbkSetHeaders{%
+      header-left={\tbkCompanyName},
+      header-center={\tbkProductName},
+      header-right={\tbkDocVersion},
+      footer-left={\tbkDate},
+      footer-center={\thepage\ of \pageref{LastPage}},
+      footer-right={\tbkDocumentCode},
+      header-rule=0.5pt,
+      footer-rule=0.5pt,
+    }%
+  }{}%
+}
+
+%% ============================================================================
+%% DISABLE HEADERS/FOOTERS
+%% ============================================================================
+
+% Disable headers for current page
+\newcommand{\tbkNoHeaders}{%
+  \thispagestyle{fancy}%
+  \fancyhead{}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+% Disable footers for current page
+\newcommand{\tbkNoFooters}{%
+  \thispagestyle{fancy}%
+  \fancyfoot{}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+% Disable both
+\newcommand{\tbkNoHeadersFooters}{%
+  \thispagestyle{empty}%
+}
+
+%% ============================================================================
+%% PAGE NUMBER FORMATTING
+%% ============================================================================
+
+% Page X of Y format
+\newcommand{\tbkPageXofY}{%
+  \thepage\ of \pageref{LastPage}%
+}
+
+% Roman numerals for frontmatter
+\newcommand{\tbkRomanPageNumbers}{%
+  \pagenumbering{roman}%
+}
+
+% Arabic numerals (default)
+\newcommand{\tbkArabicPageNumbers}{%
+  \pagenumbering{arabic}%
+}
+
+% Reset page counter
+\newcommand{\tbkResetPageNumber}{%
+  \setcounter{page}{1}%
+}
+
+%% ============================================================================
+%% FIRST PAGE STYLE
+%% ============================================================================
+
+% Define plain style for first pages of chapters
+\fancypagestyle{tbkplain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+% Define empty style
+\fancypagestyle{tbkempty}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+%% ============================================================================
+%% SECTION MARKS
+%% ============================================================================
+
+% Update section marks for headers
+\renewcommand{\sectionmark}[1]{%
+  \markright{#1}%
+}
+
+% Only define chaptermark if chapter command exists (book/report class)
+\@ifundefined{chapter}{%
+  % Article class - no chapters, do nothing
+}{%
+  \renewcommand{\chaptermark}[1]{%
+    \markboth{#1}{}%
+  }%
+}
+
+%% ============================================================================
+%% SPECIAL PAGES
+%% ============================================================================
+
+% Chapter first page style
+\newcommand{\tbkChapterFirstPageStyle}[1]{%
+  \ifstrequal{#1}{plain}{%
+    \def\tbk@chapterfirststyle{tbkplain}%
+  }{}%
+  \ifstrequal{#1}{empty}{%
+    \def\tbk@chapterfirststyle{tbkempty}%
+  }{}%
+  \ifstrequal{#1}{normal}{%
+    \def\tbk@chapterfirststyle{fancy}%
+  }{}%
+}
+\def\tbk@chapterfirststyle{tbkplain}
+
+%% ============================================================================
+%% HEADER/FOOTER ELEMENTS
+%% ============================================================================
+
+% Logo in header - use providecommand to avoid conflict with tbk-branding
+% If tbk-branding is loaded, it provides the primary \tbkLogo command
+\providecommand{\tbkLogo}[1][height=1cm]{%
+  \ifdef{\tbk@branding@logo}{%
+    \includegraphics[#1]{\tbk@branding@logo}%
+  }{%
+    % No logo defined
+  }%
+}
+
+% Horizontal line for decoration
+\newcommand{\tbkHeaderLine}{%
+  \rule{\textwidth}{\tbk@hdr@rule}%
+}
+
+%% ============================================================================
+%% INITIALIZATION
+%% ============================================================================
+
+% Set default header style
+\AtBeginDocument{%
+  \pagestyle{fancy}%
+  \tbk@applyheaders
+}
+
+\endinput

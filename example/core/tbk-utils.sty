@@ -1,0 +1,290 @@
+%% tbk-utils.sty
+%% TbK Library - Internal Utilities
+%% Shared utility functions and helpers for TbK modules
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-utils}[2025/01/01 v1.0 TbK Internal Utilities]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{etoolbox}
+\RequirePackage{xparse}
+\RequirePackage{calc}
+
+%% ============================================================================
+%% CONDITIONAL HELPERS
+%% ============================================================================
+
+% Check if a macro is defined and non-empty
+% #1 = macro name (with backslash)
+% #2 = code if true
+% #3 = code if false
+\newcommand{\tbk@ifnotempty}[3]{%
+  \ifdefempty{#1}{#3}{#2}%
+}
+
+% Check if value equals a string
+% #1 = value
+% #2 = string to compare
+% #3 = code if equal
+% #4 = code if not equal
+\newcommand{\tbk@ifequal}[4]{%
+  \ifstrequal{#1}{#2}{#3}{#4}%
+}
+
+% Check if value is in a list
+% #1 = value
+% #2 = comma-separated list
+% #3 = code if found
+% #4 = code if not found
+\newcommand{\tbk@ifinlist}[4]{%
+  \def\tbk@temp@found{0}%
+  \forcsvlist{\tbk@check@inlist{#1}}{#2}%
+  \ifnum\tbk@temp@found=1 #3\else #4\fi
+}
+
+\newcommand{\tbk@check@inlist}[2]{%
+  \ifstrequal{#1}{#2}{\def\tbk@temp@found{1}}{}%
+}
+
+%% ============================================================================
+%% STRING MANIPULATION
+%% ============================================================================
+
+% Convert to lowercase (using expl3)
+\ExplSyntaxOn
+\NewDocumentCommand{\tbkToLower}{m}{%
+  \text_lowercase:n {#1}%
+}
+
+\NewDocumentCommand{\tbkToUpper}{m}{%
+  \text_uppercase:n {#1}%
+}
+\ExplSyntaxOff
+
+% Trim whitespace from string
+\newcommand{\tbk@trim}[1]{%
+  \ignorespaces#1\unskip
+}
+
+%% ============================================================================
+%% LENGTH AND DIMENSION UTILITIES
+%% ============================================================================
+
+% Set length if value is not empty
+% #1 = length register
+% #2 = value (can be empty)
+% #3 = default value
+\newcommand{\tbk@setlengthordefault}[3]{%
+  \ifstrempty{#2}{%
+    \setlength{#1}{#3}%
+  }{%
+    \setlength{#1}{#2}%
+  }%
+}
+
+% Parse relative dimension (e.g., 0.5\textwidth)
+% Returns the computed length
+\newlength{\tbk@templength}
+\newcommand{\tbk@parselength}[2]{%
+  \setlength{\tbk@templength}{#2}%
+  \setlength{#1}{\tbk@templength}%
+}
+
+% Get percentage of page width
+% #1 = result length
+% #2 = percentage (0-1)
+\newcommand{\tbk@percentpagewidth}[2]{%
+  \setlength{#1}{#2\paperwidth}%
+}
+
+% Get percentage of page height
+% #1 = result length
+% #2 = percentage (0-1)
+\newcommand{\tbk@percentpageheight}[2]{%
+  \setlength{#1}{#2\paperheight}%
+}
+
+%% ============================================================================
+%% FILE PATH UTILITIES
+%% ============================================================================
+
+% Check if file exists
+% #1 = file path
+% #2 = code if exists
+% #3 = code if not exists
+\newcommand{\tbk@iffileexists}[3]{%
+  \IfFileExists{#1}{#2}{#3}%
+}
+
+% Get file extension
+% This is a simplified version
+\newcommand{\tbk@getfileext}[1]{%
+  % Placeholder - actual implementation would parse the filename
+  pdf%
+}
+
+%% ============================================================================
+%% LIST PROCESSING
+%% ============================================================================
+
+% Process comma-separated list with counter
+% #1 = list
+% #2 = code to execute for each item (use ##1 for item, ##2 for index)
+\newcounter{tbk@listcounter}
+\newcommand{\tbk@processlist}[2]{%
+  \setcounter{tbk@listcounter}{0}%
+  \def\tbk@listitem##1{%
+    \stepcounter{tbk@listcounter}%
+    #2%
+  }%
+  \forcsvlist{\tbk@listitem}{#1}%
+}
+
+% Count items in list
+% #1 = list
+% Stores result in \tbk@listcount
+\newcommand{\tbk@countlist}[1]{%
+  \setcounter{tbk@listcounter}{0}%
+  \forcsvlist{\tbk@countitem}{#1}%
+  \edef\tbk@listcount{\arabic{tbk@listcounter}}%
+}
+\newcommand{\tbk@countitem}[1]{\stepcounter{tbk@listcounter}}
+
+%% ============================================================================
+%% HOOK SYSTEM
+%% ============================================================================
+
+% Define a hook
+% #1 = hook name
+\newcommand{\tbk@definehook}[1]{%
+  \expandafter\def\csname tbk@hook@#1\endcsname{}%
+}
+
+% Add code to a hook
+% #1 = hook name
+% #2 = code to add
+\newcommand{\tbk@addtohook}[2]{%
+  \expandafter\appto\csname tbk@hook@#1\endcsname{#2}%
+}
+
+% Execute a hook
+% #1 = hook name
+\newcommand{\tbk@executehook}[1]{%
+  \csname tbk@hook@#1\endcsname
+}
+
+% Clear a hook
+% #1 = hook name
+\newcommand{\tbk@clearhook}[1]{%
+  \expandafter\def\csname tbk@hook@#1\endcsname{}%
+}
+
+%% ============================================================================
+%% DEBUG UTILITIES
+%% ============================================================================
+
+% Debug flag
+\newbool{tbk@debug}
+\boolfalse{tbk@debug}
+
+% Enable debug mode
+\newcommand{\tbkDebugOn}{\booltrue{tbk@debug}}
+\newcommand{\tbkDebugOff}{\boolfalse{tbk@debug}}
+
+% Print debug message
+% #1 = message
+\newcommand{\tbk@debug}[1]{%
+  \ifbool{tbk@debug}{%
+    \typeout{[TbK DEBUG] #1}%
+  }{}%
+}
+
+% Debug box (visible border for debugging layout)
+\newcommand{\tbk@debugbox}[1]{%
+  \ifbool{tbk@debug}{%
+    \fbox{#1}%
+  }{#1}%
+}
+
+%% ============================================================================
+%% SAFE COMMAND DEFINITION
+%% ============================================================================
+
+% Define command only if not already defined
+% #1 = command name
+% #2 = definition
+\newcommand{\tbk@providecommand}[2]{%
+  \providecommand{#1}{#2}%
+}
+
+% Redefine command with warning
+% #1 = command name
+% #2 = definition
+\newcommand{\tbk@renewcommand}[2]{%
+  \ifdef{#1}{%
+    \PackageWarning{tbk-utils}{Redefining command \string#1}%
+  }{}%
+  \renewcommand{#1}{#2}%
+}
+
+%% ============================================================================
+%% BOX UTILITIES
+%% ============================================================================
+
+\newsavebox{\tbk@tempbox}
+
+% Measure content width
+% #1 = length to store result
+% #2 = content
+\newcommand{\tbk@measurewidth}[2]{%
+  \sbox{\tbk@tempbox}{#2}%
+  \setlength{#1}{\wd\tbk@tempbox}%
+}
+
+% Measure content height
+% #1 = length to store result
+% #2 = content
+\newcommand{\tbk@measureheight}[2]{%
+  \sbox{\tbk@tempbox}{#2}%
+  \setlength{#1}{\ht\tbk@tempbox}%
+  \addtolength{#1}{\dp\tbk@tempbox}%
+}
+
+%% ============================================================================
+%% COORDINATE UTILITIES
+%% ============================================================================
+
+% Parse coordinate pair
+% #1, #2 = storage macros for x and y
+% #3 = input {x, y}
+\ExplSyntaxOn
+\NewDocumentCommand{\tbk@parsecoord}{mmm}{%
+  \seq_set_split:Nnn \l_tmpa_seq {,} {#3}
+  \seq_get_left:NN \l_tmpa_seq \l_tmpa_tl
+  \tl_set:Nx #1 {\tl_trim_spaces:V \l_tmpa_tl}
+  \seq_get_right:NN \l_tmpa_seq \l_tmpa_tl
+  \tl_set:Nx #2 {\tl_trim_spaces:V \l_tmpa_tl}
+}
+\ExplSyntaxOff
+
+%% ============================================================================
+%% MATH UTILITIES
+%% ============================================================================
+
+% Min of two values
+\newcommand{\tbk@min}[2]{%
+  \ifdim#1<#2 #1\else #2\fi
+}
+
+% Max of two values
+\newcommand{\tbk@max}[2]{%
+  \ifdim#1>#2 #1\else #2\fi
+}
+
+\endinput

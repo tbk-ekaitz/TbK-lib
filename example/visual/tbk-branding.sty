@@ -1,0 +1,292 @@
+%% tbk-branding.sty
+%% TbK Library - Branding Module
+%% Corporate identity and branding elements
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk-branding}[2025/01/01 v1.0 TbK Branding]
+
+%% ============================================================================
+%% REQUIRED PACKAGES
+%% ============================================================================
+\RequirePackage{graphicx}
+\RequirePackage{pgfkeys}
+\RequirePackage{xparse}
+\RequirePackage{etoolbox}
+
+%% ============================================================================
+%% BRANDING STORAGE
+%% ============================================================================
+
+% Logo paths
+\def\tbk@branding@logo{}
+\def\tbk@branding@logo@alt{}
+\def\tbk@branding@logo@mono{}
+\def\tbk@branding@logo@icon{}
+
+% Company info (can be overridden from tbk-core)
+\def\tbk@branding@company{}
+\def\tbk@branding@website{}
+\def\tbk@branding@slogan{}
+
+%% ============================================================================
+%% BRANDING CONFIGURATION KEYS
+%% ============================================================================
+
+\pgfkeys{
+  /tbk/branding/.is family,
+  /tbk/branding/.cd,
+  % Logos
+  logo/.store in=\tbk@branding@logo,
+  logo/.default={},
+  logo-alt/.store in=\tbk@branding@logo@alt,
+  logo-alt/.default={},
+  logo-mono/.store in=\tbk@branding@logo@mono,
+  logo-mono/.default={},
+  logo-icon/.store in=\tbk@branding@logo@icon,
+  logo-icon/.default={},
+  % Company info
+  company/.store in=\tbk@branding@company,
+  company/.default={},
+  website/.store in=\tbk@branding@website,
+  website/.default={},
+  slogan/.store in=\tbk@branding@slogan,
+  slogan/.default={},
+}
+
+%% ============================================================================
+%% SETUP COMMAND
+%% ============================================================================
+
+% Configure branding
+% #1 = key-value options
+\NewDocumentCommand{\tbkSetBranding}{m}{%
+  \pgfkeys{/tbk/branding/.cd, #1}%
+}
+
+%% ============================================================================
+%% LOGO COMMANDS
+%% ============================================================================
+
+% Main logo
+% #1 = options (width, height, etc.)
+\NewDocumentCommand{\tbkLogo}{O{width=4cm}}{%
+  \ifdefempty{\tbk@branding@logo}{%
+    \PackageWarning{tbk-branding}{No logo defined. Use \string\tbkSetBranding{logo=...}}%
+  }{%
+    \includegraphics[#1]{\tbk@branding@logo}%
+  }%
+}
+
+% Alternative logo (e.g., for dark backgrounds)
+\NewDocumentCommand{\tbkLogoAlt}{O{width=4cm}}{%
+  \ifdefempty{\tbk@branding@logo@alt}{%
+    \tbkLogo[#1]% Fall back to main logo
+  }{%
+    \includegraphics[#1]{\tbk@branding@logo@alt}%
+  }%
+}
+
+% Monochrome logo
+\NewDocumentCommand{\tbkLogoMono}{O{width=4cm}}{%
+  \ifdefempty{\tbk@branding@logo@mono}{%
+    \tbkLogo[#1]% Fall back to main logo
+  }{%
+    \includegraphics[#1]{\tbk@branding@logo@mono}%
+  }%
+}
+
+% Icon/symbol only
+\NewDocumentCommand{\tbkLogoIcon}{O{height=1em}}{%
+  \ifdefempty{\tbk@branding@logo@icon}{%
+    \PackageWarning{tbk-branding}{No icon logo defined}%
+  }{%
+    \includegraphics[#1]{\tbk@branding@logo@icon}%
+  }%
+}
+
+%% ============================================================================
+%% COMPANY INFO COMMANDS
+%% ============================================================================
+
+% Company name
+\newcommand{\tbkBrandingCompany}{%
+  \ifdefempty{\tbk@branding@company}{%
+    \tbkCompanyName% Fall back to core setup
+  }{%
+    \tbk@branding@company
+  }%
+}
+
+% Website
+\newcommand{\tbkBrandingWebsite}{%
+  \tbk@branding@website
+}
+
+% Slogan
+\newcommand{\tbkBrandingSlogan}{%
+  \tbk@branding@slogan
+}
+
+%% ============================================================================
+%% BRANDED ELEMENTS
+%% ============================================================================
+
+% Branded header (logo + company name)
+% #1 = options
+\NewDocumentCommand{\tbkBrandedHeader}{O{}}{%
+  \begin{minipage}{\textwidth}
+    \tbkLogo[height=1.2cm]
+    \hfill
+    {\large\bfseries\tbkBrandingCompany}
+  \end{minipage}%
+}
+
+% Branded footer
+\NewDocumentCommand{\tbkBrandedFooter}{O{}}{%
+  \begin{minipage}{\textwidth}
+    \centering
+    {\small\tbkBrandingCompany}\\
+    \ifdefempty{\tbk@branding@website}{}{%
+      {\footnotesize\tbkBrandingWebsite}%
+    }%
+  \end{minipage}%
+}
+
+%% ============================================================================
+%% WATERMARK
+%% ============================================================================
+
+\RequirePackage{eso-pic}
+
+% Add watermark logo to pages
+% #1 = opacity (0-1)
+% #2 = scale
+\NewDocumentCommand{\tbkWatermark}{O{0.1}O{1}}{%
+  \ifdefempty{\tbk@branding@logo}{}{%
+    \AddToShipoutPictureBG{%
+      \AtPageCenter{%
+        \makebox(0,0){%
+          \transparent{#1}%
+          \includegraphics[scale=#2]{\tbk@branding@logo}%
+        }%
+      }%
+    }%
+  }%
+}
+
+% Remove watermark
+\newcommand{\tbkNoWatermark}{%
+  \ClearShipoutPictureBG
+}
+
+% Draft watermark (text)
+\NewDocumentCommand{\tbkDraftWatermark}{O{DRAFT}}{%
+  \AddToShipoutPictureBG{%
+    \AtPageCenter{%
+      \makebox(0,0){%
+        \rotatebox{45}{%
+          \transparent{0.1}%
+          {\fontsize{80}{80}\selectfont\bfseries\color{gray}#1}%
+        }%
+      }%
+    }%
+  }%
+}
+
+%% ============================================================================
+%% CONFIDENTIAL MARKING
+%% ============================================================================
+
+% Confidential stamp
+% #1 = text
+\NewDocumentCommand{\tbkConfidential}{O{CONFIDENTIAL}}{%
+  \begin{center}
+    \fbox{%
+      \textcolor{red!70!black}{\bfseries\Large #1}%
+    }
+  \end{center}%
+}
+
+% Inline confidential marking
+\NewDocumentCommand{\tbkConfidentialInline}{O{CONFIDENTIAL}}{%
+  \textcolor{red!70!black}{\bfseries[#1]}%
+}
+
+%% ============================================================================
+%% COPYRIGHT NOTICE
+%% ============================================================================
+
+% Full copyright notice
+% #1 = year (optional, defaults to current)
+\NewDocumentCommand{\tbkCopyright}{O{\the\year}}{%
+  \textcopyright~#1 \tbkBrandingCompany. All rights reserved.%
+}
+
+% Short copyright
+\NewDocumentCommand{\tbkCopyrightShort}{O{\the\year}}{%
+  \textcopyright~#1 \tbkBrandingCompany%
+}
+
+%% ============================================================================
+%% BRANDING PRESETS
+%% ============================================================================
+
+% Professional style preset
+\newcommand{\tbkBrandingProfessional}{%
+  % Sets up a professional-looking document style
+  \renewcommand{\familydefault}{\sfdefault}%
+}
+
+% Academic style preset
+\newcommand{\tbkBrandingAcademic}{%
+  % Sets up an academic-looking document style
+  \renewcommand{\familydefault}{\rmdefault}%
+}
+
+%% ============================================================================
+%% DOCUMENT INFO BLOCK
+%% ============================================================================
+
+% Document info block (for covers, back pages)
+\NewDocumentCommand{\tbkDocumentInfo}{O{}}{%
+  \begin{minipage}{0.8\textwidth}
+    \centering
+    {\large\bfseries\tbkProductName}\\[0.5em]
+    Document Code: \tbkDocumentCode\\
+    Version: \tbkDocVersion\\
+    Date: \tbkDate\\[0.5em]
+    \tbkBrandingCompany
+  \end{minipage}%
+}
+
+%% ============================================================================
+%% LEGAL TEXT
+%% ============================================================================
+
+% Disclaimer
+% #1 = custom text (optional)
+\NewDocumentCommand{\tbkDisclaimer}{O{}}{%
+  \begin{small}
+    \ifstrempty{#1}{%
+      The information contained in this document is the property of \tbkBrandingCompany\
+      and may not be copied, reproduced, or distributed without prior written consent.
+      All specifications are subject to change without notice.
+    }{%
+      #1%
+    }%
+  \end{small}%
+}
+
+% Trademark notice
+\NewDocumentCommand{\tbkTrademarkNotice}{O{}}{%
+  \begin{footnotesize}
+    All trademarks and registered trademarks mentioned in this document
+    are the property of their respective owners.
+  \end{footnotesize}%
+}
+
+\endinput

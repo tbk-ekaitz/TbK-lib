@@ -1,0 +1,230 @@
+%% tbk.sty
+%% TbK Library - Main Entry Point
+%% Professional technical documentation framework for LaTeX
+%%
+%% Copyright (c) 2025 TbK Project
+%% License: LPPL 1.3c
+%%
+%% This is the main package file that loads all TbK modules.
+%%
+%% Usage:
+%%   \usepackage[options]{tbk}
+%%
+%% Options:
+%%   language=english|spanish|chinese   - Document language (default: english)
+%%   color-scheme=default|dark|custom   - Color scheme (default: default)
+%%   font-family=sans|serif|mono        - Font family (default: sans)
+%%   draft=true|false                   - Draft mode (default: false)
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tbk}[2025/01/01 v1.0 TbK Professional Technical Documentation Library]
+
+%% ============================================================================
+%% PACKAGE INFORMATION
+%% ============================================================================
+
+\def\tbk@name{TbK}
+\def\tbk@version{1.0.0}
+\def\tbk@date{2025-01-01}
+\def\tbk@description{Professional Technical Documentation Library}
+
+\typeout{*************************************************************}
+\typeout{* \tbk@name\space v\tbk@version\space (\tbk@date)}
+\typeout{* \tbk@description}
+\typeout{*************************************************************}
+
+%% ============================================================================
+%% OPTIONS PROCESSING
+%% ============================================================================
+
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+
+% Package options storage
+\def\tbk@pkg@language{english}
+\def\tbk@pkg@colorscheme{default}
+\def\tbk@pkg@fontfamily{sans}
+\newbool{tbk@pkg@draft}
+\boolfalse{tbk@pkg@draft}
+
+% Define package options
+\pgfkeys{
+  /tbk/package/.is family,
+  /tbk/package/.cd,
+  language/.store in=\tbk@pkg@language,
+  color-scheme/.store in=\tbk@pkg@colorscheme,
+  font-family/.store in=\tbk@pkg@fontfamily,
+  draft/.is if=tbk@pkg@draft,
+}
+
+% Process options
+\DeclareOption*{%
+  \edef\tbk@currentoption{\CurrentOption}%
+  \pgfkeys{/tbk/package/.cd, \tbk@currentoption}%
+}
+\ProcessOptions\relax
+
+%% ============================================================================
+%% CORE MODULE LOADING
+%% ============================================================================
+
+% Append tbk subdirectories to existing search path (don't overwrite)
+\makeatletter
+\providecommand{\input@path}{}
+\g@addto@macro\input@path{{tbk/}{tbk/core/}{tbk/layout/}{tbk/structure/}{tbk/content/}{tbk/visual/}{core/}{layout/}{structure/}{content/}{visual/}}
+\makeatother
+
+% Load core modules
+\RequirePackage{tbk-keys}
+\RequirePackage{tbk-utils}
+\RequirePackage{tbk-core}
+
+%% ============================================================================
+%% VISUAL MODULES
+%% ============================================================================
+
+\RequirePackage{tbk-colors}
+\RequirePackage{tbk-typography}
+\RequirePackage{tbk-icons}
+\RequirePackage{tbk-branding}
+
+%% ============================================================================
+%% LAYOUT MODULES
+%% ============================================================================
+
+\RequirePackage{tbk-page}
+\RequirePackage{tbk-headers}
+\RequirePackage{tbk-toc}
+\RequirePackage{tbk-cover}
+
+%% ============================================================================
+%% STRUCTURE MODULES
+%% ============================================================================
+
+\RequirePackage{tbk-sections}
+\RequirePackage{tbk-modal}
+\RequirePackage{tbk-subpages}
+
+%% ============================================================================
+%% CONTENT MODULES
+%% ============================================================================
+
+\RequirePackage{tbk-figures}
+\RequirePackage{tbk-tables}
+\RequirePackage{tbk-specs}
+\RequirePackage{tbk-lists}
+\RequirePackage{tbk-callouts}
+
+%% ============================================================================
+%% APPLY PACKAGE OPTIONS
+%% ============================================================================
+
+% Apply language setting
+\AtBeginDocument{%
+  \pgfkeys{/tbk/setup/language=\tbk@pkg@language}%
+}
+
+% Apply color scheme
+\ifdefstring{\tbk@pkg@colorscheme}{dark}{%
+  % Would apply dark color scheme here
+}{}
+
+% Apply font family
+\ifdefstring{\tbk@pkg@fontfamily}{serif}{%
+  \renewcommand{\familydefault}{\rmdefault}%
+}{}
+\ifdefstring{\tbk@pkg@fontfamily}{mono}{%
+  \renewcommand{\familydefault}{\ttdefault}%
+}{}
+
+% Apply draft mode
+\ifbool{tbk@pkg@draft}{%
+  \tbkDebugOn
+}{}
+
+%% ============================================================================
+%% CONVENIENCE COMMANDS
+%% ============================================================================
+
+% Quick setup command combining common settings
+% #1 = key-value pairs
+\NewDocumentCommand{\tbkQuickSetup}{m}{%
+  \tbkSetup{#1}%
+}
+
+% Initialize document with common defaults
+\newcommand{\tbkInit}{%
+  \tbkPageTechnicalManual
+  \tbkHeaderStyle{technical-manual}%
+}
+
+%% ============================================================================
+%% VERSION INFORMATION
+%% ============================================================================
+
+% Print version info
+\newcommand{\tbkPrintVersion}{%
+  \tbk@name\ v\tbk@version\ (\tbk@date)%
+}
+
+% About TbK
+\newcommand{\tbkAbout}{%
+  \begin{center}
+    {\Large\bfseries\tbk@name}\\[0.5em]
+    Version \tbk@version\\
+    \tbk@description\\[1em]
+    \url{https://github.com/tbk-lib/tbk}
+  \end{center}%
+}
+
+%% ============================================================================
+%% MODULE LISTING
+%% ============================================================================
+
+% List all loaded modules
+\newcommand{\tbkListModules}{%
+  \begin{description}
+    \item[tbk-core] Core module, configuration management
+    \item[tbk-keys] Key-value system
+    \item[tbk-utils] Internal utilities
+    \item[tbk-colors] Color palette system
+    \item[tbk-typography] Font and text styling
+    \item[tbk-icons] Iconography
+    \item[tbk-branding] Corporate identity
+    \item[tbk-page] Page geometry
+    \item[tbk-headers] Headers and footers
+    \item[tbk-toc] Table of contents
+    \item[tbk-cover] Cover pages
+    \item[tbk-sections] Section system
+    \item[tbk-modal] Modal overlays
+    \item[tbk-subpages] Document insertion
+    \item[tbk-figures] Figure handling
+    \item[tbk-tables] Table styling
+    \item[tbk-specs] Specification tables
+    \item[tbk-lists] List formatting
+    \item[tbk-callouts] Warning/info boxes
+  \end{description}%
+}
+
+%% ============================================================================
+%% DEFAULT INITIALIZATION
+%% ============================================================================
+
+% Set up defaults at end of preamble
+\AtEndPreamble{%
+  % Ensure hyperref is loaded last if present
+  \@ifpackageloaded{hyperref}{}{%
+    \RequirePackage{hyperref}%
+  }%
+  % Configure hyperref with safe color values
+  \hypersetup{%
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    urlcolor=blue!50!black,
+    citecolor=green!50!black,
+    pdfcreator={TbK v\tbk@version},
+  }%
+}
+
+\endinput
