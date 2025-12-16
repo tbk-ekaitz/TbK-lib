@@ -69,9 +69,10 @@
 %% CORE MODULE LOADING
 %% ============================================================================
 
-% Add tbk subdirectories to search path
+% Append tbk subdirectories to existing search path (don't overwrite)
 \makeatletter
-\def\input@path{{tbk/}{tbk/core/}{tbk/layout/}{tbk/structure/}{tbk/content/}{tbk/visual/}}
+\providecommand{\input@path}{}
+\g@addto@macro\input@path{{tbk/}{tbk/core/}{tbk/layout/}{tbk/structure/}{tbk/content/}{tbk/visual/}{core/}{layout/}{structure/}{content/}{visual/}}
 \makeatother
 
 % Load core modules
@@ -216,12 +217,12 @@
   \@ifpackageloaded{hyperref}{}{%
     \RequirePackage{hyperref}%
   }%
-  % Configure hyperref
+  % Configure hyperref with safe color values
   \hypersetup{%
     colorlinks=true,
-    linkcolor=tbk@color@primary,
-    urlcolor=tbk@color@accent,
-    citecolor=tbk@color@secondary,
+    linkcolor=blue!70!black,
+    urlcolor=blue!50!black,
+    citecolor=green!50!black,
     pdfcreator={TbK v\tbk@version},
   }%
 }
