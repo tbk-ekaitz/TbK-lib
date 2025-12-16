@@ -67,6 +67,7 @@
 
 % Configure headers and footers
 % #1 = key-value options
+% Note: Settings are stored and applied at \begin{document} via \AtBeginDocument
 \NewDocumentCommand{\tbkSetHeaders}{O{}m}{%
   % Check for odd/even specification
   \ifstrequal{#1}{even}{%
@@ -82,7 +83,6 @@
   }{%
     \pgfkeys{/tbk/headers/.cd, #2}%
   }%
-  \tbk@applyheaders
 }
 
 % Apply header/footer configuration
