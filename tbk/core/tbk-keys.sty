@@ -119,6 +119,11 @@
 \pgfkeys{
   /tbk/setup/.is family,
   /tbk/setup/.cd,
+  % Handle unknown keys (spaces in key names from formatting)
+  .unknown/.code={%
+    \let\tbk@currkey\pgfkeyscurrentname
+    \pgfkeys{/tbk/setup/\tbk@currkey/.try={#1}}%
+  },
   % Company information
   company-name/.store in=\tbk@setup@companyname,
   company-name/.default={Company Name},

@@ -11,6 +11,11 @@
 
 \documentclass[11pt,a4paper]{article}
 
+% Add path to TbK library
+\makeatletter
+\def\input@path{{../tbk/}{../tbk/core/}{../tbk/layout/}{../tbk/structure/}{../tbk/content/}{../tbk/visual/}}
+\makeatother
+
 % Load TbK library
 \usepackage{tbk}
 
@@ -21,30 +26,30 @@
 %% DOCUMENT CONFIGURATION (using string references)
 %% ============================================================================
 
-\tbkSetup{
-  company-name = {\str{company.name}},
-  product-name = {Asclepius \str{doc.title}},
-  document-code = {A99 EA-EN-A04-A002},
-  version = {1.0},
-  date = {2025},
+\tbkSetup{%
+  company-name={\str{company.name}},%
+  product-name={Asclepius \str{doc.title}},%
+  document-code={A99 EA-EN-A04-A002},%
+  version={1.0},%
+  date={2025},%
 }
 
-\tbkSetBranding{
-  company = {\str{company.name}},
-  website = {\str{company.website}},
-  slogan = {\str{company.slogan}},
+\tbkSetBranding{%
+  company={\str{company.name}},%
+  website={\str{company.website}},%
+  slogan={\str{company.slogan}},%
 }
 
 % Set header style
-\tbkSetHeaders{
-  header-left = {\small Asclepius \str{doc.title}},
-  header-center = {},
-  header-right = {\small\thepage},
-  footer-left = {\small A99 EA-EN-A04-A002},
-  footer-center = {},
-  footer-right = {\small \str{company.name}},
-  header-rule = 0.4pt,
-  footer-rule = 0.4pt,
+\tbkSetHeaders{%
+  header-left={\small Asclepius \str{doc.title}},%
+  header-center={},%
+  header-right={\small\thepage},%
+  footer-left={\small A99 EA-EN-A04-A002},%
+  footer-center={},%
+  footer-right={\small \str{company.name}},%
+  header-rule=0.4pt,%
+  footer-rule=0.4pt,%
 }
 
 \begin{document}
@@ -53,20 +58,17 @@
 %% TITLE PAGE
 %% ============================================================================
 
-\tbkTitlePage{
-  title = {\str{doc.title}},
-  subtitle = {\str{doc.subtitle}},
-  tagline = {\str{doc.tagline}},
+\tbkTitlePage{%
+  title={\str{doc.title}},%
+  subtitle={\str{doc.subtitle}},%
+  tagline={\str{doc.tagline}},%
 }
 
 %% ============================================================================
 %% TABLE OF CONTENTS
 %% ============================================================================
 
-\tbkTableOfContents[
-  title = {\str{doc.toc_title}},
-  depth = 4,
-]
+\tbkTableOfContents[title={\str{doc.toc_title}},depth=4]
 
 %% ============================================================================
 %% CHAPTER 1: SETUP AND START
@@ -106,10 +108,7 @@
 %% ----------------------------------------------------------------------------
 \tbkSection{\str{sec.console_operation}}
 
-\begin{tbkOperationTable}[
-  caption = {\str{tbl.console_buttons}},
-  label = tbl:console-buttons,
-]
+\begin{tbkOperationTable}[caption={\str{tbl.console_buttons}},label=tbl:console-buttons]
   \tbkOp{\tbkIcon{power}}{\str{op.power}}
   \tbkOp{\tbkIcon{play} \tbkIcon{pause} \tbkIcon{stop}}{\str{op.media}}
   \tbkOp{\tbkIcon{usb}}{\str{op.usb}}
@@ -276,11 +275,7 @@ the device, including model number, software version, and system specifications.
 %% ----------------------------------------------------------------------------
 \tbkSection{\str{sec.specification}}
 
-\begin{tbkSpecTable}[
-  caption = {\str{tbl.specifications}},
-  label = tbl:specifications,
-  key-style = bold,
-]
+\begin{tbkSpecTable}[caption={\str{tbl.specifications}},label=tbl:specifications,key-style=bold]
   \tbkSpec{\str{spec.product_name}}{Asclepius}
   \tbkSpec{\str{spec.model}}{TBK-99 EA}
   \tbkSpec{\str{spec.size}}{99-inch}
@@ -324,10 +319,7 @@ the device, including model number, software version, and system specifications.
 %% ----------------------------------------------------------------------------
 \tbkSection{\str{sec.contact}}
 
-\begin{tbkSpecTable}[
-  caption = {\str{tbl.contact}},
-  label = tbl:contact,
-]
+\begin{tbkSpecTable}[caption={\str{tbl.contact}},label=tbl:contact]
   \tbkSpec{\str{spec.company}}{\str{company.name} (\str{company.short_name})}
   \tbkSpec{\str{spec.address}}{\str{company.address}}
   \tbkSpec{\str{spec.phone}}{\str{company.phone}}

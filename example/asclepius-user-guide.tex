@@ -9,6 +9,11 @@
 
 \documentclass[11pt,a4paper]{article}
 
+% Add path to TbK library
+\makeatletter
+\def\input@path{{../tbk/}{../tbk/core/}{../tbk/layout/}{../tbk/structure/}{../tbk/content/}{../tbk/visual/}}
+\makeatother
+
 % Load TbK library
 \usepackage{tbk}
 
@@ -16,30 +21,30 @@
 %% DOCUMENT CONFIGURATION
 %% ============================================================================
 
-\tbkSetup{
-  company-name = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
-  product-name = {Asclepius TBK-99 EA},
-  document-code = {A99 EA-EN-A04-A002},
-  version = {1.0},
-  date = {2025},
+\tbkSetup{%
+  company-name={Taiwan Main Orthopaedic Biotechnology Co., Ltd.},%
+  product-name={Asclepius TBK-99 EA},%
+  document-code={A99 EA-EN-A04-A002},%
+  version={1.0},%
+  date={2025},%
 }
 
-\tbkSetBranding{
-  company = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
-  website = {www.surglasses.com},
-  slogan = {Innovation in Medical Education Technology},
+\tbkSetBranding{%
+  company={Taiwan Main Orthopaedic Biotechnology Co., Ltd.},%
+  website={www.surglasses.com},%
+  slogan={Innovation in Medical Education Technology},%
 }
 
 % Set header style
-\tbkSetHeaders{
-  header-left = {\small Asclepius TBK-99 EA},
-  header-center = {},
-  header-right = {\small\thepage},
-  footer-left = {\small A99 EA-EN-A04-A002},
-  footer-center = {},
-  footer-right = {\small Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
-  header-rule = 0.4pt,
-  footer-rule = 0.4pt,
+\tbkSetHeaders{%
+  header-left={\small Asclepius TBK-99 EA},%
+  header-center={},%
+  header-right={\small\thepage},%
+  footer-left={\small A99 EA-EN-A04-A002},%
+  footer-center={},%
+  footer-right={\small Taiwan Main Orthopaedic Biotechnology Co., Ltd.},%
+  header-rule=0.4pt,%
+  footer-rule=0.4pt,%
 }
 
 \begin{document}
@@ -48,20 +53,17 @@
 %% TITLE PAGE
 %% ============================================================================
 
-\tbkTitlePage{
-  title = {TBK-99 EA},
-  subtitle = {User Guide},
-  tagline = {Virtual Electronic Anatomy Table for Education},
+\tbkTitlePage{%
+  title={TBK-99 EA},%
+  subtitle={User Guide},%
+  tagline={Virtual Electronic Anatomy Table for Education},%
 }
 
 %% ============================================================================
 %% TABLE OF CONTENTS
 %% ============================================================================
 
-\tbkTableOfContents[
-  title = {Contents},
-  depth = 4,
-]
+\tbkTableOfContents[title={Contents},depth=4]
 
 %% ============================================================================
 %% CHAPTER 1: SETUP AND START
@@ -112,10 +114,7 @@ and a console interface.
 %% ----------------------------------------------------------------------------
 \tbkSection{Console Operation}
 
-\begin{tbkOperationTable}[
-  caption = {Control Panel Button Functions},
-  label = tbl:console-buttons,
-]
+\begin{tbkOperationTable}[caption={Control Panel Button Functions},label=tbl:console-buttons]
   \tbkOp{\tbkIcon{power}}{Power On/Off}
   \tbkOp{\tbkIcon{play} \tbkIcon{pause} \tbkIcon{stop}}{Media controls}
   \tbkOp{\tbkIcon{usb}}{Switch to USB file}
@@ -527,11 +526,7 @@ emergency stop latch on the lower left door panel immediately.
 %% ----------------------------------------------------------------------------
 \tbkSection{Specification}
 
-\begin{tbkSpecTable}[
-  caption = {TBK-99 EA Product Specifications},
-  label = tbl:specifications,
-  key-style = bold,
-]
+\begin{tbkSpecTable}[caption={TBK-99 EA Product Specifications},label=tbl:specifications,key-style=bold]
   \tbkSpec{Product Name}{Asclepius}
   \tbkSpec{Model}{TBK-99 EA}
   \tbkSpec{Size}{99-inch}
@@ -722,10 +717,7 @@ to material and service fees.
 %% ----------------------------------------------------------------------------
 \tbkSection{Contact Information}
 
-\begin{tbkSpecTable}[
-  caption = {Taiwan Main Orthopaedic Biotechnology Co., Ltd.},
-  label = tbl:contact,
-]
+\begin{tbkSpecTable}[caption={Taiwan Main Orthopaedic Biotechnology Co., Ltd.},label=tbl:contact]
   \tbkSpec{Company Name}{Taiwan Main Orthopaedic Biotechnology Co., Ltd. (Surglasses)}
   \tbkSpec{Address}{2F, No. 41, Keya Rd., Daya Dist., Taichung City, Taiwan}
   \tbkSpec{Phone}{(+886) 4-2565-2818}
