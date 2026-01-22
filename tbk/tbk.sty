@@ -211,20 +211,12 @@
 %% DEFAULT INITIALIZATION
 %% ============================================================================
 
-% Set up defaults at end of preamble
-\AtEndPreamble{%
-  % Ensure hyperref is loaded last if present
-  \@ifpackageloaded{hyperref}{}{%
-    \RequirePackage{hyperref}%
-  }%
-  % Configure hyperref with safe color values
-  \hypersetup{%
-    colorlinks=true,
-    linkcolor=blue!70!black,
-    urlcolor=blue!50!black,
-    citecolor=green!50!black,
-    pdfcreator={TbK v\tbk@version},
-  }%
+% hyperref is loaded by tbk-sections, configure it here
+\hypersetup{%
+  colorlinks=true,%
+  linkcolor=blue!70!black,%
+  urlcolor=blue!50!black,%
+  citecolor=green!50!black,%
 }
 
 \endinput
