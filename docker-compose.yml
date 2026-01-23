@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  latex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tbk-latex:latest
+    container_name: tbk-latex
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    # Keep container running for interactive use
+    stdin_open: true
+    tty: true
+
+  # Service to compile the example document
+  compile:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tbk-latex:latest
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/example
+    command: >
+      bash -c "
+        pdflatex -interaction=nonstopmode asclepius-user-guide.tex &&
+        pdflatex -interaction=nonstopmode asclepius-user-guide.tex &&
+        echo '=== Compilation complete ===' &&
+        ls -la *.pdf
+      "
+
+  # Service to compile any document (pass TEXFILE env var)
+  compile-file:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tbk-latex:latest
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      - TEXFILE=${TEXFILE:-example/asclepius-user-guide.tex}
+    command: >
+      bash -c "
+        cd $$(dirname $$TEXFILE) &&
+        pdflatex -interaction=nonstopmode $$(basename $$TEXFILE) &&
+        pdflatex -interaction=nonstopmode $$(basename $$TEXFILE) &&
+        echo '=== Compilation complete ==='
+      "
