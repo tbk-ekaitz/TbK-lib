@@ -1,0 +1,341 @@
+\documentclass[11pt,a4paper]{article}
+
+% Load TbK Library
+\usepackage{tbk}
+
+%% ============================================================================
+%% DOCUMENT CONFIGURATION
+%% ============================================================================
+
+\tbkSetup{%
+  company-name={TbK Documentation Systems},%
+  product-name={TbK Library Showcase},%
+  document-code={TBK-DEMO-001},%
+  version={1.0},%
+  date={2025},%
+}
+
+\tbkSetBranding{%
+  company={TbK Documentation Systems},%
+  website={github.com/tbk-lib},%
+  slogan={Professional Technical Documentation Made Easy},%
+}
+
+\tbkSetHeaders{%
+  header-left={\small TbK Library Showcase},%
+  header-center={},%
+  header-right={\small\thepage},%
+  footer-left={\small TBK-DEMO-001},%
+  footer-center={},%
+  footer-right={\small v1.0},%
+}
+
+%% ============================================================================
+%% DOCUMENT START
+%% ============================================================================
+
+\begin{document}
+
+%% ----------------------------------------------------------------------------
+%% COVER PAGE
+%% ----------------------------------------------------------------------------
+
+\begin{tbkCover}
+  \tbkCoverTitle{TbK Library}
+  \tbkCoverSubtitle{Complete Feature Showcase}
+  \tbkCoverInfo{%
+    Document Code: TBK-DEMO-001\\
+    Version: 1.0\\
+    Date: January 2025%
+  }
+\end{tbkCover}
+
+\clearpage
+
+%% ----------------------------------------------------------------------------
+%% TABLE OF CONTENTS
+%% ----------------------------------------------------------------------------
+
+\tableofcontents
+\clearpage
+
+%% ============================================================================
+%% SECTION 1: INTRODUCTION
+%% ============================================================================
+
+\tbkChapter{Introduction}
+
+Welcome to the \textbf{TbK Library Showcase}. This document demonstrates all the features available in the TbK (Technical Book) LaTeX library for creating professional technical documentation.
+
+\tbkSection{What is TbK?}
+
+TbK is a comprehensive LaTeX library designed for creating professional technical documentation. It provides:
+
+\begin{tbkList}
+  \item Consistent styling across all document elements
+  \item Professional table and figure handling
+  \item Callout boxes for warnings, notes, and tips
+  \item Specification tables for technical data
+  \item Customizable headers and footers
+  \item Cover page generation
+\end{tbkList}
+
+\tbkSection{Document Structure}
+
+This showcase is organized into the following sections:
+
+\begin{tbkNumberedList}
+  \item \textbf{Typography} -- Text styling and formatting
+  \item \textbf{Lists} -- Various list types
+  \item \textbf{Tables} -- Data presentation
+  \item \textbf{Callouts} -- Informational boxes
+  \item \textbf{Icons} -- Visual elements
+\end{tbkNumberedList}
+
+%% ============================================================================
+%% SECTION 2: TYPOGRAPHY
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Typography}
+
+\tbkSection{Text Emphasis}
+
+TbK uses a professional sans-serif font family by default. You can use standard LaTeX commands for emphasis:
+
+\begin{itemize}
+  \item \textbf{Bold text} for important terms
+  \item \textit{Italic text} for emphasis
+  \item \texttt{Monospace text} for code and technical terms
+  \item \underline{Underlined text} when needed
+\end{itemize}
+
+\tbkSection{Headings Hierarchy}
+
+The library supports up to 6 levels of headings:
+
+\tbkSubsection{This is a Subsection (Level 3)}
+
+Subsections help organize content within sections.
+
+\tbkSubsubsection{This is a Subsubsection (Level 4)}
+
+For more detailed organization when needed.
+
+%% ============================================================================
+%% SECTION 3: LISTS
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Lists}
+
+\tbkSection{Bullet Lists}
+
+Standard bullet lists for unordered items:
+
+\begin{tbkList}
+  \item First item in the list
+  \item Second item with more detail
+  \item Third item to complete the example
+\end{tbkList}
+
+\tbkSection{Numbered Lists}
+
+For sequential or prioritized content:
+
+\begin{tbkNumberedList}
+  \item Connect the power cable
+  \item Press the power button
+  \item Wait for system initialization
+  \item Configure initial settings
+\end{tbkNumberedList}
+
+\tbkSection{Checklist}
+
+For task tracking:
+
+\begin{tbkChecklist}
+  \item[done] Read the documentation
+  \item[done] Install required packages
+  \item[pending] Configure the system
+  \item[pending] Run initial tests
+\end{tbkChecklist}
+
+%% ============================================================================
+%% SECTION 4: TABLES
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Tables}
+
+\tbkSection{Basic Tables}
+
+Simple two-column tables for key-value data:
+
+\begin{tbkTable}[caption={System Requirements}]
+  \tbkRow{Operating System}{Windows 10/11, macOS 12+, Linux}
+  \tbkRow{RAM}{8 GB minimum, 16 GB recommended}
+  \tbkRow{Storage}{500 MB available space}
+  \tbkRow{Display}{1920x1080 minimum resolution}
+\end{tbkTable}
+
+\tbkSection{Specification Tables}
+
+For detailed technical specifications:
+
+\begin{tbkSpecTable}[caption={Hardware Specifications},label=tbl:specs]
+  \tbkSpec{Model Number}{TBK-2025-PRO}
+  \tbkSpec{Dimensions}{300 x 200 x 50 mm}
+  \tbkSpec{Weight}{2.5 kg}
+  \tbkSpec{Power Supply}{100-240V AC, 50/60Hz}
+  \tbkSpec{Operating Temperature}{0°C to 40°C}
+  \tbkSpec{Storage Temperature}{-20°C to 60°C}
+  \tbkSpec{Humidity}{10\% to 90\% non-condensing}
+\end{tbkSpecTable}
+
+\tbkSection{Operation Tables}
+
+For describing controls and their functions:
+
+\begin{tbkOperationTable}[caption={Control Panel Functions}]
+  \tbkOp{\tbkIcon{power}}{Power -- Turn the device on or off}
+  \tbkOp{\tbkIcon{settings}}{Settings -- Access configuration menu}
+  \tbkOp{\tbkIcon{info}}{Info -- Display system information}
+  \tbkOp{\tbkIcon{home}}{Home -- Return to main screen}
+\end{tbkOperationTable}
+
+%% ============================================================================
+%% SECTION 5: CALLOUTS
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Callouts}
+
+Callouts are colored boxes used to highlight important information.
+
+\tbkSection{Information Callouts}
+
+\begin{tbkInfo}{Getting Started}
+This callout provides helpful information to guide users through a process or explain a concept in more detail.
+\end{tbkInfo}
+
+\tbkSection{Warning Callouts}
+
+\begin{tbkWarning}{Important Safety Notice}
+Always disconnect power before performing maintenance. Failure to do so may result in electric shock or equipment damage.
+\end{tbkWarning}
+
+\tbkSection{Tip Callouts}
+
+\begin{tbkTip}{Pro Tip}
+For best results, calibrate the system monthly. Regular calibration ensures optimal performance and accuracy.
+\end{tbkTip}
+
+\tbkSection{Note Callouts}
+
+\begin{tbkNote}{Please Note}
+This feature is only available in the Professional edition. Contact sales for upgrade options.
+\end{tbkNote}
+
+%% ============================================================================
+%% SECTION 6: ICONS
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Icons}
+
+TbK includes FontAwesome 5 icons for visual elements.
+
+\tbkSection{Common Icons}
+
+\begin{tbkTable}[caption={Available Icons}]
+  \tbkRow{\tbkIcon{check}}{check -- Confirmation}
+  \tbkRow{\tbkIcon{times}}{times -- Cancel/Error}
+  \tbkRow{\tbkIcon{info}}{info -- Information}
+  \tbkRow{\tbkIcon{warning}}{warning -- Warning}
+  \tbkRow{\tbkIcon{settings}}{settings -- Configuration}
+  \tbkRow{\tbkIcon{user}}{user -- User/Account}
+  \tbkRow{\tbkIcon{home}}{home -- Home/Main}
+  \tbkRow{\tbkIcon{power}}{power -- Power}
+  \tbkRow{\tbkIcon{search}}{search -- Search}
+  \tbkRow{\tbkIcon{edit}}{edit -- Edit/Modify}
+\end{tbkTable}
+
+\tbkSection{Using Icons in Text}
+
+Icons can be used inline: Press \tbkIcon{power} to start, then \tbkIcon{settings} to configure.
+
+%% ============================================================================
+%% SECTION 7: COMBINED EXAMPLE
+%% ============================================================================
+
+\clearpage
+\tbkChapter{Complete Example}
+
+This section demonstrates how multiple TbK elements work together.
+
+\tbkSection{Product Setup Guide}
+
+\begin{tbkWarning}{Before You Begin}
+Ensure you have all components listed in the package contents before starting installation.
+\end{tbkWarning}
+
+\tbkSubsection{Package Contents}
+
+\begin{tbkChecklist}
+  \item[pending] Main unit (1x)
+  \item[pending] Power adapter (1x)
+  \item[pending] USB cable (1x)
+  \item[pending] Quick start guide (1x)
+\end{tbkChecklist}
+
+\tbkSubsection{Installation Steps}
+
+\begin{tbkNumberedList}
+  \item Unpack all components from the box
+  \item Place the main unit on a stable surface
+  \item Connect the power adapter
+  \item Press \tbkIcon{power} to turn on
+  \item Follow on-screen setup wizard
+\end{tbkNumberedList}
+
+\begin{tbkTip}{Quick Setup}
+For fastest setup, have your WiFi password ready before starting.
+\end{tbkTip}
+
+\tbkSubsection{Technical Details}
+
+\begin{tbkSpecTable}[caption={Connection Specifications}]
+  \tbkSpec{WiFi}{802.11 a/b/g/n/ac (2.4GHz \& 5GHz)}
+  \tbkSpec{Bluetooth}{5.0 LE}
+  \tbkSpec{USB}{USB 3.0 Type-C}
+  \tbkSpec{Ethernet}{Gigabit (10/100/1000)}
+\end{tbkSpecTable}
+
+\begin{tbkInfo}{Need Help?}
+Visit our support portal at \texttt{support.tbk-lib.com} or email \texttt{help@tbk-lib.com} for assistance.
+\end{tbkInfo}
+
+%% ============================================================================
+%% DOCUMENT END
+%% ============================================================================
+
+\clearpage
+\tbkSection*{Document Information}
+
+\begin{tbkSpecTable}
+  \tbkSpec{Document Title}{TbK Library Showcase}
+  \tbkSpec{Document Code}{TBK-DEMO-001}
+  \tbkSpec{Version}{1.0}
+  \tbkSpec{Date}{January 2025}
+  \tbkSpec{Author}{TbK Documentation Team}
+  \tbkSpec{License}{LPPL 1.3c}
+\end{tbkSpecTable}
+
+\vfill
+\begin{center}
+\textit{Generated with TbK Library v1.0.0}\\
+\texttt{github.com/tbk-lib/tbk}
+\end{center}
+
+\end{document}

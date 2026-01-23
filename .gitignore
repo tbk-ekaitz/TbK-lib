@@ -3,7 +3,10 @@
 *.log
 *.out
 *.toc
-*.pdf
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+
+# PDFs (except in examples directory)
+*.pdf
+!examples/*.pdf
